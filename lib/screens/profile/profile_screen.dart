@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../models/user_profile.dart';
 import '../../providers/app_provider.dart';
+import '../../utils/unit_converter.dart';
 import '../onboarding/onboarding_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -133,12 +134,18 @@ class ProfileScreen extends StatelessWidget {
                       _infoRow(
                         Icons.monitor_weight_outlined,
                         'Weight',
-                        '${profile.weight.toStringAsFixed(1)} kg',
+                        UnitConverter.formatWeight(
+                          profile.weight,
+                          profile.weightUnit,
+                        ),
                       ),
                       _infoRow(
                         Icons.height_rounded,
                         'Height',
-                        '${profile.height.toInt()} cm',
+                        UnitConverter.formatHeight(
+                          profile.height,
+                          profile.heightUnit,
+                        ),
                       ),
                       _infoRow(
                         Icons.wc_rounded,
@@ -532,6 +539,8 @@ class ProfileScreen extends StatelessWidget {
                             height: height,
                             activityLevel: activityLevel,
                             goal: goal,
+                            weightUnit: profile.weightUnit,
+                            heightUnit: profile.heightUnit,
                           );
                           provider.updateProfile(updated);
                           Navigator.pop(ctx);

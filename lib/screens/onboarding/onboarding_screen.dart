@@ -5,6 +5,7 @@ import '../../theme/app_theme.dart';
 import '../../models/user_profile.dart';
 import '../../providers/app_provider.dart';
 import '../../utils/validators.dart';
+import '../../utils/unit_converter.dart';
 import '../home/home_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -26,8 +27,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   String? _emailError;
   String _gender = 'male';
   int _age = 25;
-  double _weight = 70;
-  double _height = 170;
+  double _weight = 70; // Always stored in kg
+  double _height = 170; // Always stored in cm
+  String _weightUnit = 'kg';
+  String _heightUnit = 'cm';
   String _activityLevel = 'moderate';
   String _goal = 'maintenance';
 
@@ -96,6 +99,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       height: _height,
       activityLevel: _activityLevel,
       goal: _goal,
+      weightUnit: _weightUnit,
+      heightUnit: _heightUnit,
     );
 
     await context.read<AppProvider>().completeOnboarding(profile);
@@ -467,61 +472,276 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget _buildBodyMetricsPage() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 40),
-          const Text(
-            'Body Metrics',
-            style: TextStyle(
-              fontSize: 28,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 40),
+            const Text(
+              'Body Metrics',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'We\'ll use this to calculate your targets',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.white.withAlpha(150),
+              ),
+            ),
+            const SizedBox(height: 40),
+
+            // Age
+            _metricSlider(
+              label: 'Age',
+              value: _age.toDouble(),
+              min: 14,
+              max: 80,
+              unit: 'years',
+              onChanged: (v) => setState(() => _age = v.round()),
+            ),
+            const SizedBox(height: 24),
+
+            // Weight with unit toggle
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Weight',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Row(
+                  children: [
+                    _unitToggle('kg', _weightUnit == 'kg', () {
+                      setState(() {
+                        if (_weightUnit == 'lbs') {
+                          // Keep same weight, just change display unit
+                          _weightUnit = 'kg';
+                        }
+                      });
+                    }),
+                    const SizedBox(width: 8),
+                    _unitToggle('lbs', _weightUnit == 'lbs', () {
+                      setState(() {
+                        if (_weightUnit == 'kg') {
+                          // Keep same weight, just change display unit
+                          _weightUnit = 'lbs';
+                        }
+                      });
+                    }),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            _weightSlider(),
+            const SizedBox(height: 24),
+
+            // Height with unit toggle
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Height',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Row(
+                  children: [
+                    _unitToggle('cm', _heightUnit == 'cm', () {
+                      setState(() {
+                        if (_heightUnit == 'ft') {
+                          // Keep same height, just change display unit
+                          _heightUnit = 'cm';
+                        }
+                      });
+                    }),
+                    const SizedBox(width: 8),
+                    _unitToggle('ft', _heightUnit == 'ft', () {
+                      setState(() {
+                        if (_heightUnit == 'cm') {
+                          // Keep same height, just change display unit
+                          _heightUnit = 'ft';
+                        }
+                      });
+                    }),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            _heightSlider(),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _unitToggle(String label, bool isSelected, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primary.withAlpha(25) : AppColors.card,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : Colors.transparent,
+            width: 1.5,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? AppColors.primary : AppColors.textSecondary,
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _weightSlider() {
+    // Display value in selected unit
+    double displayValue;
+    double minValue;
+    double maxValue;
+    String displayText;
+
+    if (_weightUnit == 'lbs') {
+      displayValue = UnitConverter.kgToLbs(_weight);
+      minValue = UnitConverter.kgToLbs(30);
+      maxValue = UnitConverter.kgToLbs(200);
+      displayText = '${displayValue.toStringAsFixed(1)} lbs';
+    } else {
+      displayValue = _weight;
+      minValue = 30;
+      maxValue = 200;
+      displayText = '${displayValue.toStringAsFixed(1)} kg';
+    }
+
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withAlpha(25),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            displayText,
+            style: const TextStyle(
+              color: AppColors.primary,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              fontSize: 16,
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'We\'ll use this to calculate your targets',
-            style: TextStyle(fontSize: 15, color: Colors.white.withAlpha(150)),
+        ),
+        const SizedBox(height: 8),
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            activeTrackColor: AppColors.primary,
+            inactiveTrackColor: AppColors.cardLight,
+            thumbColor: AppColors.primary,
+            overlayColor: AppColors.primary.withAlpha(30),
           ),
-          const SizedBox(height: 40),
+          child: Slider(
+            value: displayValue,
+            min: minValue,
+            max: maxValue,
+            onChanged: (v) {
+              setState(() {
+                if (_weightUnit == 'lbs') {
+                  // Convert back to kg for storage
+                  _weight = UnitConverter.lbsToKg(v);
+                } else {
+                  _weight = v;
+                }
+                _weight = double.parse(_weight.toStringAsFixed(1));
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
 
-          // Age
-          _metricSlider(
-            label: 'Age',
-            value: _age.toDouble(),
-            min: 14,
-            max: 80,
-            unit: 'years',
-            onChanged: (v) => setState(() => _age = v.round()),
-          ),
-          const SizedBox(height: 24),
+  Widget _heightSlider() {
+    // Display value in selected unit
+    double displayValue;
+    double minValue;
+    double maxValue;
+    String displayText;
 
-          // Weight
-          _metricSlider(
-            label: 'Weight',
-            value: _weight,
-            min: 30,
-            max: 200,
-            unit: 'kg',
-            decimals: 1,
-            onChanged: (v) =>
-                setState(() => _weight = double.parse(v.toStringAsFixed(1))),
-          ),
-          const SizedBox(height: 24),
+    if (_heightUnit == 'ft') {
+      displayValue = UnitConverter.cmToFeet(_height);
+      minValue = UnitConverter.cmToFeet(100);
+      maxValue = UnitConverter.cmToFeet(220);
+      final (feet, inches) = UnitConverter.cmToFeetInches(_height);
+      displayText = '$feet\' ${inches.toStringAsFixed(1)}"';
+    } else {
+      displayValue = _height;
+      minValue = 100;
+      maxValue = 220;
+      displayText = '${displayValue.toInt()} cm';
+    }
 
-          // Height
-          _metricSlider(
-            label: 'Height',
-            value: _height,
-            min: 100,
-            max: 220,
-            unit: 'cm',
-            onChanged: (v) =>
-                setState(() => _height = double.parse(v.toStringAsFixed(0))),
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withAlpha(25),
+            borderRadius: BorderRadius.circular(10),
           ),
-        ],
-      ),
+          child: Text(
+            displayText,
+            style: const TextStyle(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            activeTrackColor: AppColors.primary,
+            inactiveTrackColor: AppColors.cardLight,
+            thumbColor: AppColors.primary,
+            overlayColor: AppColors.primary.withAlpha(30),
+          ),
+          child: Slider(
+            value: displayValue,
+            min: minValue,
+            max: maxValue,
+            onChanged: (v) {
+              setState(() {
+                if (_heightUnit == 'ft') {
+                  // Convert back to cm for storage
+                  _height = UnitConverter.feetToCm(v);
+                } else {
+                  _height = v;
+                }
+                _height = double.parse(_height.toStringAsFixed(0));
+              });
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -814,6 +1034,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   // ─── Page 6: Results ───────────────────────────────────────────
+  // ─── Page 6: Results ───────────────────────────────────────────
   Widget _buildResultsPage() {
     final profile = UserProfile(
       name: _nameController.text.trim(),
@@ -824,6 +1045,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       height: _height,
       activityLevel: _activityLevel,
       goal: _goal,
+      weightUnit: _weightUnit,
+      heightUnit: _heightUnit,
     );
     profile.calculateTargets();
 

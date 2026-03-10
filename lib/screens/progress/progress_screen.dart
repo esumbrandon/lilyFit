@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/app_provider.dart';
 import '../../models/meal_log.dart';
+import '../../utils/unit_converter.dart';
 
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
@@ -56,7 +57,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     _statCard(
                       'Current',
                       weightEntries.isNotEmpty
-                          ? '${weightEntries.last.weight.toStringAsFixed(1)} kg'
+                          ? UnitConverter.formatWeight(
+                              weightEntries.last.weight,
+                              provider.userProfile.weightUnit,
+                            )
                           : '--',
                       Icons.monitor_weight_outlined,
                       AppColors.primary,
@@ -95,7 +99,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     children: [
                       const Row(
                         children: [
-                          Icon(Icons.show_chart_rounded, color: AppColors.primary, size: 20),
+                          Icon(
+                            Icons.show_chart_rounded,
+                            color: AppColors.primary,
+                            size: 20,
+                          ),
                           SizedBox(width: 8),
                           Text(
                             'Weight History',
@@ -116,12 +124,17 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                   'Log at least 2 weights\nto see your chart',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: AppColors.textTertiary.withAlpha(150),
+                                    color: AppColors.textTertiary.withAlpha(
+                                      150,
+                                    ),
                                     fontSize: 14,
                                   ),
                                 ),
                               )
-                            : _buildWeightChart(weightEntries),
+                            : _buildWeightChart(
+                                weightEntries,
+                                provider.userProfile.weightUnit,
+                              ),
                       ),
                     ],
                   ),
@@ -162,7 +175,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     children: [
                       const Row(
                         children: [
-                          Icon(Icons.bar_chart_rounded, color: AppColors.secondary, size: 20),
+                          Icon(
+                            Icons.bar_chart_rounded,
+                            color: AppColors.secondary,
+                            size: 20,
+                          ),
                           SizedBox(width: 8),
                           Text(
                             'Weekly Calories',
@@ -177,7 +194,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       const SizedBox(height: 20),
                       SizedBox(
                         height: 180,
-                        child: _buildWeeklyBarChart(weeklyCalories, provider.userProfile.targetCalories),
+                        child: _buildWeeklyBarChart(
+                          weeklyCalories,
+                          provider.userProfile.targetCalories,
+                        ),
                       ),
                     ],
                   ),
@@ -221,11 +241,15 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       const Divider(color: AppColors.cardLight, height: 24),
                       _summaryRow(
                         'Weight Change',
-                        _weightChange(weightEntries),
+                        _weightChange(
+                          weightEntries,
+                          provider.userProfile.weightUnit,
+                        ),
                         weightEntries.length >= 2
-                            ? (weightEntries.last.weight <= weightEntries.first.weight
-                                ? AppColors.success
-                                : AppColors.error)
+                            ? (weightEntries.last.weight <=
+                                      weightEntries.first.weight
+                                  ? AppColors.success
+                                  : AppColors.error)
                             : AppColors.textTertiary,
                       ),
                     ],
@@ -276,13 +300,15 @@ class _ProgressScreenState extends State<ProgressScreen> {
     );
   }
 
-  Widget _buildWeightChart(List<WeightEntry> entries) {
+  Widget _buildWeightChart(List<WeightEntry> entries, String weightUnit) {
     final spots = entries.asMap().entries.map((e) {
       return FlSpot(e.key.toDouble(), e.value.weight);
     }).toList();
 
-    final minY = entries.map((e) => e.weight).reduce((a, b) => a < b ? a : b) - 2;
-    final maxY = entries.map((e) => e.weight).reduce((a, b) => a > b ? a : b) + 2;
+    final minY =
+        entries.map((e) => e.weight).reduce((a, b) => a < b ? a : b) - 2;
+    final maxY =
+        entries.map((e) => e.weight).reduce((a, b) => a > b ? a : b) + 2;
 
     return LineChart(
       LineChartData(
@@ -290,23 +316,27 @@ class _ProgressScreenState extends State<ProgressScreen> {
           show: true,
           drawVerticalLine: false,
           horizontalInterval: (maxY - minY) / 4,
-          getDrawingHorizontalLine: (value) => FlLine(
-            color: AppColors.cardLight,
-            strokeWidth: 1,
-          ),
+          getDrawingHorizontalLine: (value) =>
+              FlLine(color: AppColors.cardLight, strokeWidth: 1),
         ),
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 42,
-              getTitlesWidget: (value, meta) => Text(
-                '${value.toInt()} kg',
-                style: const TextStyle(
-                  color: AppColors.textTertiary,
-                  fontSize: 10,
-                ),
-              ),
+              getTitlesWidget: (value, meta) {
+                final displayValue = weightUnit == 'lbs'
+                    ? UnitConverter.kgToLbs(value)
+                    : value;
+                final unit = weightUnit == 'lbs' ? 'lbs' : 'kg';
+                return Text(
+                  '${displayValue.toInt()} $unit',
+                  style: const TextStyle(
+                    color: AppColors.textTertiary,
+                    fontSize: 10,
+                  ),
+                );
+              },
             ),
           ),
           bottomTitles: AxisTitles(
@@ -330,8 +360,12 @@ class _ProgressScreenState extends State<ProgressScreen> {
               },
             ),
           ),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
         borderData: FlBorderData(show: false),
         minY: minY,
@@ -371,7 +405,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             tooltipRoundedRadius: 12,
             getTooltipItems: (spots) => spots.map((spot) {
               return LineTooltipItem(
-                '${spot.y.toStringAsFixed(1)} kg',
+                UnitConverter.formatWeight(spot.y, weightUnit),
                 const TextStyle(
                   color: AppColors.primary,
                   fontWeight: FontWeight.w600,
@@ -389,7 +423,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
     List<MapEntry<DateTime, double>> data,
     double target,
   ) {
-    final maxCal = data.map((e) => e.value).fold(target, (a, b) => a > b ? a : b);
+    final maxCal = data
+        .map((e) => e.value)
+        .fold(target, (a, b) => a > b ? a : b);
 
     return BarChart(
       BarChartData(
@@ -399,15 +435,19 @@ class _ProgressScreenState extends State<ProgressScreen> {
           show: true,
           drawVerticalLine: false,
           horizontalInterval: maxCal / 4,
-          getDrawingHorizontalLine: (value) => FlLine(
-            color: AppColors.cardLight,
-            strokeWidth: 1,
-          ),
+          getDrawingHorizontalLine: (value) =>
+              FlLine(color: AppColors.cardLight, strokeWidth: 1),
         ),
         titlesData: FlTitlesData(
-          leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          leftTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
@@ -440,18 +480,20 @@ class _ProgressScreenState extends State<ProgressScreen> {
               BarChartRodData(
                 toY: entry.value.value,
                 width: 20,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(6),
+                ),
                 gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: isOverTarget
                       ? [const Color(0xFFEF4444), const Color(0xFFFBBF24)]
                       : isToday
-                          ? [AppColors.primary, AppColors.secondary]
-                          : [
-                              AppColors.primary.withAlpha(100),
-                              AppColors.secondary.withAlpha(100),
-                            ],
+                      ? [AppColors.primary, AppColors.secondary]
+                      : [
+                          AppColors.primary.withAlpha(100),
+                          AppColors.secondary.withAlpha(100),
+                        ],
                 ),
               ),
             ],
@@ -502,10 +544,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 14,
-          ),
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
         ),
         Text(
           value,
@@ -526,15 +565,32 @@ class _ProgressScreenState extends State<ProgressScreen> {
     return total / daysWithData;
   }
 
-  String _weightChange(List<WeightEntry> entries) {
+  String _weightChange(List<WeightEntry> entries, String weightUnit) {
     if (entries.length < 2) return '--';
     final change = entries.last.weight - entries.first.weight;
-    final sign = change >= 0 ? '+' : '';
-    return '$sign${change.toStringAsFixed(1)} kg';
+
+    // Convert to user's preferred unit
+    final displayChange = weightUnit == 'lbs'
+        ? UnitConverter.kgToLbs(change.abs())
+        : change.abs();
+
+    final sign = change >= 0 ? '+' : '-';
+    final unit = weightUnit == 'lbs' ? 'lbs' : 'kg';
+    return '$sign${displayChange.toStringAsFixed(1)} $unit';
   }
 
   void _showLogWeightDialog(BuildContext context) {
-    _weightController.text = context.read<AppProvider>().userProfile.weight.toStringAsFixed(1);
+    final provider = context.read<AppProvider>();
+    final weightUnit = provider.userProfile.weightUnit;
+    final currentWeight = provider.userProfile.weight;
+
+    // Display in user's preferred unit
+    final displayWeight = weightUnit == 'lbs'
+        ? UnitConverter.kgToLbs(currentWeight)
+        : currentWeight;
+
+    _weightController.text = displayWeight.toStringAsFixed(1);
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -554,7 +610,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
             const SizedBox(height: 16),
             TextField(
               controller: _weightController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -562,7 +620,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               ),
               textAlign: TextAlign.center,
               decoration: InputDecoration(
-                suffixText: 'kg',
+                suffixText: weightUnit,
                 suffixStyle: const TextStyle(
                   color: AppColors.textTertiary,
                   fontSize: 16,
@@ -587,9 +645,13 @@ class _ProgressScreenState extends State<ProgressScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              final weight = double.tryParse(_weightController.text);
-              if (weight != null && weight > 0) {
-                context.read<AppProvider>().addWeight(weight);
+              final inputWeight = double.tryParse(_weightController.text);
+              if (inputWeight != null && inputWeight > 0) {
+                // Convert to kg if needed before saving
+                final weightInKg = weightUnit == 'lbs'
+                    ? UnitConverter.lbsToKg(inputWeight)
+                    : inputWeight;
+                context.read<AppProvider>().addWeight(weightInKg);
                 Navigator.pop(ctx);
               }
             },

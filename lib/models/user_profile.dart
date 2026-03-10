@@ -5,14 +5,16 @@ class UserProfile {
   String email;
   String gender;
   int age;
-  double weight; // kg
-  double height; // cm
+  double weight; // Always stored in kg
+  double height; // Always stored in cm
   String activityLevel;
   String goal;
   double targetCalories;
   double targetProtein;
   double targetCarbs;
   double targetFat;
+  String weightUnit; // 'kg' or 'lbs'
+  String heightUnit; // 'cm' or 'ft'
 
   UserProfile({
     this.name = '',
@@ -27,6 +29,8 @@ class UserProfile {
     this.targetProtein = 150,
     this.targetCarbs = 200,
     this.targetFat = 67,
+    this.weightUnit = 'kg',
+    this.heightUnit = 'cm',
   });
 
   void calculateTargets() {
@@ -93,6 +97,8 @@ class UserProfile {
     'targetProtein': targetProtein,
     'targetCarbs': targetCarbs,
     'targetFat': targetFat,
+    'weightUnit': weightUnit,
+    'heightUnit': heightUnit,
   };
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
@@ -108,6 +114,8 @@ class UserProfile {
     targetProtein: (json['targetProtein'] ?? 150).toDouble(),
     targetCarbs: (json['targetCarbs'] ?? 200).toDouble(),
     targetFat: (json['targetFat'] ?? 67).toDouble(),
+    weightUnit: json['weightUnit'] ?? 'kg',
+    heightUnit: json['heightUnit'] ?? 'cm',
   );
 
   String encode() => jsonEncode(toJson());
