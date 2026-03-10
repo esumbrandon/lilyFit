@@ -78,6 +78,15 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 4),
+                            if (profile.email.isNotEmpty)
+                              Text(
+                                profile.email,
+                                style: TextStyle(
+                                  color: Colors.white.withAlpha(180),
+                                  fontSize: 13,
+                                ),
+                              ),
+                            const SizedBox(height: 2),
                             Text(
                               '${_goalLabel(profile.goal)} · ${_activityLabel(profile.activityLevel)}',
                               style: TextStyle(
@@ -116,11 +125,31 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _infoRow(Icons.cake_outlined, 'Age', '${profile.age} years'),
-                      _infoRow(Icons.monitor_weight_outlined, 'Weight', '${profile.weight.toStringAsFixed(1)} kg'),
-                      _infoRow(Icons.height_rounded, 'Height', '${profile.height.toInt()} cm'),
-                      _infoRow(Icons.wc_rounded, 'Gender', profile.gender == 'male' ? 'Male' : 'Female'),
-                      _infoRow(Icons.speed_rounded, 'BMI', '${profile.bmi.toStringAsFixed(1)} (${profile.bmiCategory})'),
+                      _infoRow(
+                        Icons.cake_outlined,
+                        'Age',
+                        '${profile.age} years',
+                      ),
+                      _infoRow(
+                        Icons.monitor_weight_outlined,
+                        'Weight',
+                        '${profile.weight.toStringAsFixed(1)} kg',
+                      ),
+                      _infoRow(
+                        Icons.height_rounded,
+                        'Height',
+                        '${profile.height.toInt()} cm',
+                      ),
+                      _infoRow(
+                        Icons.wc_rounded,
+                        'Gender',
+                        profile.gender == 'male' ? 'Male' : 'Female',
+                      ),
+                      _infoRow(
+                        Icons.speed_rounded,
+                        'BMI',
+                        '${profile.bmi.toStringAsFixed(1)} (${profile.bmiCategory})',
+                      ),
                     ],
                   ),
                 ),
@@ -149,10 +178,26 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _targetRow('Calories', '${profile.targetCalories.toInt()} kcal', AppColors.primary),
-                      _targetRow('Protein', '${profile.targetProtein.toInt()} g', AppColors.protein),
-                      _targetRow('Carbs', '${profile.targetCarbs.toInt()} g', AppColors.carbs),
-                      _targetRow('Fat', '${profile.targetFat.toInt()} g', AppColors.fat),
+                      _targetRow(
+                        'Calories',
+                        '${profile.targetCalories.toInt()} kcal',
+                        AppColors.primary,
+                      ),
+                      _targetRow(
+                        'Protein',
+                        '${profile.targetProtein.toInt()} g',
+                        AppColors.protein,
+                      ),
+                      _targetRow(
+                        'Carbs',
+                        '${profile.targetCarbs.toInt()} g',
+                        AppColors.carbs,
+                      ),
+                      _targetRow(
+                        'Fat',
+                        '${profile.targetFat.toInt()} g',
+                        AppColors.fat,
+                      ),
                     ],
                   ),
                 ),
@@ -285,7 +330,13 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _settingsTile(IconData icon, String title, String subtitle, VoidCallback onTap, {bool isDestructive = false}) {
+  Widget _settingsTile(
+    IconData icon,
+    String title,
+    String subtitle,
+    VoidCallback onTap, {
+    bool isDestructive = false,
+  }) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       leading: Icon(
@@ -304,13 +355,17 @@ class ProfileScreen extends StatelessWidget {
       subtitle: Text(
         subtitle,
         style: TextStyle(
-          color: isDestructive ? AppColors.error.withAlpha(150) : AppColors.textTertiary,
+          color: isDestructive
+              ? AppColors.error.withAlpha(150)
+              : AppColors.textTertiary,
           fontSize: 12,
         ),
       ),
       trailing: Icon(
         Icons.chevron_right_rounded,
-        color: isDestructive ? AppColors.error.withAlpha(100) : AppColors.textTertiary,
+        color: isDestructive
+            ? AppColors.error.withAlpha(100)
+            : AppColors.textTertiary,
         size: 20,
       ),
       onTap: onTap,
@@ -357,7 +412,9 @@ class ProfileScreen extends StatelessWidget {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
               ),
               padding: EdgeInsets.fromLTRB(
-                24, 24, 24,
+                24,
+                24,
+                24,
                 MediaQuery.of(ctx).padding.bottom + 24,
               ),
               child: SingleChildScrollView(
@@ -367,7 +424,8 @@ class ProfileScreen extends StatelessWidget {
                   children: [
                     Center(
                       child: Container(
-                        width: 40, height: 4,
+                        width: 40,
+                        height: 4,
                         decoration: BoxDecoration(
                           color: AppColors.cardLight,
                           borderRadius: BorderRadius.circular(2),
@@ -389,7 +447,8 @@ class ProfileScreen extends StatelessWidget {
                     _editSlider(
                       label: 'Age',
                       value: age.toDouble(),
-                      min: 14, max: 80,
+                      min: 14,
+                      max: 80,
                       unit: 'years',
                       onChanged: (v) => setSheetState(() => age = v.round()),
                     ),
@@ -399,10 +458,13 @@ class ProfileScreen extends StatelessWidget {
                     _editSlider(
                       label: 'Weight',
                       value: weight,
-                      min: 30, max: 200,
+                      min: 30,
+                      max: 200,
                       unit: 'kg',
                       decimals: 1,
-                      onChanged: (v) => setSheetState(() => weight = double.parse(v.toStringAsFixed(1))),
+                      onChanged: (v) => setSheetState(
+                        () => weight = double.parse(v.toStringAsFixed(1)),
+                      ),
                     ),
                     const SizedBox(height: 16),
 
@@ -410,25 +472,49 @@ class ProfileScreen extends StatelessWidget {
                     _editSlider(
                       label: 'Height',
                       value: height,
-                      min: 100, max: 220,
+                      min: 100,
+                      max: 220,
                       unit: 'cm',
-                      onChanged: (v) => setSheetState(() => height = double.parse(v.toStringAsFixed(0))),
+                      onChanged: (v) => setSheetState(
+                        () => height = double.parse(v.toStringAsFixed(0)),
+                      ),
                     ),
                     const SizedBox(height: 20),
 
                     // Goal
                     const Text(
                       'Goal',
-                      style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        _goalChip(ctx, 'fatLoss', 'Lose Fat', goal, (v) => setSheetState(() => goal = v)),
+                        _goalChip(
+                          ctx,
+                          'fatLoss',
+                          'Lose Fat',
+                          goal,
+                          (v) => setSheetState(() => goal = v),
+                        ),
                         const SizedBox(width: 8),
-                        _goalChip(ctx, 'maintenance', 'Maintain', goal, (v) => setSheetState(() => goal = v)),
+                        _goalChip(
+                          ctx,
+                          'maintenance',
+                          'Maintain',
+                          goal,
+                          (v) => setSheetState(() => goal = v),
+                        ),
                         const SizedBox(width: 8),
-                        _goalChip(ctx, 'muscleGain', 'Build Muscle', goal, (v) => setSheetState(() => goal = v)),
+                        _goalChip(
+                          ctx,
+                          'muscleGain',
+                          'Build Muscle',
+                          goal,
+                          (v) => setSheetState(() => goal = v),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -439,6 +525,7 @@ class ProfileScreen extends StatelessWidget {
                         onPressed: () {
                           final updated = UserProfile(
                             name: profile.name,
+                            email: profile.email,
                             gender: profile.gender,
                             age: age,
                             weight: weight,
@@ -492,17 +579,18 @@ class ProfileScreen extends StatelessWidget {
             ),
           ],
         ),
-        Slider(
-          value: value,
-          min: min,
-          max: max,
-          onChanged: onChanged,
-        ),
+        Slider(value: value, min: min, max: max, onChanged: onChanged),
       ],
     );
   }
 
-  Widget _goalChip(BuildContext context, String value, String label, String current, ValueChanged<String> onChanged) {
+  Widget _goalChip(
+    BuildContext context,
+    String value,
+    String label,
+    String current,
+    ValueChanged<String> onChanged,
+  ) {
     final selected = current == value;
     return Expanded(
       child: GestureDetector(
@@ -546,7 +634,11 @@ class ProfileScreen extends StatelessWidget {
         content: TextField(
           controller: controller,
           keyboardType: TextInputType.number,
-          style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+          ),
           textAlign: TextAlign.center,
           decoration: InputDecoration(
             suffixText: 'ml',
@@ -561,7 +653,10 @@ class ProfileScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: AppColors.textTertiary)),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: AppColors.textTertiary),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -590,7 +685,10 @@ class ProfileScreen extends StatelessWidget {
             SizedBox(width: 10),
             Text(
               'LilyFit',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ],
         ),
@@ -636,7 +734,10 @@ class ProfileScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: AppColors.textTertiary)),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: AppColors.textTertiary),
+            ),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -648,9 +749,7 @@ class ProfileScreen extends StatelessWidget {
                 (route) => false,
               );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.error,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
             child: const Text('Reset'),
           ),
         ],

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 class UserProfile {
   String name;
+  String email;
   String gender;
   int age;
   double weight; // kg
@@ -15,6 +16,7 @@ class UserProfile {
 
   UserProfile({
     this.name = '',
+    this.email = '',
     this.gender = 'male',
     this.age = 25,
     this.weight = 70,
@@ -80,6 +82,7 @@ class UserProfile {
 
   Map<String, dynamic> toJson() => {
     'name': name,
+    'email': email,
     'gender': gender,
     'age': age,
     'weight': weight,
@@ -94,6 +97,7 @@ class UserProfile {
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
     name: json['name'] ?? '',
+    email: json['email'] ?? '',
     gender: json['gender'] ?? 'male',
     age: json['age'] ?? 25,
     weight: (json['weight'] ?? 70).toDouble(),

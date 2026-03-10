@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../models/user_profile.dart';
 import '../../providers/app_provider.dart';
+import '../../utils/validators.dart';
 import '../home/home_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -20,6 +21,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   // Form data
   final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  String? _nameError;
+  String? _emailError;
   String _gender = 'male';
   int _age = 25;
   double _weight = 70;
@@ -31,10 +35,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void dispose() {
     _pageController.dispose();
     _nameController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
   void _nextPage() {
+    // Validate page 1 (name and email) before proceeding
+    if (_currentPage == 1) {
+      final nameValidation = Validators.validateName(_nameController.text);
+      final emailValidation = Validators.validateEmail(_emailController.text);
+
+      setState(() {
+        _nameError = nameValidation;
+        _emailError = emailValidation;
+      });
+
+      if (nameValidation != null || emailValidation != null) {
+        return;
+      }
+    }
+
     if (_currentPage < _totalPages - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
@@ -53,8 +73,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _completeOnboarding() async {
+    // Final validation
+    final nameValidation = Validators.validateName(_nameController.text);
+    final emailValidation = Validators.validateEmail(_emailController.text);
+
+    if (nameValidation != null || emailValidation != null) {
+      // Go back to page 1 to show errors
+      _pageController.jumpToPage(1);
+      setState(() {
+        _nameError = nameValidation;
+        _emailError = emailValidation;
+      });
+      return;
+    }
+
     final profile = UserProfile(
-      name: _nameController.text.trim().isEmpty ? 'User' : _nameController.text.trim(),
+      name: _nameController.text.trim(),
+      email: _emailController.text.trim(),
       gender: _gender,
       age: _age,
       weight: _weight,
@@ -66,9 +101,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     await context.read<AppProvider>().completeOnboarding(profile);
 
     if (!mounted) return;
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const HomeScreen()),
-    );
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
   }
 
   @override
@@ -92,9 +127,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         gradient: i <= _currentPage
                             ? AppColors.primaryGradient
                             : null,
-                        color: i > _currentPage
-                            ? AppColors.cardLight
-                            : null,
+                        color: i > _currentPage ? AppColors.cardLight : null,
                       ),
                     ),
                   );
@@ -143,8 +176,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         _currentPage == 0
                             ? 'Get Started'
                             : _currentPage == _totalPages - 1
-                                ? 'Start Tracking!'
-                                : 'Continue',
+                            ? 'Start Tracking!'
+                            : 'Continue',
                       ),
                     ),
                   ),
@@ -220,9 +253,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           const SizedBox(height: 40),
           // Feature highlights
-          _featureHighlight(Icons.restaurant_menu_rounded, 'Global food database with African cuisines'),
-          _featureHighlight(Icons.track_changes_rounded, 'Smart calorie & macro tracking'),
-          _featureHighlight(Icons.trending_up_rounded, 'Progress analytics & insights'),
+          _featureHighlight(
+            Icons.restaurant_menu_rounded,
+            'Global food database with African cuisines',
+          ),
+          _featureHighlight(
+            Icons.track_changes_rounded,
+            'Smart calorie & macro tracking',
+          ),
+          _featureHighlight(
+            Icons.trending_up_rounded,
+            'Progress analytics & insights',
+          ),
         ],
       ),
     );
@@ -260,66 +302,122 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget _buildNameGenderPage() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 40),
-          const Text(
-            'About You',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 40),
+            const Text(
+              'About You',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Let\'s personalize your experience',
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.white.withAlpha(150),
+            const SizedBox(height: 8),
+            Text(
+              'Let\'s personalize your experience',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.white.withAlpha(150),
+              ),
             ),
-          ),
-          const SizedBox(height: 40),
+            const SizedBox(height: 40),
 
-          // Name
-          const Text(
-            'Your Name',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
+            // Name
+            const Text(
+              'Your Name *',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _nameController,
-            style: const TextStyle(color: Colors.white),
-            decoration: const InputDecoration(
-              hintText: 'Enter your name',
-              prefixIcon: Icon(Icons.person_outline, color: AppColors.textTertiary),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _nameController,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Enter your name',
+                prefixIcon: const Icon(
+                  Icons.person_outline,
+                  color: AppColors.textTertiary,
+                ),
+                errorText: _nameError,
+                errorStyle: const TextStyle(color: Colors.redAccent),
+              ),
+              onChanged: (value) {
+                if (_nameError != null) {
+                  setState(() {
+                    _nameError = Validators.validateName(value);
+                  });
+                }
+              },
             ),
-          ),
-          const SizedBox(height: 32),
+            const SizedBox(height: 24),
 
-          // Gender
-          const Text(
-            'Gender',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
+            // Email
+            const Text(
+              'Email Address *',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              _genderCard('male', 'Male', Icons.male_rounded),
-              const SizedBox(width: 12),
-              _genderCard('female', 'Female', Icons.female_rounded),
-            ],
-          ),
-        ],
+            const SizedBox(height: 8),
+            TextField(
+              controller: _emailController,
+              style: const TextStyle(color: Colors.white),
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                hintText: 'Enter your email',
+                prefixIcon: const Icon(
+                  Icons.email_outlined,
+                  color: AppColors.textTertiary,
+                ),
+                errorText: _emailError,
+                errorStyle: const TextStyle(color: Colors.redAccent),
+              ),
+              onChanged: (value) {
+                if (_emailError != null) {
+                  setState(() {
+                    _emailError = Validators.validateEmail(value);
+                  });
+                }
+              },
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'We\'ll send payment receipts and important updates',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.white.withAlpha(100),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            // Gender
+            const Text(
+              'Gender',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                _genderCard('male', 'Male', Icons.male_rounded),
+                const SizedBox(width: 12),
+                _genderCard('female', 'Female', Icons.female_rounded),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -384,10 +482,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           const SizedBox(height: 8),
           Text(
             'We\'ll use this to calculate your targets',
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.white.withAlpha(150),
-            ),
+            style: TextStyle(fontSize: 15, color: Colors.white.withAlpha(150)),
           ),
           const SizedBox(height: 40),
 
@@ -410,7 +505,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             max: 200,
             unit: 'kg',
             decimals: 1,
-            onChanged: (v) => setState(() => _weight = double.parse(v.toStringAsFixed(1))),
+            onChanged: (v) =>
+                setState(() => _weight = double.parse(v.toStringAsFixed(1))),
           ),
           const SizedBox(height: 24),
 
@@ -421,7 +517,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             min: 100,
             max: 220,
             unit: 'cm',
-            onChanged: (v) => setState(() => _height = double.parse(v.toStringAsFixed(0))),
+            onChanged: (v) =>
+                setState(() => _height = double.parse(v.toStringAsFixed(0))),
           ),
         ],
       ),
@@ -476,12 +573,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             thumbColor: AppColors.primary,
             overlayColor: AppColors.primary.withAlpha(30),
           ),
-          child: Slider(
-            value: value,
-            min: min,
-            max: max,
-            onChanged: onChanged,
-          ),
+          child: Slider(value: value, min: min, max: max, onChanged: onChanged),
         ),
       ],
     );
@@ -506,23 +598,50 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           const SizedBox(height: 8),
           Text(
             'How active are you on a typical day?',
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.white.withAlpha(150),
-            ),
+            style: TextStyle(fontSize: 15, color: Colors.white.withAlpha(150)),
           ),
           const SizedBox(height: 28),
-          _activityOption('sedentary', 'Sedentary', 'Little or no exercise', '🪑'),
-          _activityOption('light', 'Lightly Active', 'Light exercise 1-3 days/week', '🚶'),
-          _activityOption('moderate', 'Moderately Active', 'Moderate exercise 3-5 days/week', '🏃'),
-          _activityOption('active', 'Very Active', 'Hard exercise 6-7 days/week', '💪'),
-          _activityOption('veryActive', 'Extremely Active', 'Very hard exercise & physical job', '🏋️'),
+          _activityOption(
+            'sedentary',
+            'Sedentary',
+            'Little or no exercise',
+            '🪑',
+          ),
+          _activityOption(
+            'light',
+            'Lightly Active',
+            'Light exercise 1-3 days/week',
+            '🚶',
+          ),
+          _activityOption(
+            'moderate',
+            'Moderately Active',
+            'Moderate exercise 3-5 days/week',
+            '🏃',
+          ),
+          _activityOption(
+            'active',
+            'Very Active',
+            'Hard exercise 6-7 days/week',
+            '💪',
+          ),
+          _activityOption(
+            'veryActive',
+            'Extremely Active',
+            'Very hard exercise & physical job',
+            '🏋️',
+          ),
         ],
       ),
     );
   }
 
-  Widget _activityOption(String value, String label, String description, String emoji) {
+  Widget _activityOption(
+    String value,
+    String label,
+    String description,
+    String emoji,
+  ) {
     final selected = _activityLevel == value;
     return GestureDetector(
       onTap: () {
@@ -569,7 +688,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
             if (selected)
-              const Icon(Icons.check_circle, color: AppColors.primary, size: 22),
+              const Icon(
+                Icons.check_circle,
+                color: AppColors.primary,
+                size: 22,
+              ),
           ],
         ),
       ),
@@ -595,10 +718,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           const SizedBox(height: 8),
           Text(
             'What would you like to achieve?',
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.white.withAlpha(150),
-            ),
+            style: TextStyle(fontSize: 15, color: Colors.white.withAlpha(150)),
           ),
           const SizedBox(height: 32),
           _goalCard(
@@ -627,7 +747,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _goalCard(String value, String label, String description, IconData icon, Color color) {
+  Widget _goalCard(
+    String value,
+    String label,
+    String description,
+    IconData icon,
+    Color color,
+  ) {
     final selected = _goal == value;
     return GestureDetector(
       onTap: () {
@@ -691,6 +817,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget _buildResultsPage() {
     final profile = UserProfile(
       name: _nameController.text.trim(),
+      email: _emailController.text.trim(),
       gender: _gender,
       age: _age,
       weight: _weight,
@@ -721,10 +848,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Text(
             'Based on your profile, here are your daily targets',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.white.withAlpha(150),
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.white.withAlpha(150)),
           ),
           const SizedBox(height: 36),
 
@@ -779,9 +903,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           // Macro targets
           Row(
             children: [
-              _macroResultCard('Protein', profile.targetProtein, 'g', AppColors.protein),
+              _macroResultCard(
+                'Protein',
+                profile.targetProtein,
+                'g',
+                AppColors.protein,
+              ),
               const SizedBox(width: 10),
-              _macroResultCard('Carbs', profile.targetCarbs, 'g', AppColors.carbs),
+              _macroResultCard(
+                'Carbs',
+                profile.targetCarbs,
+                'g',
+                AppColors.carbs,
+              ),
               const SizedBox(width: 10),
               _macroResultCard('Fat', profile.targetFat, 'g', AppColors.fat),
             ],
@@ -812,7 +946,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _macroResultCard(String label, double value, String unit, Color color) {
+  Widget _macroResultCard(
+    String label,
+    double value,
+    String unit,
+    Color color,
+  ) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -867,10 +1006,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         const SizedBox(height: 2),
         Text(
           label,
-          style: const TextStyle(
-            color: AppColors.textTertiary,
-            fontSize: 12,
-          ),
+          style: const TextStyle(color: AppColors.textTertiary, fontSize: 12),
         ),
       ],
     );
