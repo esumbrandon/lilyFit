@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../models/food_item.dart';
 import '../../models/meal_log.dart';
 import '../../data/food_database.dart';
 import '../../providers/app_provider.dart';
-import '../../services/photo_food_estimator.dart';
 
 class FoodSearchScreen extends StatefulWidget {
   final MealType? mealType;
@@ -20,11 +18,8 @@ class FoodSearchScreen extends StatefulWidget {
 
 class _FoodSearchScreenState extends State<FoodSearchScreen> {
   final _searchController = TextEditingController();
-  final _imagePicker = ImagePicker();
-  final _photoEstimator = PhotoFoodEstimator();
   String _selectedRegion = 'all';
   String _searchQuery = '';
-  bool _isAnalyzingPhoto = false;
 
   List<FoodItem> get _filteredFoods {
     List<FoodItem> foods = FoodDatabase.byRegion(_selectedRegion);
@@ -44,7 +39,6 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
   @override
   void dispose() {
     _searchController.dispose();
-    _photoEstimator.dispose();
     super.dispose();
   }
 
@@ -63,22 +57,6 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: IconButton(
-              icon: _isAnalyzingPhoto
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.camera_alt_rounded),
-              tooltip: 'Snap food',
-              onPressed: _isAnalyzingPhoto ? null : _snapAndEstimateFood,
-            ),
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -217,64 +195,6 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       isScrollControlled: true,
       builder: (ctx) => _FoodDetailSheet(food: food, mealType: widget.mealType),
     );
-  }
-
-  Future<void> _snapAndEstimateFood() async {
-    try {
-      final image = await _imagePicker.pickImage(
-        source: ImageSource.camera,
-        imageQuality: 85,
-        preferredCameraDevice: CameraDevice.rear,
-      );
-
-      if (image == null || !mounted) {
-        return;
-      }
-
-      setState(() => _isAnalyzingPhoto = true);
-      final estimate = await _photoEstimator.estimateFromImagePath(image.path);
-      if (!mounted) {
-        return;
-      }
-
-      setState(() => _isAnalyzingPhoto = false);
-
-      if (estimate.food == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Could not identify food from this photo. Try another angle.',
-            ),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-        return;
-      }
-
-      final detectedFood = estimate.food!;
-      _showFoodDetail(context, detectedFood);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Detected ${detectedFood.name} (~${detectedFood.calories.toInt()} kcal)',
-          ),
-          backgroundColor: AppColors.primary,
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    } catch (_) {
-      if (!mounted) {
-        return;
-      }
-      setState(() => _isAnalyzingPhoto = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Camera or image analysis failed. Please try again.'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
   }
 }
 
