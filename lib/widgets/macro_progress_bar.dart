@@ -34,15 +34,19 @@ class MacroProgressBar extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                label,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.5,
+              Flexible(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 4),
               Text(
                 '${current.toInt()}$unit',
                 style: const TextStyle(
@@ -94,10 +98,7 @@ class MacroProgressBar extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             '/ ${target.toInt()}$unit',
-            style: const TextStyle(
-              color: AppColors.textTertiary,
-              fontSize: 11,
-            ),
+            style: const TextStyle(color: AppColors.textTertiary, fontSize: 11),
           ),
         ],
       ),
