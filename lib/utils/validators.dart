@@ -29,6 +29,19 @@ class Validators {
     return null;
   }
 
+  /// Validates password strength
+  static String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Password is required';
+    }
+
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+
+    return null;
+  }
+
   /// Validates if a required field is not empty
   static String? validateRequired(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) {

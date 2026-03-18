@@ -1,0 +1,25 @@
+/// Supabase Configuration Template
+///
+/// SETUP INSTRUCTIONS:
+/// 1. Copy this file and rename it to 'supabase_config.dart'
+/// 2. Go to https://supabase.com and open your project
+/// 3. Go to Project Settings > API
+/// 4. Copy your Project URL and anon public key
+/// 5. Replace the placeholder values below
+///
+/// SECURITY NOTE:
+/// • Never commit 'supabase_config.dart' to version control
+/// • This template file is safe to commit
+/// • For production, consider using environment variables
+
+class SupabaseConfig {
+  // Replace with your actual Supabase project URL
+  static const String supabaseUrl = 'YOUR_SUPABASE_PROJECT_URL';
+  
+  // Replace with your actual Supabase anon public key
+  static const String supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
+
+  // Example format:
+  // static const String supabaseUrl = 'https://abcdefghijklmnop.supabase.co';
+  // static const String supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+}

@@ -38,8 +38,13 @@ class UserProfile {
     double bmr;
     if (gender == 'male') {
       bmr = 10 * weight + 6.25 * height - 5 * age + 5;
-    } else {
+    } else if (gender == 'female') {
       bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+    } else {
+      // For 'other' gender, use average of male and female formulas
+      final maleBmr = 10 * weight + 6.25 * height - 5 * age + 5;
+      final femaleBmr = 10 * weight + 6.25 * height - 5 * age - 161;
+      bmr = (maleBmr + femaleBmr) / 2;
     }
 
     // Activity multiplier

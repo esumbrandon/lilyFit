@@ -150,7 +150,9 @@ class ProfileScreen extends StatelessWidget {
                       _infoRow(
                         Icons.wc_rounded,
                         'Gender',
-                        profile.gender == 'male' ? 'Male' : 'Female',
+                        profile.gender == 'male'
+                            ? 'Male'
+                            : (profile.gender == 'female' ? 'Female' : 'Other'),
                       ),
                       _infoRow(
                         Icons.speed_rounded,

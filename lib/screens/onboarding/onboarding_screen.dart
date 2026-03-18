@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../models/user_profile.dart';
 import '../../providers/app_provider.dart';
+import '../../services/supabase_service.dart';
 import '../../utils/validators.dart';
 import '../../utils/unit_converter.dart';
 import '../home/home_screen.dart';
@@ -23,8 +24,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   // Form data
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   String? _nameError;
   String? _emailError;
+  String? _passwordError;
+  bool _isPasswordVisible = false;
   String _gender = 'male';
   int _age = 25;
   double _weight = 70; // Always stored in kg
@@ -39,21 +43,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _pageController.dispose();
     _nameController.dispose();
     _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
   void _nextPage() {
-    // Validate page 1 (name and email) before proceeding
+    // Validate page 1 (name, email, password) before proceeding
     if (_currentPage == 1) {
       final nameValidation = Validators.validateName(_nameController.text);
       final emailValidation = Validators.validateEmail(_emailController.text);
+      final passwordValidation = Validators.validatePassword(
+        _passwordController.text,
+      );
 
       setState(() {
         _nameError = nameValidation;
         _emailError = emailValidation;
+        _passwordError = passwordValidation;
       });
 
-      if (nameValidation != null || emailValidation != null) {
+      if (nameValidation != null ||
+          emailValidation != null ||
+          passwordValidation != null) {
         return;
       }
     }
@@ -79,36 +90,145 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     // Final validation
     final nameValidation = Validators.validateName(_nameController.text);
     final emailValidation = Validators.validateEmail(_emailController.text);
+    final passwordValidation = Validators.validatePassword(
+      _passwordController.text,
+    );
 
-    if (nameValidation != null || emailValidation != null) {
+    if (nameValidation != null ||
+        emailValidation != null ||
+        passwordValidation != null) {
       // Go back to page 1 to show errors
       _pageController.jumpToPage(1);
       setState(() {
         _nameError = nameValidation;
         _emailError = emailValidation;
+        _passwordError = passwordValidation;
       });
       return;
     }
 
-    final profile = UserProfile(
-      name: _nameController.text.trim(),
-      email: _emailController.text.trim(),
-      gender: _gender,
-      age: _age,
-      weight: _weight,
-      height: _height,
-      activityLevel: _activityLevel,
-      goal: _goal,
-      weightUnit: _weightUnit,
-      heightUnit: _heightUnit,
+    // Show loading dialog
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      ),
     );
 
-    await context.read<AppProvider>().completeOnboarding(profile);
+    try {
+      final supabaseService = SupabaseService();
 
-    if (!mounted) return;
-    Navigator.of(
-      context,
-    ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
+      // 1. Sign up with Supabase Auth
+      final authResponse = await supabaseService.signUp(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        name: _nameController.text.trim(),
+      );
+
+      if (authResponse.user == null) {
+        throw Exception('Failed to create account');
+      }
+
+      // Check if email confirmation is required
+      if (authResponse.session == null) {
+        // Email confirmation is enabled - user needs to verify email
+        if (!mounted) return;
+        Navigator.of(context).pop(); // Close loading dialog
+
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: AppColors.card,
+            title: const Text(
+              'Verify Your Email',
+              style: TextStyle(color: Colors.white),
+            ),
+            content: Text(
+              'We sent a verification email to ${_emailController.text.trim()}. Please check your inbox and click the verification link to complete your registration.',
+              style: const TextStyle(color: AppColors.textSecondary),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  // Go back to first page
+                  _pageController.jumpToPage(0);
+                },
+                child: const Text(
+                  'OK',
+                  style: TextStyle(color: AppColors.primary),
+                ),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+
+      // 2. Create user profile with calculated targets
+      final profile = UserProfile(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        gender: _gender,
+        age: _age,
+        weight: _weight,
+        height: _height,
+        activityLevel: _activityLevel,
+        goal: _goal,
+        weightUnit: _weightUnit,
+        heightUnit: _heightUnit,
+      );
+      profile.calculateTargets();
+
+      // 3. Save profile to Supabase database
+      await supabaseService.saveUserProfile(profile);
+
+      // 4. Save locally and complete onboarding
+      if (!mounted) return;
+      await context.read<AppProvider>().completeOnboarding(profile);
+
+      // Close loading dialog
+      if (!mounted) return;
+      Navigator.of(context).pop();
+
+      // Navigate to home
+      if (!mounted) return;
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
+    } catch (e) {
+      // Close loading dialog
+      if (!mounted) return;
+      Navigator.of(context).pop();
+
+      // Show error message
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: AppColors.card,
+          title: const Text(
+            'Sign Up Failed',
+            style: TextStyle(color: Colors.white),
+          ),
+          content: Text(
+            e.toString().replaceAll('Exception: ', ''),
+            style: const TextStyle(color: AppColors.textSecondary),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'OK',
+                style: TextStyle(color: AppColors.primary),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override
@@ -402,6 +522,50 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 fontStyle: FontStyle.italic,
               ),
             ),
+            const SizedBox(height: 24),
+
+            // Password
+            const Text(
+              'Password *',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _passwordController,
+              style: const TextStyle(color: Colors.white),
+              obscureText: !_isPasswordVisible,
+              decoration: InputDecoration(
+                hintText: 'Create a password (min. 6 characters)',
+                prefixIcon: const Icon(
+                  Icons.lock_outline,
+                  color: AppColors.textTertiary,
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _isPasswordVisible
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                    color: AppColors.textTertiary,
+                  ),
+                  onPressed: () {
+                    setState(() => _isPasswordVisible = !_isPasswordVisible);
+                  },
+                ),
+                errorText: _passwordError,
+                errorStyle: const TextStyle(color: Colors.redAccent),
+              ),
+              onChanged: (value) {
+                if (_passwordError != null) {
+                  setState(() {
+                    _passwordError = Validators.validatePassword(value);
+                  });
+                }
+              },
+            ),
             const SizedBox(height: 32),
 
             // Gender
@@ -419,6 +583,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 _genderCard('male', 'Male', Icons.male_rounded),
                 const SizedBox(width: 12),
                 _genderCard('female', 'Female', Icons.female_rounded),
+                const SizedBox(width: 12),
+                _genderCard('other', 'Other', Icons.person_rounded),
               ],
             ),
           ],
