@@ -18,7 +18,7 @@
 -- ============================================================
 
 -- ============ USER PROFILES TABLE ============
--- Extends Supabase auth.users with fitness-specific data
+-- Extends Supabase auth.users with health and nutrition data
 -- NOTE: email is auto-synced from auth.users - do not manually set it
 CREATE TABLE IF NOT EXISTS public.user_profiles (
   id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,

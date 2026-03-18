@@ -47,6 +47,46 @@ class AppColors {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
+
+  static const LinearGradient warmGradient = LinearGradient(
+    colors: [Color(0xFFF472B6), Color(0xFFFBBF24)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient coolGradient = LinearGradient(
+    colors: [Color(0xFF60A5FA), Color(0xFF8B5CF6)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  // Card shadow for depth
+  static List<BoxShadow> get cardShadow => [
+    BoxShadow(
+      color: Colors.black.withOpacity(0.2),
+      blurRadius: 20,
+      offset: const Offset(0, 10),
+    ),
+    BoxShadow(
+      color: primary.withOpacity(0.05),
+      blurRadius: 30,
+      offset: const Offset(0, 5),
+    ),
+  ];
+
+  // Glassmorphism effect
+  static BoxDecoration get glassMorphism => BoxDecoration(
+    color: Colors.white.withOpacity(0.05),
+    borderRadius: BorderRadius.circular(20),
+    border: Border.all(color: Colors.white.withOpacity(0.1), width: 1.5),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.1),
+        blurRadius: 30,
+        offset: const Offset(0, 15),
+      ),
+    ],
+  );
 }
 
 class AppTheme {
@@ -80,6 +120,7 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
+        shadowColor: Colors.black.withOpacity(0.3),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -92,7 +133,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
         hintStyle: const TextStyle(color: AppColors.textTertiary),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -100,7 +144,9 @@ class AppTheme {
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.background,
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           textStyle: GoogleFonts.poppins(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -113,7 +159,9 @@ class AppTheme {
           foregroundColor: AppColors.primary,
           side: const BorderSide(color: AppColors.primary, width: 1.5),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           textStyle: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -138,7 +186,10 @@ class AppTheme {
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.card,
         selectedColor: AppColors.primary.withAlpha(40),
-        labelStyle: GoogleFonts.poppins(fontSize: 13, color: AppColors.textSecondary),
+        labelStyle: GoogleFonts.poppins(
+          fontSize: 13,
+          color: AppColors.textSecondary,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         side: BorderSide.none,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

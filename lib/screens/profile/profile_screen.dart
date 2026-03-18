@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../models/user_profile.dart';
 import '../../providers/app_provider.dart';
+import '../../services/supabase_service.dart';
 import '../../utils/unit_converter.dart';
+import '../auth/auth_screen.dart';
 import '../onboarding/onboarding_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -257,6 +259,14 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       _divider(),
                       _settingsTile(
+                        Icons.logout_rounded,
+                        'Logout',
+                        'Sign out of your account',
+                        () => _handleLogout(context, provider),
+                        isDestructive: false,
+                      ),
+                      _divider(),
+                      _settingsTile(
                         Icons.restart_alt_rounded,
                         'Reset All Data',
                         'Start fresh',
@@ -386,9 +396,9 @@ class ProfileScreen extends StatelessWidget {
   }
 
   String _goalLabel(String goal) => switch (goal) {
-    'fatLoss' => 'Fat Loss',
-    'muscleGain' => 'Muscle Gain',
-    _ => 'Maintenance',
+    'fatLoss' => 'Lose Weight',
+    'muscleGain' => 'Gain Weight',
+    _ => 'Maintain Weight',
   };
 
   String _activityLabel(String level) => switch (level) {
@@ -692,7 +702,7 @@ class ProfileScreen extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: const Row(
           children: [
-            Icon(Icons.fitness_center_rounded, color: AppColors.primary),
+            Icon(Icons.restaurant_menu_rounded, color: AppColors.primary),
             SizedBox(width: 10),
             Text(
               'LilyFit',
@@ -708,7 +718,7 @@ class ProfileScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'A global nutrition and fitness tracking app with strong support for African cuisines.',
+              'A smart calorie and nutrition management app that helps you reach your health goals. Features global food database with strong support for African cuisines.',
               style: TextStyle(color: Colors.white.withAlpha(180), height: 1.5),
             ),
             const SizedBox(height: 16),
@@ -722,6 +732,71 @@ class ProfileScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx),
             child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleLogout(BuildContext context, AppProvider provider) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text(
+          'Logout',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+        ),
+        content: Text(
+          'Are you sure you want to logout?',
+          style: TextStyle(color: Colors.white.withAlpha(180)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: AppColors.textTertiary),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(ctx); // Close dialog
+
+              // Show loading
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => const Center(
+                  child: CircularProgressIndicator(color: AppColors.primary),
+                ),
+              );
+
+              try {
+                await SupabaseService().signOut();
+
+                if (!context.mounted) return;
+                Navigator.of(context).pop(); // Close loading
+
+                // Navigate to auth screen and clear all routes
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const AuthScreen()),
+                  (route) => false,
+                );
+              } catch (e) {
+                if (!context.mounted) return;
+                Navigator.of(context).pop(); // Close loading
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Logout failed: $e'),
+                    backgroundColor: AppColors.error,
+                  ),
+                );
+              }
+            },
+            child: const Text('Logout'),
           ),
         ],
       ),

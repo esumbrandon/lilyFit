@@ -16,19 +16,18 @@ class OnboardingScreen extends StatefulWidget {
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends State<OnboardingScreen>
+    with SingleTickerProviderStateMixin {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  final int _totalPages = 6;
+  final int _totalPages = 5; // Reduced from 6 (removed info page)
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
 
   // Form data
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  String _name = '';
   String? _nameError;
-  String? _emailError;
-  String? _passwordError;
-  bool _isPasswordVisible = false;
   String _gender = 'male';
   int _age = 25;
   double _weight = 70; // Always stored in kg
@@ -39,37 +38,62 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   String _goal = 'maintenance';
 
   @override
+  void initState() {
+    super.initState();
+    // Get user's name from auth metadata
+    final user = SupabaseService().getCurrentUser();
+    if (user != null && user.userMetadata?['name'] != null) {
+      _name = user.userMetadata!['name'] as String;
+    }
+
+    // Setup animations
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
+
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0.3, 0), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
+    // Start animation
+    _animationController.forward();
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
   void _nextPage() {
-    // Validate page 1 (name, email, password) before proceeding
-    if (_currentPage == 1) {
-      final nameValidation = Validators.validateName(_nameController.text);
-      final emailValidation = Validators.validateEmail(_emailController.text);
-      final passwordValidation = Validators.validatePassword(
-        _passwordController.text,
-      );
+    // Validate page 0 (name) before proceeding
+    if (_currentPage == 0) {
+      final nameValidation = Validators.validateName(_name);
 
       setState(() {
         _nameError = nameValidation;
-        _emailError = emailValidation;
-        _passwordError = passwordValidation;
       });
 
-      if (nameValidation != null ||
-          emailValidation != null ||
-          passwordValidation != null) {
+      if (nameValidation != null) {
         return;
       }
     }
 
     if (_currentPage < _totalPages - 1) {
+      // Reset and replay animation
+      _animationController.reset();
+      _animationController.forward();
+
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
@@ -79,6 +103,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void _prevPage() {
     if (_currentPage > 0) {
+      // Reset and replay animation
+      _animationController.reset();
+      _animationController.forward();
+
       _pageController.previousPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
@@ -88,21 +116,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _completeOnboarding() async {
     // Final validation
-    final nameValidation = Validators.validateName(_nameController.text);
-    final emailValidation = Validators.validateEmail(_emailController.text);
-    final passwordValidation = Validators.validatePassword(
-      _passwordController.text,
-    );
+    final nameValidation = Validators.validateName(_name);
 
-    if (nameValidation != null ||
-        emailValidation != null ||
-        passwordValidation != null) {
-      // Go back to page 1 to show errors
-      _pageController.jumpToPage(1);
+    if (nameValidation != null) {
+      _pageController.jumpToPage(0);
       setState(() {
         _nameError = nameValidation;
-        _emailError = emailValidation;
-        _passwordError = passwordValidation;
       });
       return;
     }
@@ -119,58 +138,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     try {
       final supabaseService = SupabaseService();
+      final user = supabaseService.getCurrentUser();
 
-      // 1. Sign up with Supabase Auth
-      final authResponse = await supabaseService.signUp(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-        name: _nameController.text.trim(),
-      );
-
-      if (authResponse.user == null) {
-        throw Exception('Failed to create account');
+      if (user == null) {
+        throw Exception('No user logged in. Please login first.');
       }
 
-      // Check if email confirmation is required
-      if (authResponse.session == null) {
-        // Email confirmation is enabled - user needs to verify email
-        if (!mounted) return;
-        Navigator.of(context).pop(); // Close loading dialog
-
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            backgroundColor: AppColors.card,
-            title: const Text(
-              'Verify Your Email',
-              style: TextStyle(color: Colors.white),
-            ),
-            content: Text(
-              'We sent a verification email to ${_emailController.text.trim()}. Please check your inbox and click the verification link to complete your registration.',
-              style: const TextStyle(color: AppColors.textSecondary),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  // Go back to first page
-                  _pageController.jumpToPage(0);
-                },
-                child: const Text(
-                  'OK',
-                  style: TextStyle(color: AppColors.primary),
-                ),
-              ),
-            ],
-          ),
-        );
-        return;
-      }
-
-      // 2. Create user profile with calculated targets
+      // Create user profile with calculated targets
       final profile = UserProfile(
-        name: _nameController.text.trim(),
-        email: _emailController.text.trim(),
+        name: _name.trim(),
+        email: user.email ?? '',
         gender: _gender,
         age: _age,
         weight: _weight,
@@ -182,10 +159,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       );
       profile.calculateTargets();
 
-      // 3. Save profile to Supabase database
+      // Save profile to Supabase database
       await supabaseService.saveUserProfile(profile);
 
-      // 4. Save locally and complete onboarding
+      // Save locally and complete onboarding
       if (!mounted) return;
       await context.read<AppProvider>().completeOnboarding(profile);
 
@@ -231,6 +208,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
   }
 
+  Widget _buildAnimatedPage(Widget child) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(position: _slideAnimation, child: child),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -267,12 +251,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 physics: const NeverScrollableScrollPhysics(),
                 onPageChanged: (page) => setState(() => _currentPage = page),
                 children: [
-                  _buildWelcomePage(),
-                  _buildNameGenderPage(),
-                  _buildBodyMetricsPage(),
-                  _buildActivityPage(),
-                  _buildGoalPage(),
-                  _buildResultsPage(),
+                  _buildAnimatedPage(_buildNameGenderPage()),
+                  _buildAnimatedPage(_buildBodyMetricsPage()),
+                  _buildAnimatedPage(_buildActivityPage()),
+                  _buildAnimatedPage(_buildGoalPage()),
+                  _buildAnimatedPage(_buildResultsPage()),
                 ],
               ),
             ),
@@ -298,9 +281,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ? _completeOnboarding
                           : _nextPage,
                       child: Text(
-                        _currentPage == 0
-                            ? 'Get Started'
-                            : _currentPage == _totalPages - 1
+                        _currentPage == _totalPages - 1
                             ? 'Start Tracking!'
                             : 'Continue',
                       ),
@@ -316,113 +297,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   // ─── Page 1: Welcome ───────────────────────────────────────────
-  Widget _buildWelcomePage() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Animated logo area
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: AppColors.primaryGradient,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withAlpha(60),
-                  blurRadius: 30,
-                  spreadRadius: 5,
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.fitness_center_rounded,
-              size: 56,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 40),
-          const Text(
-            'LilyFit',
-            style: TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-              letterSpacing: -1,
-            ),
-          ),
-          const SizedBox(height: 12),
-          ShaderMask(
-            shaderCallback: (bounds) =>
-                AppColors.primaryGradient.createShader(bounds),
-            child: const Text(
-              'Your Global Nutrition Companion',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Track calories, monitor macros, and reach your\nfitness goals with foods from around the world.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.white.withAlpha(150),
-              height: 1.5,
-            ),
-          ),
-          const SizedBox(height: 40),
-          // Feature highlights
-          _featureHighlight(
-            Icons.restaurant_menu_rounded,
-            'Global food database with African cuisines',
-          ),
-          _featureHighlight(
-            Icons.track_changes_rounded,
-            'Smart calorie & macro tracking',
-          ),
-          _featureHighlight(
-            Icons.trending_up_rounded,
-            'Progress analytics & insights',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _featureHighlight(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withAlpha(25),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: AppColors.primary, size: 20),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: Colors.white.withAlpha(200),
-                fontSize: 14,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   // ─── Page 2: Name & Gender ─────────────────────────────────────
   Widget _buildNameGenderPage() {
     return Padding(
@@ -442,7 +316,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Let\'s personalize your experience',
+              'Let\'s personalize your calorie management plan',
               style: TextStyle(
                 fontSize: 15,
                 color: Colors.white.withAlpha(150),
@@ -452,7 +326,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
             // Name
             const Text(
-              'Your Name *',
+              'Your Name',
               style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,
@@ -461,8 +335,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             const SizedBox(height: 8),
             TextField(
-              controller: _nameController,
               style: const TextStyle(color: Colors.white),
+              onChanged: (value) {
+                setState(() {
+                  _name = value;
+                  if (_nameError != null) {
+                    _nameError = Validators.validateName(value);
+                  }
+                });
+              },
+              controller: TextEditingController(text: _name)
+                ..selection = TextSelection.collapsed(offset: _name.length),
               decoration: InputDecoration(
                 hintText: 'Enter your name',
                 prefixIcon: const Icon(
@@ -472,99 +355,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 errorText: _nameError,
                 errorStyle: const TextStyle(color: Colors.redAccent),
               ),
-              onChanged: (value) {
-                if (_nameError != null) {
-                  setState(() {
-                    _nameError = Validators.validateName(value);
-                  });
-                }
-              },
-            ),
-            const SizedBox(height: 24),
-
-            // Email
-            const Text(
-              'Email Address *',
-              style: TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _emailController,
-              style: const TextStyle(color: Colors.white),
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                hintText: 'Enter your email',
-                prefixIcon: const Icon(
-                  Icons.email_outlined,
-                  color: AppColors.textTertiary,
-                ),
-                errorText: _emailError,
-                errorStyle: const TextStyle(color: Colors.redAccent),
-              ),
-              onChanged: (value) {
-                if (_emailError != null) {
-                  setState(() {
-                    _emailError = Validators.validateEmail(value);
-                  });
-                }
-              },
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'We\'ll send payment receipts and important updates',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.white.withAlpha(100),
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Password
-            const Text(
-              'Password *',
-              style: TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _passwordController,
-              style: const TextStyle(color: Colors.white),
-              obscureText: !_isPasswordVisible,
-              decoration: InputDecoration(
-                hintText: 'Create a password (min. 6 characters)',
-                prefixIcon: const Icon(
-                  Icons.lock_outline,
-                  color: AppColors.textTertiary,
-                ),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isPasswordVisible
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                    color: AppColors.textTertiary,
-                  ),
-                  onPressed: () {
-                    setState(() => _isPasswordVisible = !_isPasswordVisible);
-                  },
-                ),
-                errorText: _passwordError,
-                errorStyle: const TextStyle(color: Colors.redAccent),
-              ),
-              onChanged: (value) {
-                if (_passwordError != null) {
-                  setState(() {
-                    _passwordError = Validators.validatePassword(value);
-                  });
-                }
-              },
             ),
             const SizedBox(height: 32),
 
@@ -587,6 +377,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 _genderCard('other', 'Other', Icons.person_rounded),
               ],
             ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -1109,8 +900,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           const SizedBox(height: 32),
           _goalCard(
             'fatLoss',
-            'Lose Fat',
-            'Calorie deficit to burn fat while maintaining muscle',
+            'Lose Weight',
+            'Calorie deficit to help you lose weight safely',
             Icons.trending_down_rounded,
             const Color(0xFFEF4444),
           ),
@@ -1123,8 +914,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           _goalCard(
             'muscleGain',
-            'Build Muscle',
-            'Calorie surplus to support muscle growth',
+            'Gain Weight',
+            'Calorie surplus to help you gain weight healthily',
             Icons.trending_up_rounded,
             const Color(0xFF60A5FA),
           ),
@@ -1199,12 +990,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // ─── Page 6: Results ───────────────────────────────────────────
-  // ─── Page 6: Results ───────────────────────────────────────────
+  // ─── Page 5: Results ───────────────────────────────────────────
   Widget _buildResultsPage() {
+    final user = SupabaseService().getCurrentUser();
     final profile = UserProfile(
-      name: _nameController.text.trim(),
-      email: _emailController.text.trim(),
+      name: _name.trim(),
+      email: user?.email ?? '',
       gender: _gender,
       age: _age,
       weight: _weight,
@@ -1402,8 +1193,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   String get _goalLabel => switch (_goal) {
-    'fatLoss' => 'Fat Loss',
-    'muscleGain' => 'Muscle Gain',
+    'fatLoss' => 'Lose Weight',
+    'muscleGain' => 'Gain Weight',
     _ => 'Maintain',
   };
 }
