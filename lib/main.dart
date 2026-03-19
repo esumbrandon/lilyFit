@@ -5,10 +5,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'theme/app_theme.dart';
 import 'providers/app_provider.dart';
 import 'services/supabase_service.dart';
+import 'services/language_service.dart';
 import 'config/supabase_config.dart';
 import 'screens/auth/auth_screen.dart';
 import 'screens/onboarding/onboarding_screen.dart';
 import 'screens/home/home_screen.dart';
+import 'screens/language_selection/language_selection_screen.dart';
+import 'l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,8 +52,78 @@ class LilyFitApp extends StatelessWidget {
       title: 'LilyFit',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
-      home: const AuthWrapper(),
+      // Localization configuration
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      // Use locale from AppProvider
+      locale: context.watch<AppProvider>().currentLocale,
+      home: const AppInitializer(),
+      routes: {
+        '/auth': (context) => const AuthWrapper(),
+        '/language': (context) => const LanguageSelectionScreen(),
+      },
     );
+  }
+}
+
+/// Handles app initialization and navigation to language selection or auth
+class AppInitializer extends StatefulWidget {
+  const AppInitializer({super.key});
+
+  @override
+  State<AppInitializer> createState() => _AppInitializerState();
+}
+
+class _AppInitializerState extends State<AppInitializer> {
+  bool _isChecking = true;
+  bool _showLanguageSelection = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkInitialRoute();
+  }
+
+  Future<void> _checkInitialRoute() async {
+    // Check if this is the first launch
+    final isFirstLaunch = await LanguageService.isFirstLaunch();
+
+    if (isFirstLaunch) {
+      // First launch - show language selection
+      setState(() {
+        _showLanguageSelection = true;
+        _isChecking = false;
+      });
+    } else {
+      // Not first launch - load saved language and proceed
+      final savedLanguage = await LanguageService.getSavedLanguage();
+      if (savedLanguage != null && mounted) {
+        final provider = context.read<AppProvider>();
+        provider.setLocale(Locale(savedLanguage));
+      }
+
+      setState(() {
+        _showLanguageSelection = false;
+        _isChecking = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isChecking) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+      );
+    }
+
+    if (_showLanguageSelection) {
+      return const LanguageSelectionScreen();
+    }
+
+    return const AuthWrapper();
   }
 }
 

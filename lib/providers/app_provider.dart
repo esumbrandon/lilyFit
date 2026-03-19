@@ -15,6 +15,7 @@ class AppProvider extends ChangeNotifier {
   double _waterGoal = 2500; // mL
   List<WeightEntry> _weightEntries = [];
   DateTime _selectedDate = DateTime.now();
+  Locale _currentLocale = const Locale('en'); // Default locale
 
   // ─── Getters ────────────────────────────────────────────────────
   UserProfile get userProfile => _userProfile;
@@ -24,11 +25,11 @@ class AppProvider extends ChangeNotifier {
   List<WeightEntry> get weightEntries => List.unmodifiable(_weightEntries);
   DateTime get selectedDate => _selectedDate;
   List<MealLog> get allMealLogs => List.unmodifiable(_mealLogs);
+  Locale get currentLocale => _currentLocale;
 
   // Today's meals filtered by selected date
-  List<MealLog> get todaysMeals => _mealLogs
-      .where((m) => _isSameDay(m.dateTime, _selectedDate))
-      .toList();
+  List<MealLog> get todaysMeals =>
+      _mealLogs.where((m) => _isSameDay(m.dateTime, _selectedDate)).toList();
 
   List<MealLog> getMealsByType(MealType type) =>
       todaysMeals.where((m) => m.mealType == type).toList();
@@ -40,28 +41,26 @@ class AppProvider extends ChangeNotifier {
       todaysMeals.fold(0, (sum, m) => sum + m.totalProtein);
   double get consumedCarbs =>
       todaysMeals.fold(0, (sum, m) => sum + m.totalCarbs);
-  double get consumedFat =>
-      todaysMeals.fold(0, (sum, m) => sum + m.totalFat);
+  double get consumedFat => todaysMeals.fold(0, (sum, m) => sum + m.totalFat);
 
   double get remainingCalories =>
-      (_userProfile.targetCalories - consumedCalories).clamp(0, double.infinity);
-  double get calorieProgress =>
-      _userProfile.targetCalories > 0
-          ? (consumedCalories / _userProfile.targetCalories).clamp(0.0, 1.5)
-          : 0;
+      (_userProfile.targetCalories - consumedCalories).clamp(
+        0,
+        double.infinity,
+      );
+  double get calorieProgress => _userProfile.targetCalories > 0
+      ? (consumedCalories / _userProfile.targetCalories).clamp(0.0, 1.5)
+      : 0;
 
-  double get proteinProgress =>
-      _userProfile.targetProtein > 0
-          ? (consumedProtein / _userProfile.targetProtein).clamp(0.0, 1.5)
-          : 0;
-  double get carbsProgress =>
-      _userProfile.targetCarbs > 0
-          ? (consumedCarbs / _userProfile.targetCarbs).clamp(0.0, 1.5)
-          : 0;
-  double get fatProgress =>
-      _userProfile.targetFat > 0
-          ? (consumedFat / _userProfile.targetFat).clamp(0.0, 1.5)
-          : 0;
+  double get proteinProgress => _userProfile.targetProtein > 0
+      ? (consumedProtein / _userProfile.targetProtein).clamp(0.0, 1.5)
+      : 0;
+  double get carbsProgress => _userProfile.targetCarbs > 0
+      ? (consumedCarbs / _userProfile.targetCarbs).clamp(0.0, 1.5)
+      : 0;
+  double get fatProgress => _userProfile.targetFat > 0
+      ? (consumedFat / _userProfile.targetFat).clamp(0.0, 1.5)
+      : 0;
 
   int get waterGlasses => (_waterIntake / 250).floor();
   int get waterGoalGlasses => (_waterGoal / 250).floor();
@@ -135,7 +134,9 @@ class AppProvider extends ChangeNotifier {
 
     // Add initial weight entry
     if (profile.weight > 0) {
-      _weightEntries.add(WeightEntry(date: DateTime.now(), weight: profile.weight));
+      _weightEntries.add(
+        WeightEntry(date: DateTime.now(), weight: profile.weight),
+      );
       await _saveWeightEntries();
     }
 
@@ -150,7 +151,11 @@ class AppProvider extends ChangeNotifier {
   }
 
   // ─── Meal Logging ──────────────────────────────────────────────
-  Future<void> addMeal(FoodItem food, MealType mealType, {double servings = 1.0}) async {
+  Future<void> addMeal(
+    FoodItem food,
+    MealType mealType, {
+    double servings = 1.0,
+  }) async {
     final log = MealLog(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       food: food,
@@ -257,5 +262,11 @@ class AppProvider extends ChangeNotifier {
           .fold(0.0, (sum, m) => sum + m.totalCalories);
       return MapEntry(date, dayCalories);
     });
+  }
+
+  // ─── Locale Management ──────────────────────────────────────────
+  void setLocale(Locale locale) {
+    _currentLocale = locale;
+    notifyListeners();
   }
 }
