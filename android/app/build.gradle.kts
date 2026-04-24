@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.example.lilyfit"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // ndkVersion = flutter.ndkVersion  // Commented out - not needed for most Flutter apps
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
