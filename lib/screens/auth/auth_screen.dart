@@ -192,6 +192,96 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     }
   }
 
+  Future<void> _handleForgotPassword() async {
+    final emailController = TextEditingController();
+
+    final result = await showDialog<String?>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.card,
+        title: const Text(
+          'Reset Password',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Enter your email address and we\'ll send you a link to reset your password.',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: emailController,
+              style: const TextStyle(color: Colors.white),
+              keyboardType: TextInputType.emailAddress,
+              autofocus: true,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                hintText: 'Enter your email',
+                prefixIcon: const Icon(Icons.email_outlined),
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.05),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, emailController.text),
+            child: const Text(
+              'Send Reset Link',
+              style: TextStyle(color: AppColors.primary),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (result == null || result.isEmpty) return;
+
+    // Validate email
+    final emailError = Validators.validateEmail(result);
+    if (emailError != null) {
+      _showErrorDialog('Invalid Email', emailError);
+      return;
+    }
+
+    // Show loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      ),
+    );
+
+    try {
+      await _supabaseService.resetPassword(result.trim());
+
+      if (!mounted) return;
+      Navigator.of(context).pop(); // Close loading
+
+      _showInfoDialog(
+        'Reset Link Sent',
+        'We\'ve sent a password reset link to $result. Please check your email and follow the instructions.',
+      );
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.of(context).pop(); // Close loading
+
+      _showErrorDialog('Reset Failed', e.toString());
+    }
+  }
+
   void _showErrorDialog(String title, String message) {
     showDialog(
       context: context,
@@ -234,57 +324,68 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isSmallScreen = screenHeight < 700;
+    final topPadding = isSmallScreen ? 16.0 : 30.0;
+    final logoSpacing = isSmallScreen ? 20.0 : 35.0;
+
     return Scaffold(
-      body: Stack(
-        children: [
-          // Animated background gradient
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF0A0A1A),
-                  Color(0xFF131330),
-                  Color(0xFF1C1C3C),
-                ],
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Stack(
+          children: [
+            // Animated background gradient
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF0A0A1A),
+                    Color(0xFF131330),
+                    Color(0xFF1C1C3C),
+                  ],
+                ),
               ),
             ),
-          ),
 
-          // Floating orbs for visual interest
-          ..._buildFloatingOrbs(),
+            // Floating orbs for visual interest
+            ..._buildFloatingOrbs(),
 
-          // Main content
-          SafeArea(
-            child: FadeTransition(
-              opacity: _fadeController,
-              child: Column(
-                children: [
-                  const SizedBox(height: 50),
+            // Main content
+            SafeArea(
+              child: FadeTransition(
+                opacity: _fadeController,
+                child: Column(
+                  children: [
+                    SizedBox(height: topPadding),
 
-                  // Animated Logo
-                  _buildAnimatedLogo(),
+                    // Animated Logo
+                    _buildAnimatedLogo(isSmallScreen),
 
-                  const SizedBox(height: 50),
+                    SizedBox(height: logoSpacing),
 
-                  // Glass morphism tab bar
-                  _buildGlassTabBar(),
+                    // Glass morphism tab bar
+                    _buildGlassTabBar(),
 
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 16),
 
-                  // Tab Views
-                  Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: [_buildLoginForm(), _buildSignupForm()],
+                    // Tab Views
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          _buildLoginForm(isSmallScreen),
+                          _buildSignupForm(isSmallScreen),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -350,60 +451,66 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     ];
   }
 
-  Widget _buildAnimatedLogo() {
+  Widget _buildAnimatedLogo(bool isSmallScreen) {
+    final iconSize = isSmallScreen ? 36.0 : 48.0;
+    final titleSize = isSmallScreen ? 32.0 : 42.0;
+    final taglineSize = isSmallScreen ? 13.0 : 15.0;
+    final iconPadding = isSmallScreen ? 16.0 : 20.0;
+    final spaceBetween = isSmallScreen ? 12.0 : 20.0;
+
     return AnimatedBuilder(
       animation: _floatingController,
       builder: (context, child) {
         return Transform.translate(
           offset: Offset(
             0,
-            math.sin(_floatingController.value * 2 * math.pi) * 10,
+            math.sin(_floatingController.value * 2 * math.pi) * 8,
           ),
           child: Column(
             children: [
               // Animated icon with glow
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(iconPadding),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: AppColors.primaryGradient,
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.primary.withOpacity(0.3),
-                      blurRadius: 30,
-                      spreadRadius: 5,
+                      blurRadius: 24,
+                      spreadRadius: 3,
                     ),
                   ],
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.restaurant_menu_rounded,
-                  size: 48,
+                  size: iconSize,
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: spaceBetween),
 
               // App name with gradient
               ShaderMask(
                 shaderCallback: (bounds) =>
                     AppColors.primaryGradient.createShader(bounds),
-                child: const Text(
+                child: Text(
                   'LilyFit',
                   style: TextStyle(
-                    fontSize: 42,
+                    fontSize: titleSize,
                     fontWeight: FontWeight.w800,
                     color: Colors.white,
                     letterSpacing: -1,
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
 
               // Tagline
               Text(
                 'Smart calorie management',
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: taglineSize,
                   color: Colors.white.withOpacity(0.7),
                   fontWeight: FontWeight.w500,
                 ),
@@ -449,19 +556,23 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         labelColor: Colors.white,
         unselectedLabelColor: Colors.white.withOpacity(0.5),
         labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+        padding: EdgeInsets.zero,
         tabs: const [
-          Tab(text: 'Login'),
-          Tab(text: 'Sign Up'),
+          Tab(text: 'Login', height: 44),
+          Tab(text: 'Sign Up', height: 44),
         ],
       ),
     );
   }
 
-  Widget _buildLoginForm() {
+  Widget _buildLoginForm(bool isSmallScreen) {
+    final fieldSpacing = isSmallScreen ? 14.0 : 18.0;
+    final formPadding = isSmallScreen ? 20.0 : 24.0;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(formPadding),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.05),
           borderRadius: BorderRadius.circular(24),
@@ -480,15 +591,20 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             // Email
             TextField(
               controller: _loginEmailController,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white, fontSize: 15),
               keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 labelText: 'Email',
                 hintText: 'Enter your email',
-                prefixIcon: const Icon(Icons.email_outlined),
+                prefixIcon: const Icon(Icons.email_outlined, size: 20),
                 errorText: _loginEmailError,
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.05),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
               ),
               onChanged: (_) {
                 if (_loginEmailError != null) {
@@ -496,23 +612,26 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 }
               },
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: fieldSpacing),
 
             // Password
             TextField(
               controller: _loginPasswordController,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white, fontSize: 15),
               obscureText: !_loginPasswordVisible,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) => _handleLogin(),
               decoration: InputDecoration(
                 labelText: 'Password',
                 hintText: 'Enter your password',
-                prefixIcon: const Icon(Icons.lock_outline),
+                prefixIcon: const Icon(Icons.lock_outline, size: 20),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _loginPasswordVisible
                         ? Icons.visibility_off
                         : Icons.visibility,
                     color: AppColors.textTertiary,
+                    size: 20,
                   ),
                   onPressed: () {
                     setState(
@@ -523,6 +642,10 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 errorText: _loginPasswordError,
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.05),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
               ),
               onChanged: (_) {
                 if (_loginPasswordError != null) {
@@ -530,11 +653,36 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 }
               },
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 8),
+
+            // Forgot Password
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: _handleForgotPassword,
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: const Text(
+                  'Forgot Password?',
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: isSmallScreen ? 16 : 20),
 
             // Login Button with hover effect
             SizedBox(
-              height: 56,
+              height: isSmallScreen ? 50 : 56,
               child: ElevatedButton(
                 onPressed: _handleLogin,
                 style: ElevatedButton.styleFrom(
@@ -562,7 +710,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                     child: const Text(
                       'Login',
                       style: TextStyle(
-                        fontSize: 17,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         letterSpacing: 0.5,
@@ -578,11 +726,14 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildSignupForm() {
+  Widget _buildSignupForm(bool isSmallScreen) {
+    final fieldSpacing = isSmallScreen ? 14.0 : 16.0;
+    final formPadding = isSmallScreen ? 20.0 : 24.0;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(formPadding),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.05),
           borderRadius: BorderRadius.circular(24),
@@ -601,14 +752,19 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             // Name
             TextField(
               controller: _signupNameController,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white, fontSize: 15),
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 labelText: 'Full Name',
                 hintText: 'Enter your full name',
-                prefixIcon: const Icon(Icons.person_outline),
+                prefixIcon: const Icon(Icons.person_outline, size: 20),
                 errorText: _signupNameError,
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.05),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
               ),
               onChanged: (_) {
                 if (_signupNameError != null) {
@@ -616,20 +772,25 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 }
               },
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: fieldSpacing),
 
             // Email
             TextField(
               controller: _signupEmailController,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white, fontSize: 15),
               keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 labelText: 'Email',
                 hintText: 'Enter your email',
-                prefixIcon: const Icon(Icons.email_outlined),
+                prefixIcon: const Icon(Icons.email_outlined, size: 20),
                 errorText: _signupEmailError,
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.05),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
               ),
               onChanged: (_) {
                 if (_signupEmailError != null) {
@@ -637,23 +798,25 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 }
               },
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: fieldSpacing),
 
             // Password
             TextField(
               controller: _signupPasswordController,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white, fontSize: 15),
               obscureText: !_signupPasswordVisible,
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 labelText: 'Password',
-                hintText: 'Create a password (min. 6 characters)',
-                prefixIcon: const Icon(Icons.lock_outline),
+                hintText: 'Min. 6 characters',
+                prefixIcon: const Icon(Icons.lock_outline, size: 20),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _signupPasswordVisible
                         ? Icons.visibility_off
                         : Icons.visibility,
                     color: AppColors.textTertiary,
+                    size: 20,
                   ),
                   onPressed: () {
                     setState(
@@ -664,6 +827,10 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 errorText: _signupPasswordError,
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.05),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
               ),
               onChanged: (_) {
                 if (_signupPasswordError != null) {
@@ -671,23 +838,26 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 }
               },
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: fieldSpacing),
 
             // Confirm Password
             TextField(
               controller: _signupConfirmPasswordController,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white, fontSize: 15),
               obscureText: !_signupConfirmPasswordVisible,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) => _handleSignup(),
               decoration: InputDecoration(
                 labelText: 'Confirm Password',
                 hintText: 'Re-enter your password',
-                prefixIcon: const Icon(Icons.lock_outline),
+                prefixIcon: const Icon(Icons.lock_outline, size: 20),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _signupConfirmPasswordVisible
                         ? Icons.visibility_off
                         : Icons.visibility,
                     color: AppColors.textTertiary,
+                    size: 20,
                   ),
                   onPressed: () {
                     setState(
@@ -699,6 +869,10 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 errorText: _signupConfirmPasswordError,
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.05),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
               ),
               onChanged: (_) {
                 if (_signupConfirmPasswordError != null) {
@@ -706,11 +880,11 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 }
               },
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: isSmallScreen ? 20 : 28),
 
             // Signup Button with enhanced shadow
             SizedBox(
-              height: 56,
+              height: isSmallScreen ? 50 : 56,
               child: ElevatedButton(
                 onPressed: _handleSignup,
                 style: ElevatedButton.styleFrom(
@@ -738,7 +912,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                     child: const Text(
                       'Create Account',
                       style: TextStyle(
-                        fontSize: 17,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         letterSpacing: 0.5,
@@ -748,7 +922,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: isSmallScreen ? 8 : 12),
           ],
         ),
       ),

@@ -37,10 +37,30 @@ class SupabaseService {
     required String email,
     required String password,
   }) async {
-    return await _supabase.auth.signInWithPassword(
-      email: email,
-      password: password,
-    );
+    try {
+      final response = await _supabase.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+
+      if (response.user == null) {
+        throw Exception('Login failed: No user returned');
+      }
+
+      return response;
+    } on AuthException catch (e) {
+      // Handle specific Supabase auth errors
+      switch (e.statusCode) {
+        case '400':
+          throw Exception('Invalid email or password');
+        case '422':
+          throw Exception('Email not confirmed. Please check your inbox.');
+        default:
+          throw Exception(e.message);
+      }
+    } catch (e) {
+      throw Exception('Login error: ${e.toString()}');
+    }
   }
 
   /// Sign out current user
