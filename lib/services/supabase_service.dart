@@ -478,4 +478,75 @@ class SupabaseService {
   Future<void> unsubscribe(RealtimeChannel channel) async {
     await _supabase.removeChannel(channel);
   }
+
+  // ============ FOOD DATABASE ============
+
+  /// Fetch all foods from database
+  Future<List<Map<String, dynamic>>> getAllFoods() async {
+    try {
+      final response = await _supabase
+          .from('foods')
+          .select()
+          .eq('is_active', true)
+          .order('name', ascending: true);
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      throw Exception('Failed to fetch foods: ${e.toString()}');
+    }
+  }
+
+  /// Fetch foods by region
+  Future<List<Map<String, dynamic>>> getFoodsByRegion(String region) async {
+    try {
+      final response = await _supabase
+          .from('foods')
+          .select()
+          .eq('region', region)
+          .eq('is_active', true)
+          .order('name', ascending: true);
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      throw Exception('Failed to fetch foods by region: ${e.toString()}');
+    }
+  }
+
+  /// Search foods by name
+  Future<List<Map<String, dynamic>>> searchFoods(String query) async {
+    try {
+      if (query.isEmpty) {
+        return await getAllFoods();
+      }
+
+      final response = await _supabase
+          .from('foods')
+          .select()
+          .ilike('name', '%$query%')
+          .eq('is_active', true)
+          .order('name', ascending: true);
+
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      throw Exception('Failed to search foods: ${e.toString()}');
+    }
+  }
+
+  /// Get last update timestamp from foods table
+  Future<DateTime?> getFoodsLastUpdated() async {
+    try {
+      final response = await _supabase
+          .from('foods')
+          .select('updated_at')
+          .order('updated_at', ascending: false)
+          .limit(1)
+          .maybeSingle();
+
+      if (response == null) return null;
+
+      return DateTime.parse(response['updated_at']);
+    } catch (e) {
+      return null;
+    }
+  }
 }

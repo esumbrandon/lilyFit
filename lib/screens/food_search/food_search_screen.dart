@@ -18,11 +18,75 @@ class FoodSearchScreen extends StatefulWidget {
 
 class _FoodSearchScreenState extends State<FoodSearchScreen> {
   final _searchController = TextEditingController();
+  final _foodDatabase = FoodDatabase();
   String _selectedRegion = 'all';
   String _searchQuery = '';
+  List<FoodItem> _allFoods = [];
+  bool _isLoading = true;
+  bool _isRefreshing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFoods();
+  }
+
+  Future<void> _loadFoods() async {
+    setState(() => _isLoading = true);
+    try {
+      final foods = await _foodDatabase.foods;
+      setState(() {
+        _allFoods = foods;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load foods: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _refreshFoods() async {
+    setState(() => _isRefreshing = true);
+    try {
+      final foods = await _foodDatabase.refresh();
+      setState(() {
+        _allFoods = foods;
+        _isRefreshing = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Food database updated!'),
+            backgroundColor: AppColors.success,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() => _isRefreshing = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   List<FoodItem> get _filteredFoods {
-    List<FoodItem> foods = FoodDatabase.byRegion(_selectedRegion);
+    List<FoodItem> foods = _selectedRegion == 'all'
+        ? _allFoods
+        : _allFoods.where((f) => f.region == _selectedRegion).toList();
+
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
       foods = foods
@@ -44,8 +108,6 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final foods = _filteredFoods;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -57,134 +119,159 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-      ),
-      body: Column(
-        children: [
-          // Search bar
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-            child: TextField(
-              controller: _searchController,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: 'Search foods...',
-                prefixIcon: const Icon(
-                  Icons.search_rounded,
-                  color: AppColors.textTertiary,
-                ),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(
-                          Icons.clear_rounded,
-                          color: AppColors.textTertiary,
-                        ),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() => _searchQuery = '');
-                        },
-                      )
-                    : null,
-              ),
-              onChanged: (v) => setState(() => _searchQuery = v),
-            ),
-          ),
-
-          // Region filter chips
-          SizedBox(
-            height: 56,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              children: FoodDatabase.regions.map((region) {
-                final selected = _selectedRegion == region;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    label: Text(
-                      '${FoodDatabase.regionEmoji(region)} ${FoodDatabase.regionLabel(region)}',
-                    ),
-                    selected: selected,
-                    onSelected: (_) {
-                      HapticFeedback.selectionClick();
-                      setState(() => _selectedRegion = region);
-                    },
-                    selectedColor: AppColors.primary.withAlpha(30),
-                    labelStyle: TextStyle(
-                      color: selected
-                          ? AppColors.primary
-                          : AppColors.textSecondary,
-                      fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                      fontSize: 13,
-                    ),
-                    checkmarkColor: AppColors.primary,
-                    showCheckmark: false,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(
-                        color: selected
-                            ? AppColors.primary.withAlpha(80)
-                            : Colors.transparent,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-
-          // Results count
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
-            child: Row(
-              children: [
-                Text(
-                  '${foods.length} food${foods.length == 1 ? '' : 's'} found',
-                  style: const TextStyle(
-                    color: AppColors.textTertiary,
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Food list
-          Expanded(
-            child: foods.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.search_off_rounded,
-                          size: 56,
-                          color: AppColors.textTertiary.withAlpha(100),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'No foods found',
-                          style: TextStyle(
-                            color: AppColors.textTertiary.withAlpha(150),
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
+        actions: [
+          IconButton(
+            icon: _isRefreshing
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.primary,
                     ),
                   )
-                : ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                    itemCount: foods.length,
-                    itemBuilder: (context, index) {
-                      final food = foods[index];
-                      return _FoodItemCard(
-                        food: food,
-                        onTap: () => _showFoodDetail(context, food),
-                      );
-                    },
-                  ),
+                : const Icon(Icons.refresh_rounded),
+            onPressed: _isRefreshing ? null : _refreshFoods,
+            tooltip: 'Refresh food database',
           ),
         ],
       ),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
+          : Column(
+              children: [
+                // Search bar
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+                  child: TextField(
+                    controller: _searchController,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      hintText: 'Search foods...',
+                      prefixIcon: const Icon(
+                        Icons.search_rounded,
+                        color: AppColors.textTertiary,
+                      ),
+                      suffixIcon: _searchQuery.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(
+                                Icons.clear_rounded,
+                                color: AppColors.textTertiary,
+                              ),
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() => _searchQuery = '');
+                              },
+                            )
+                          : null,
+                    ),
+                    onChanged: (v) => setState(() => _searchQuery = v),
+                  ),
+                ),
+
+                // Region filter chips
+                SizedBox(
+                  height: 56,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    children: FoodDatabase.regions.map((region) {
+                      final selected = _selectedRegion == region;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ChoiceChip(
+                          label: Text(
+                            '${FoodDatabase.regionEmoji(region)} ${FoodDatabase.regionLabel(region)}',
+                          ),
+                          selected: selected,
+                          onSelected: (_) {
+                            HapticFeedback.selectionClick();
+                            setState(() => _selectedRegion = region);
+                          },
+                          selectedColor: AppColors.primary.withAlpha(30),
+                          labelStyle: TextStyle(
+                            color: selected
+                                ? AppColors.primary
+                                : AppColors.textSecondary,
+                            fontWeight: selected
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                            fontSize: 13,
+                          ),
+                          checkmarkColor: AppColors.primary,
+                          showCheckmark: false,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(
+                              color: selected
+                                  ? AppColors.primary.withAlpha(80)
+                                  : Colors.transparent,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+
+                // Results count
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+                  child: Row(
+                    children: [
+                      Text(
+                        '${_filteredFoods.length} food${_filteredFoods.length == 1 ? '' : 's'} found',
+                        style: const TextStyle(
+                          color: AppColors.textTertiary,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Food list
+                Expanded(
+                  child: _filteredFoods.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.search_off_rounded,
+                                size: 56,
+                                color: AppColors.textTertiary.withAlpha(100),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                'No foods found',
+                                style: TextStyle(
+                                  color: AppColors.textTertiary.withAlpha(150),
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                          itemCount: _filteredFoods.length,
+                          itemBuilder: (context, index) {
+                            final food = _filteredFoods[index];
+                            return _FoodItemCard(
+                              food: food,
+                              onTap: () => _showFoodDetail(context, food),
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
     );
   }
 
