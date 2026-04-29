@@ -50,3 +50,5 @@ lib/config/supabase_config.dart
 
 # Project docs
 Implementation.md
+superbase_schema.sql
+superbase_foods_schema.sql
