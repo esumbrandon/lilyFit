@@ -100,15 +100,99 @@ class AppTheme {
         surface: AppColors.surface,
         error: AppColors.error,
       ),
-      textTheme: GoogleFonts.poppinsTextTheme(base.textTheme).apply(
-        bodyColor: AppColors.textPrimary,
-        displayColor: AppColors.textPrimary,
+      textTheme: GoogleFonts.nunitoTextTheme(base.textTheme).copyWith(
+        displayLarge: GoogleFonts.spaceGrotesk(
+          fontSize: 57,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+          letterSpacing: -1.5,
+        ),
+        displayMedium: GoogleFonts.spaceGrotesk(
+          fontSize: 45,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+          letterSpacing: -0.5,
+        ),
+        displaySmall: GoogleFonts.spaceGrotesk(
+          fontSize: 36,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+        headlineLarge: GoogleFonts.spaceGrotesk(
+          fontSize: 32,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+        ),
+        headlineMedium: GoogleFonts.spaceGrotesk(
+          fontSize: 28,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+        ),
+        headlineSmall: GoogleFonts.spaceGrotesk(
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+        titleLarge: GoogleFonts.spaceGrotesk(
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+          letterSpacing: 0,
+        ),
+        titleMedium: GoogleFonts.spaceGrotesk(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+          letterSpacing: 0.15,
+        ),
+        titleSmall: GoogleFonts.spaceGrotesk(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+          letterSpacing: 0.1,
+        ),
+        bodyLarge: GoogleFonts.nunito(
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: AppColors.textPrimary,
+          letterSpacing: 0.15,
+        ),
+        bodyMedium: GoogleFonts.nunito(
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          color: AppColors.textPrimary,
+          letterSpacing: 0.25,
+        ),
+        bodySmall: GoogleFonts.nunito(
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          color: AppColors.textSecondary,
+          letterSpacing: 0.4,
+        ),
+        labelLarge: GoogleFonts.nunito(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+          letterSpacing: 0.1,
+        ),
+        labelMedium: GoogleFonts.nunito(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+          letterSpacing: 0.5,
+        ),
+        labelSmall: GoogleFonts.nunito(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textSecondary,
+          letterSpacing: 0.5,
+        ),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
-        titleTextStyle: GoogleFonts.poppins(
+        titleTextStyle: GoogleFonts.spaceGrotesk(
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
@@ -147,9 +231,9 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          textStyle: GoogleFonts.poppins(
+          textStyle: GoogleFonts.nunito(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w800,
           ),
           elevation: 0,
         ),
@@ -162,9 +246,9 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          textStyle: GoogleFonts.poppins(
+          textStyle: GoogleFonts.nunito(
             fontSize: 14,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
@@ -186,8 +270,9 @@ class AppTheme {
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.card,
         selectedColor: AppColors.primary.withAlpha(40),
-        labelStyle: GoogleFonts.poppins(
+        labelStyle: GoogleFonts.nunito(
           fontSize: 13,
+          fontWeight: FontWeight.w600,
           color: AppColors.textSecondary,
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
