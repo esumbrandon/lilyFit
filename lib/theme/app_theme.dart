@@ -2,60 +2,60 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
-  // Backgrounds
-  static const Color background = Color(0xFF0A0A1A);
-  static const Color surface = Color(0xFF131330);
-  static const Color card = Color(0xFF1C1C3C);
-  static const Color cardLight = Color(0xFF252550);
+  // Backgrounds — charcoal-navy (visibly blue-dark, not near-black)
+  static const Color background = Color(0xFF111C35);
+  static const Color surface = Color(0xFF182540);
+  static const Color card = Color(0xFF1F2E4D);
+  static const Color cardLight = Color(0xFF28395C);
 
   // Primary palette
-  static const Color primary = Color(0xFF4ADE80);
-  static const Color primaryDark = Color(0xFF22C55E);
-  static const Color secondary = Color(0xFF22D3EE);
-  static const Color accent = Color(0xFF8B5CF6);
+  static const Color primary = Color(0xFF4F8EF7); // Electric blue
+  static const Color primaryDark = Color(0xFF2B6EE8); // Deep blue
+  static const Color secondary = Color(0xFF06D6A0); // Fresh mint
+  static const Color accent = Color(0xFFFF6B6B); // Vibrant coral
 
   // Macro colors
-  static const Color protein = Color(0xFF60A5FA);
-  static const Color carbs = Color(0xFFFBBF24);
-  static const Color fat = Color(0xFFF472B6);
+  static const Color protein = Color(0xFF818CF8); // Indigo-400
+  static const Color carbs = Color(0xFFFBBF24); // Amber-400
+  static const Color fat = Color(0xFFFB923C); // Orange-400
 
   // Text
-  static const Color textPrimary = Color(0xFFFFFFFF);
-  static const Color textSecondary = Color(0xFFA0A0C0);
-  static const Color textTertiary = Color(0xFF6B6B90);
+  static const Color textPrimary = Color(0xFFF2F5FC);
+  static const Color textSecondary = Color(0xFF7E8EA8);
+  static const Color textTertiary = Color(0xFF4D5E78);
 
   // Status
-  static const Color success = Color(0xFF4ADE80);
+  static const Color success = Color(0xFF06D6A0);
   static const Color warning = Color(0xFFFBBF24);
   static const Color error = Color(0xFFEF4444);
 
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [Color(0xFF4ADE80), Color(0xFF22D3EE)],
+    colors: [Color(0xFF4F8EF7), Color(0xFF06D6A0)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient accentGradient = LinearGradient(
-    colors: [Color(0xFF8B5CF6), Color(0xFFEC4899)],
+    colors: [Color(0xFFFF6B6B), Color(0xFFFBBF24)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient surfaceGradient = LinearGradient(
-    colors: [Color(0xFF1C1C3C), Color(0xFF131330)],
+    colors: [Color(0xFF1F2E4D), Color(0xFF182540)],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
 
   static const LinearGradient warmGradient = LinearGradient(
-    colors: [Color(0xFFF472B6), Color(0xFFFBBF24)],
+    colors: [Color(0xFFFF6B6B), Color(0xFFFB923C)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient coolGradient = LinearGradient(
-    colors: [Color(0xFF60A5FA), Color(0xFF8B5CF6)],
+    colors: [Color(0xFF4F8EF7), Color(0xFF818CF8)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -63,12 +63,12 @@ class AppColors {
   // Card shadow for depth
   static List<BoxShadow> get cardShadow => [
     BoxShadow(
-      color: Colors.black.withOpacity(0.2),
+      color: Colors.black.withOpacity(0.25),
       blurRadius: 20,
       offset: const Offset(0, 10),
     ),
     BoxShadow(
-      color: primary.withOpacity(0.05),
+      color: primary.withOpacity(0.08),
       blurRadius: 30,
       offset: const Offset(0, 5),
     ),
@@ -78,10 +78,10 @@ class AppColors {
   static BoxDecoration get glassMorphism => BoxDecoration(
     color: Colors.white.withOpacity(0.05),
     borderRadius: BorderRadius.circular(20),
-    border: Border.all(color: Colors.white.withOpacity(0.1), width: 1.5),
+    border: Border.all(color: Colors.white.withOpacity(0.08), width: 1.5),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withOpacity(0.1),
+        color: Colors.black.withOpacity(0.15),
         blurRadius: 30,
         offset: const Offset(0, 15),
       ),
@@ -99,6 +99,9 @@ class AppTheme {
         secondary: AppColors.secondary,
         surface: AppColors.surface,
         error: AppColors.error,
+        onPrimary: Color(0xFFF2F5FC),
+        onSecondary: Color(0xFF06080F),
+        onSurface: AppColors.textPrimary,
       ),
       textTheme: GoogleFonts.nunitoTextTheme(base.textTheme).copyWith(
         displayLarge: GoogleFonts.spaceGrotesk(

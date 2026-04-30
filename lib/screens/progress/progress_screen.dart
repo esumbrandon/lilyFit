@@ -487,7 +487,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: isOverTarget
-                      ? [const Color(0xFFEF4444), const Color(0xFFFBBF24)]
+                      ? [const Color(0xFFFF6B6B), const Color(0xFFFBBF24)]
                       : isToday
                       ? [AppColors.primary, AppColors.secondary]
                       : [

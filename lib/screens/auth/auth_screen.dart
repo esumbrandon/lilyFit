@@ -341,9 +341,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF0A0A1A),
-                    Color(0xFF131330),
-                    Color(0xFF1C1C3C),
+                    AppColors.background,
+                    AppColors.surface,
+                    AppColors.card,
                   ],
                 ),
               ),

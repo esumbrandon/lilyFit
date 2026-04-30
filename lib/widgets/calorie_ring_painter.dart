@@ -9,8 +9,8 @@ class CalorieRingPainter extends CustomPainter {
 
   CalorieRingPainter({
     required this.progress,
-    this.backgroundColor = const Color(0xFF1C1C3C),
-    this.gradientColors = const [Color(0xFF4ADE80), Color(0xFF22D3EE)],
+    this.backgroundColor = const Color(0xFF1F2E4D),
+    this.gradientColors = const [Color(0xFF4F8EF7), Color(0xFF06D6A0)],
     this.strokeWidth = 14,
   });
 
@@ -103,8 +103,8 @@ class CalorieRingWidget extends StatelessWidget {
             painter: CalorieRingPainter(
               progress: value,
               gradientColors: isOver
-                  ? [const Color(0xFFEF4444), const Color(0xFFFBBF24)]
-                  : [const Color(0xFF4ADE80), const Color(0xFF22D3EE)],
+                  ? [const Color(0xFFFF6B6B), const Color(0xFFFBBF24)]
+                  : [const Color(0xFF4F8EF7), const Color(0xFF06D6A0)],
               strokeWidth: 16,
             ),
             child: Center(
@@ -131,7 +131,10 @@ class CalorieRingWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withAlpha(15),
                       borderRadius: BorderRadius.circular(12),
