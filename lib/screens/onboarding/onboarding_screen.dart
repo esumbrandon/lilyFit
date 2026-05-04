@@ -16,14 +16,11 @@ class OnboardingScreen extends StatefulWidget {
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen>
-    with SingleTickerProviderStateMixin {
+class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  final int _totalPages = 5; // Reduced from 6 (removed info page)
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
+  double _pageScrollPosition = 0;
+  final int _totalPages = 8;
 
   // Form data
   String _name = '';
@@ -36,6 +33,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   String _heightUnit = 'cm';
   String _activityLevel = 'moderate';
   String _goal = 'maintenance';
+  String _dietType = 'balanced';
+  double _waterGoalMl = 2000;
+  bool _isSnappingBack = false;
 
   @override
   void initState() {
@@ -46,38 +46,25 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       _name = user.userMetadata!['name'] as String;
     }
 
-    // Setup animations
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
-    );
-
-    _slideAnimation =
-        Tween<Offset>(begin: const Offset(0.3, 0), end: Offset.zero).animate(
-          CurvedAnimation(
-            parent: _animationController,
-            curve: Curves.easeOutCubic,
-          ),
-        );
-
-    // Start animation
-    _animationController.forward();
+    // Track continuous scroll position for smooth progress bar
+    _pageController.addListener(() {
+      if (mounted) {
+        setState(() {
+          _pageScrollPosition = _pageController.page ?? _currentPage.toDouble();
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     _pageController.dispose();
-    _animationController.dispose();
     super.dispose();
   }
 
   void _nextPage() {
-    // Validate page 0 (name) before proceeding
-    if (_currentPage == 0) {
+    // Validate page 1 (name) before proceeding
+    if (_currentPage == 1) {
       final nameValidation = Validators.validateName(_name);
 
       setState(() {
@@ -90,26 +77,20 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     }
 
     if (_currentPage < _totalPages - 1) {
-      // Reset and replay animation
-      _animationController.reset();
-      _animationController.forward();
-
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
+      _pageController.animateToPage(
+        _currentPage + 1,
+        duration: const Duration(milliseconds: 420),
+        curve: Curves.easeOutCubic,
       );
     }
   }
 
   void _prevPage() {
     if (_currentPage > 0) {
-      // Reset and replay animation
-      _animationController.reset();
-      _animationController.forward();
-
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
+      _pageController.animateToPage(
+        _currentPage - 1,
+        duration: const Duration(milliseconds: 420),
+        curve: Curves.easeOutCubic,
       );
     }
   }
@@ -119,7 +100,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     final nameValidation = Validators.validateName(_name);
 
     if (nameValidation != null) {
-      _pageController.jumpToPage(0);
+      _pageController.jumpToPage(1);
       setState(() {
         _nameError = nameValidation;
       });
@@ -165,6 +146,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       // Save locally and complete onboarding
       if (!mounted) return;
       await context.read<AppProvider>().completeOnboarding(profile);
+      await context.read<AppProvider>().setWaterGoal(_waterGoalMl);
 
       // Close loading dialog
       if (!mounted) return;
@@ -208,13 +190,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     }
   }
 
-  Widget _buildAnimatedPage(Widget child) {
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: SlideTransition(position: _slideAnimation, child: child),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -226,17 +201,28 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
               child: Row(
                 children: List.generate(_totalPages, (i) {
+                  // Fill fraction: 0.0 (empty) → 1.0 (full) based on live scroll
+                  final fill = (((_pageScrollPosition + 1) - i)).clamp(
+                    0.0,
+                    1.0,
+                  );
                   return Expanded(
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
+                    child: Container(
                       height: 4,
                       margin: const EdgeInsets.symmetric(horizontal: 2),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(2),
-                        gradient: i <= _currentPage
-                            ? AppColors.primaryGradient
-                            : null,
-                        color: i > _currentPage ? AppColors.cardLight : null,
+                        color: AppColors.cardLight,
+                      ),
+                      child: FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: fill,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(2),
+                            gradient: AppColors.primaryGradient,
+                          ),
+                        ),
                       ),
                     ),
                   );
@@ -248,14 +234,42 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             Expanded(
               child: PageView(
                 controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                onPageChanged: (page) => setState(() => _currentPage = page),
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
+                onPageChanged: (page) {
+                  if (_isSnappingBack) {
+                    if (page == 1) _isSnappingBack = false;
+                    setState(() => _currentPage = page);
+                    return;
+                  }
+                  // Validate forward swipe from name page (page 1)
+                  if (page > _currentPage && _currentPage == 1) {
+                    final err = Validators.validateName(_name);
+                    if (err != null) {
+                      setState(() => _nameError = err);
+                      _isSnappingBack = true;
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _pageController.animateToPage(
+                          1,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      });
+                      return;
+                    }
+                  }
+                  setState(() => _currentPage = page);
+                },
                 children: [
-                  _buildAnimatedPage(_buildNameGenderPage()),
-                  _buildAnimatedPage(_buildBodyMetricsPage()),
-                  _buildAnimatedPage(_buildActivityPage()),
-                  _buildAnimatedPage(_buildGoalPage()),
-                  _buildAnimatedPage(_buildResultsPage()),
+                  _buildWelcomePage(),
+                  _buildNameGenderPage(),
+                  _buildBodyMetricsPage(),
+                  _buildActivityPage(),
+                  _buildGoalPage(),
+                  _buildDietPage(),
+                  _buildWaterGoalPage(),
+                  _buildResultsPage(),
                 ],
               ),
             ),
@@ -1197,4 +1211,434 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     'muscleGain' => 'Gain Weight',
     _ => 'Maintain',
   };
+
+  // ─── Page 0: Welcome ──────────────────────────────────────────
+  Widget _buildWelcomePage() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 110,
+            height: 110,
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.circular(32),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withAlpha(80),
+                  blurRadius: 30,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.fitness_center_rounded,
+              color: Colors.white,
+              size: 56,
+            ),
+          ),
+          const SizedBox(height: 32),
+          ShaderMask(
+            shaderCallback: (bounds) =>
+                AppColors.primaryGradient.createShader(bounds),
+            child: const Text(
+              'LilyFit',
+              style: TextStyle(
+                fontSize: 42,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+                letterSpacing: -1,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Your personal nutrition &\nfitness companion',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 17,
+              color: Colors.white.withAlpha(180),
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 48),
+          _welcomeFeature(
+            Icons.track_changes_rounded,
+            AppColors.primary,
+            'Calorie Tracking',
+            'Log meals and stay on target every day',
+          ),
+          const SizedBox(height: 14),
+          _welcomeFeature(
+            Icons.pie_chart_rounded,
+            AppColors.secondary,
+            'Macro Analysis',
+            'Balance protein, carbs & fats perfectly',
+          ),
+          const SizedBox(height: 14),
+          _welcomeFeature(
+            Icons.show_chart_rounded,
+            AppColors.accent,
+            'Progress Insights',
+            'Track your transformation over time',
+          ),
+          const SizedBox(height: 40),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Swipe or tap Continue to begin',
+                style: TextStyle(
+                  color: Colors.white.withAlpha(100),
+                  fontSize: 13,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Icon(
+                Icons.arrow_forward_rounded,
+                color: Colors.white.withAlpha(100),
+                size: 16,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _welcomeFeature(
+    IconData icon,
+    Color color,
+    String title,
+    String description,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withAlpha(15),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withAlpha(40)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withAlpha(30),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    color: AppColors.textTertiary,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── Page 6: Diet Preferences ─────────────────────────────────
+  Widget _buildDietPage() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 40),
+          const Text(
+            'Eating Style',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'We\'ll tailor food suggestions to your preferences',
+            style: TextStyle(fontSize: 15, color: Colors.white.withAlpha(150)),
+          ),
+          const SizedBox(height: 28),
+          Expanded(
+            child: ListView(
+              children: [
+                _dietOption(
+                  'balanced',
+                  'Balanced',
+                  '🍽️',
+                  'Well-rounded nutrition with all food groups',
+                ),
+                _dietOption(
+                  'highProtein',
+                  'High-Protein',
+                  '💪',
+                  'Prioritises protein for muscle growth & recovery',
+                ),
+                _dietOption(
+                  'lowCarb',
+                  'Low-Carb / Keto',
+                  '🥑',
+                  'Reduced carbohydrates with higher healthy fats',
+                ),
+                _dietOption(
+                  'vegetarian',
+                  'Vegetarian',
+                  '🌿',
+                  'Plant-based foods with dairy & eggs allowed',
+                ),
+                _dietOption(
+                  'vegan',
+                  'Vegan',
+                  '🌱',
+                  '100% plant-based — no animal products',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _dietOption(
+    String value,
+    String label,
+    String emoji,
+    String description,
+  ) {
+    final selected = _dietType == value;
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        setState(() => _dietType = value);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        decoration: BoxDecoration(
+          color: selected ? AppColors.primary.withAlpha(20) : AppColors.card,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: selected ? AppColors.primary : Colors.transparent,
+            width: 1.5,
+          ),
+        ),
+        child: Row(
+          children: [
+            Text(emoji, style: const TextStyle(fontSize: 26)),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: selected ? AppColors.primary : Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    description,
+                    style: const TextStyle(
+                      color: AppColors.textTertiary,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (selected)
+              const Icon(
+                Icons.check_circle,
+                color: AppColors.primary,
+                size: 22,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ─── Page 7: Water Goal ───────────────────────────────────────
+  Widget _buildWaterGoalPage() {
+    final litres = _waterGoalMl / 1000;
+    final glasses = (_waterGoalMl / 250).round();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 40),
+            const Text(
+              'Daily Water Goal',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Staying hydrated boosts metabolism and energy',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.white.withAlpha(150),
+              ),
+            ),
+            const SizedBox(height: 36),
+            Center(
+              child: Column(
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      gradient: AppColors.primaryGradient,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withAlpha(60),
+                          blurRadius: 24,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.water_drop_rounded,
+                      color: Colors.white,
+                      size: 50,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    '${litres.toStringAsFixed(1)} L',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 44,
+                      fontWeight: FontWeight.w800,
+                      height: 1,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '$glasses glasses  (250 ml each)',
+                    style: TextStyle(
+                      color: Colors.white.withAlpha(150),
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+            const Text(
+              'Quick select',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [1500, 2000, 2500, 3000, 3500, 4000].map((ml) {
+                final isSelected = _waterGoalMl == ml.toDouble();
+                return GestureDetector(
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    setState(() => _waterGoalMl = ml.toDouble());
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppColors.primary.withAlpha(25)
+                          : AppColors.card,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isSelected
+                            ? AppColors.primary
+                            : Colors.transparent,
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Text(
+                      '${(ml / 1000).toStringAsFixed(1)}L',
+                      style: TextStyle(
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.textSecondary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Fine-tune',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 8),
+            SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                activeTrackColor: AppColors.primary,
+                inactiveTrackColor: AppColors.cardLight,
+                thumbColor: AppColors.primary,
+                overlayColor: AppColors.primary.withAlpha(30),
+              ),
+              child: Slider(
+                value: _waterGoalMl,
+                min: 1000,
+                max: 4000,
+                divisions: 30,
+                onChanged: (v) =>
+                    setState(() => _waterGoalMl = (v / 100).round() * 100),
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
 }

@@ -17,6 +17,14 @@ class AppProvider extends ChangeNotifier {
   DateTime _selectedDate = DateTime.now();
   Locale _currentLocale = const Locale('en'); // Default locale
 
+  // ─── Water Reminder Settings ────────────────────────────────────
+  bool _waterRemindersEnabled = false;
+  int _waterReminderIntervalMinutes = 60;
+  int _waterReminderStartHour = 8;
+  int _waterReminderStartMinute = 0;
+  int _waterReminderEndHour = 22;
+  int _waterReminderEndMinute = 0;
+
   // ─── Getters ────────────────────────────────────────────────────
   UserProfile get userProfile => _userProfile;
   bool get isOnboarded => _isOnboarded;
@@ -26,6 +34,14 @@ class AppProvider extends ChangeNotifier {
   DateTime get selectedDate => _selectedDate;
   List<MealLog> get allMealLogs => List.unmodifiable(_mealLogs);
   Locale get currentLocale => _currentLocale;
+
+  // Water reminder getters
+  bool get waterRemindersEnabled => _waterRemindersEnabled;
+  int get waterReminderIntervalMinutes => _waterReminderIntervalMinutes;
+  int get waterReminderStartHour => _waterReminderStartHour;
+  int get waterReminderStartMinute => _waterReminderStartMinute;
+  int get waterReminderEndHour => _waterReminderEndHour;
+  int get waterReminderEndMinute => _waterReminderEndMinute;
 
   // Today's meals filtered by selected date
   List<MealLog> get todaysMeals =>
@@ -109,6 +125,14 @@ class AppProvider extends ChangeNotifier {
     final today = _formatDate(DateTime.now());
     _waterIntake = _prefs.getDouble('water_$today') ?? 0;
     _waterGoal = _prefs.getDouble('waterGoal') ?? 2500;
+
+    _waterRemindersEnabled = _prefs.getBool('waterRemindersEnabled') ?? false;
+    _waterReminderIntervalMinutes =
+        _prefs.getInt('waterReminderIntervalMinutes') ?? 60;
+    _waterReminderStartHour = _prefs.getInt('waterReminderStartHour') ?? 8;
+    _waterReminderStartMinute = _prefs.getInt('waterReminderStartMinute') ?? 0;
+    _waterReminderEndHour = _prefs.getInt('waterReminderEndHour') ?? 22;
+    _waterReminderEndMinute = _prefs.getInt('waterReminderEndMinute') ?? 0;
 
     final weightJson = _prefs.getString('weightEntries');
     if (weightJson != null) {
@@ -206,6 +230,32 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // ─── Water Reminder Settings ─────────────────────────────────────
+  Future<void> updateWaterReminders({
+    required bool enabled,
+    required int intervalMinutes,
+    required int startHour,
+    required int startMinute,
+    required int endHour,
+    required int endMinute,
+  }) async {
+    _waterRemindersEnabled = enabled;
+    _waterReminderIntervalMinutes = intervalMinutes;
+    _waterReminderStartHour = startHour;
+    _waterReminderStartMinute = startMinute;
+    _waterReminderEndHour = endHour;
+    _waterReminderEndMinute = endMinute;
+
+    await _prefs.setBool('waterRemindersEnabled', enabled);
+    await _prefs.setInt('waterReminderIntervalMinutes', intervalMinutes);
+    await _prefs.setInt('waterReminderStartHour', startHour);
+    await _prefs.setInt('waterReminderStartMinute', startMinute);
+    await _prefs.setInt('waterReminderEndHour', endHour);
+    await _prefs.setInt('waterReminderEndMinute', endMinute);
+
+    notifyListeners();
+  }
+
   // ─── Weight Tracking ────────────────────────────────────────────
   Future<void> addWeight(double weight) async {
     final today = DateTime.now();
@@ -242,6 +292,12 @@ class AppProvider extends ChangeNotifier {
     _waterGoal = 2500;
     _weightEntries = [];
     _selectedDate = DateTime.now();
+    _waterRemindersEnabled = false;
+    _waterReminderIntervalMinutes = 60;
+    _waterReminderStartHour = 8;
+    _waterReminderStartMinute = 0;
+    _waterReminderEndHour = 22;
+    _waterReminderEndMinute = 0;
     notifyListeners();
   }
 

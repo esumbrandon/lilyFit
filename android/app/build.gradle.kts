@@ -8,11 +8,12 @@ plugins {
 android {
     namespace = "com.example.lilyfit"
     compileSdk = flutter.compileSdkVersion
-    // ndkVersion = flutter.ndkVersion  // Commented out - not needed for most Flutter apps
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -41,4 +42,8 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

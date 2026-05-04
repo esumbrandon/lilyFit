@@ -6,6 +6,7 @@ import 'theme/app_theme.dart';
 import 'providers/app_provider.dart';
 import 'services/supabase_service.dart';
 import 'services/language_service.dart';
+import 'services/notification_service.dart';
 import 'config/supabase_config.dart';
 import 'screens/auth/auth_screen.dart';
 import 'screens/onboarding/onboarding_screen.dart';
@@ -22,6 +23,9 @@ void main() async {
     anonKey: SupabaseConfig.supabaseAnonKey,
   );
 
+  // Initialize notification service (must come after ensureInitialized).
+  await NotificationService.initialize();
+
   // Set system UI overlay style
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -34,6 +38,17 @@ void main() async {
 
   final appProvider = AppProvider();
   await appProvider.initialize();
+
+  // Re-schedule water reminders if the user had them enabled before.
+  if (appProvider.waterRemindersEnabled) {
+    await NotificationService.scheduleWaterReminders(
+      intervalMinutes: appProvider.waterReminderIntervalMinutes,
+      startHour: appProvider.waterReminderStartHour,
+      startMinute: appProvider.waterReminderStartMinute,
+      endHour: appProvider.waterReminderEndHour,
+      endMinute: appProvider.waterReminderEndMinute,
+    );
+  }
 
   runApp(
     ChangeNotifierProvider.value(value: appProvider, child: const LilyFitApp()),

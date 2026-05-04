@@ -7,6 +7,7 @@ import '../../services/supabase_service.dart';
 import '../../utils/unit_converter.dart';
 import '../auth/auth_screen.dart';
 import '../onboarding/onboarding_screen.dart';
+import 'water_reminder_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -249,6 +250,20 @@ class ProfileScreen extends StatelessWidget {
                         'Water Goal',
                         '${provider.waterGoal.toInt()} ml/day',
                         () => _showWaterGoalDialog(context, provider),
+                      ),
+                      _divider(),
+                      _settingsTile(
+                        Icons.notifications_active_outlined,
+                        'Water Reminders',
+                        provider.waterRemindersEnabled
+                            ? 'Every ${provider.waterReminderIntervalMinutes} min · On'
+                            : 'Off',
+                        () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const WaterReminderScreen(),
+                          ),
+                        ),
                       ),
                       _divider(),
                       _settingsTile(
