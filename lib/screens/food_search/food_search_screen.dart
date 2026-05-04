@@ -18,8 +18,10 @@ class FoodSearchScreen extends StatefulWidget {
 
 class _FoodSearchScreenState extends State<FoodSearchScreen> {
   final _searchController = TextEditingController();
+  final _scrollController = ScrollController();
   final _foodDatabase = FoodDatabase();
   String _selectedRegion = 'all';
+  String _prevRegion = 'all';
   String _searchQuery = '';
   List<FoodItem> _allFoods = [];
   bool _isLoading = true;
@@ -103,6 +105,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -171,51 +174,90 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                   ),
                 ),
 
-                // Region filter chips
+                // Region filter cards
                 SizedBox(
-                  height: 56,
-                  child: ListView(
+                  height: 72,
+                  child: ListView.separated(
                     scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
-                      vertical: 10,
+                      vertical: 8,
                     ),
-                    children: FoodDatabase.regions.map((region) {
+                    itemCount: FoodDatabase.regions.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 10),
+                    itemBuilder: (context, index) {
+                      final region = FoodDatabase.regions[index];
                       final selected = _selectedRegion == region;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ChoiceChip(
-                          label: Text(
-                            '${FoodDatabase.regionEmoji(region)} ${FoodDatabase.regionLabel(region)}',
+                      return GestureDetector(
+                        onTap: () {
+                          HapticFeedback.selectionClick();
+                          if (region == _selectedRegion) return;
+                          setState(() {
+                            _prevRegion = _selectedRegion;
+                            _selectedRegion = region;
+                          });
+                          // Scroll list back to top
+                          if (_scrollController.hasClients) {
+                            _scrollController.jumpTo(0);
+                          }
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 250),
+                          curve: Curves.easeOutCubic,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
                           ),
-                          selected: selected,
-                          onSelected: (_) {
-                            HapticFeedback.selectionClick();
-                            setState(() => _selectedRegion = region);
-                          },
-                          selectedColor: AppColors.primary.withAlpha(30),
-                          labelStyle: TextStyle(
-                            color: selected
-                                ? AppColors.primary
-                                : AppColors.textSecondary,
-                            fontWeight: selected
-                                ? FontWeight.w600
-                                : FontWeight.w400,
-                            fontSize: 13,
-                          ),
-                          checkmarkColor: AppColors.primary,
-                          showCheckmark: false,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(
+                          decoration: BoxDecoration(
+                            gradient: selected
+                                ? AppColors.primaryGradient
+                                : null,
+                            color: selected ? null : AppColors.card,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
                               color: selected
-                                  ? AppColors.primary.withAlpha(80)
-                                  : Colors.transparent,
+                                  ? Colors.transparent
+                                  : AppColors.cardLight,
+                              width: 1.5,
                             ),
+                            boxShadow: selected
+                                ? [
+                                    BoxShadow(
+                                      color: AppColors.primary.withAlpha(60),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                FoodDatabase.regionEmoji(region),
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                              const SizedBox(width: 7),
+                              AnimatedDefaultTextStyle(
+                                duration: const Duration(milliseconds: 250),
+                                curve: Curves.easeOutCubic,
+                                style: TextStyle(
+                                  color: selected
+                                      ? Colors.white
+                                      : AppColors.textSecondary,
+                                  fontWeight: selected
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
+                                  fontSize: 13,
+                                ),
+                                child: Text(FoodDatabase.regionLabel(region)),
+                              ),
+                            ],
                           ),
                         ),
                       );
-                    }).toList(),
+                    },
                   ),
                 ),
 
@@ -237,38 +279,63 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
 
                 // Food list
                 Expanded(
-                  child: _filteredFoods.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.search_off_rounded,
-                                size: 56,
-                                color: AppColors.textTertiary.withAlpha(100),
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                'No foods found',
-                                style: TextStyle(
-                                  color: AppColors.textTertiary.withAlpha(150),
-                                  fontSize: 16,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 320),
+                    switchInCurve: Curves.easeOutCubic,
+                    switchOutCurve: Curves.easeInCubic,
+                    transitionBuilder: (child, animation) {
+                      final regions = FoodDatabase.regions;
+                      final prevIdx = regions.indexOf(_prevRegion);
+                      final currIdx = regions.indexOf(_selectedRegion);
+                      // Slide right-to-left when going forward, left-to-right when going back
+                      final isForward = currIdx >= prevIdx;
+                      final slideIn = Tween<Offset>(
+                        begin: Offset(isForward ? 1.0 : -1.0, 0),
+                        end: Offset.zero,
+                      ).animate(animation);
+                      return FadeTransition(
+                        opacity: animation,
+                        child: SlideTransition(position: slideIn, child: child),
+                      );
+                    },
+                    child: _filteredFoods.isEmpty
+                        ? Center(
+                            key: ValueKey('empty_$_selectedRegion'),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.search_off_rounded,
+                                  size: 56,
+                                  color: AppColors.textTertiary.withAlpha(100),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 12),
+                                Text(
+                                  'No foods found',
+                                  style: TextStyle(
+                                    color: AppColors.textTertiary.withAlpha(
+                                      150,
+                                    ),
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            key: ValueKey('list_$_selectedRegion'),
+                            controller: _scrollController,
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                            itemCount: _filteredFoods.length,
+                            itemBuilder: (context, index) {
+                              final food = _filteredFoods[index];
+                              return _FoodItemCard(
+                                food: food,
+                                onTap: () => _showFoodDetail(context, food),
+                              );
+                            },
                           ),
-                        )
-                      : ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                          itemCount: _filteredFoods.length,
-                          itemBuilder: (context, index) {
-                            final food = _filteredFoods[index];
-                            return _FoodItemCard(
-                              food: food,
-                              onTap: () => _showFoodDetail(context, food),
-                            );
-                          },
-                        ),
+                  ),
                 ),
               ],
             ),
