@@ -21,7 +21,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
   final _scrollController = ScrollController();
   final _foodDatabase = FoodDatabase();
   String _selectedRegion = 'all';
-  String _prevRegion = 'all';
+  bool _isForwardSwitch = true;
   String _searchQuery = '';
   List<FoodItem> _allFoods = [];
   bool _isLoading = true;
@@ -118,10 +118,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
               ? 'Add to ${widget.mealType!.label}'
               : 'Food Database',
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: _isRefreshing
@@ -193,8 +190,11 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                         onTap: () {
                           HapticFeedback.selectionClick();
                           if (region == _selectedRegion) return;
+                          final regions = FoodDatabase.regions;
                           setState(() {
-                            _prevRegion = _selectedRegion;
+                            _isForwardSwitch =
+                                regions.indexOf(region) >
+                                regions.indexOf(_selectedRegion);
                             _selectedRegion = region;
                           });
                           // Scroll list back to top
@@ -280,22 +280,46 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                 // Food list
                 Expanded(
                   child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 320),
-                    switchInCurve: Curves.easeOutCubic,
-                    switchOutCurve: Curves.easeInCubic,
+                    duration: const Duration(milliseconds: 380),
                     transitionBuilder: (child, animation) {
-                      final regions = FoodDatabase.regions;
-                      final prevIdx = regions.indexOf(_prevRegion);
-                      final currIdx = regions.indexOf(_selectedRegion);
-                      // Slide right-to-left when going forward, left-to-right when going back
-                      final isForward = currIdx >= prevIdx;
-                      final slideIn = Tween<Offset>(
-                        begin: Offset(isForward ? 1.0 : -1.0, 0),
-                        end: Offset.zero,
-                      ).animate(animation);
+                      // Detect incoming vs outgoing by matching the current key
+                      final currentKey = ValueKey('list_$_selectedRegion');
+                      final currentEmptyKey = ValueKey(
+                        'empty_$_selectedRegion',
+                      );
+                      final isIncoming =
+                          child.key == currentKey ||
+                          child.key == currentEmptyKey;
+                      // Incoming slides in from the side; outgoing exits the opposite way
+                      final inOffset = _isForwardSwitch
+                          ? const Offset(1.0, 0)
+                          : const Offset(-1.0, 0);
+                      final outOffset = _isForwardSwitch
+                          ? const Offset(-0.3, 0)
+                          : const Offset(0.3, 0);
+                      final position =
+                          Tween<Offset>(
+                            begin: isIncoming ? inOffset : outOffset,
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: isIncoming
+                                  ? Curves.easeOutCubic
+                                  : Curves.easeInCubic,
+                            ),
+                          );
                       return FadeTransition(
-                        opacity: animation,
-                        child: SlideTransition(position: slideIn, child: child),
+                        opacity: CurvedAnimation(
+                          parent: animation,
+                          curve: isIncoming
+                              ? Curves.easeOut
+                              : const Interval(0.0, 0.5),
+                        ),
+                        child: SlideTransition(
+                          position: position,
+                          child: child,
+                        ),
                       );
                     },
                     child: _filteredFoods.isEmpty
@@ -330,7 +354,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             itemBuilder: (context, index) {
                               final food = _filteredFoods[index];
                               return _FoodItemCard(
+                                key: ValueKey(food.name),
                                 food: food,
+                                index: index,
                                 onTap: () => _showFoodDetail(context, food),
                               );
                             },
@@ -352,82 +378,147 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
   }
 }
 
-class _FoodItemCard extends StatelessWidget {
+class _FoodItemCard extends StatefulWidget {
   final FoodItem food;
   final VoidCallback onTap;
+  final int index;
 
-  const _FoodItemCard({required this.food, required this.onTap});
+  const _FoodItemCard({
+    super.key,
+    required this.food,
+    required this.onTap,
+    required this.index,
+  });
+
+  @override
+  State<_FoodItemCard> createState() => _FoodItemCardState();
+}
+
+class _FoodItemCardState extends State<_FoodItemCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _entrance;
+  bool _pressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _entrance = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 420),
+    );
+    // Stagger first ~9 items; beyond that animate immediately
+    final delay = (widget.index * 45).clamp(0, 360);
+    if (delay == 0) {
+      _entrance.forward();
+    } else {
+      Future.delayed(Duration(milliseconds: delay), () {
+        if (mounted) _entrance.forward();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _entrance.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: Material(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(16),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Row(
-              children: [
-                // Emoji
-                Container(
-                  width: 46,
-                  height: 46,
-                  decoration: BoxDecoration(
-                    color: AppColors.cardLight,
-                    borderRadius: BorderRadius.circular(14),
+    final opacity = CurvedAnimation(parent: _entrance, curve: Curves.easeOut);
+    final slide = Tween<Offset>(
+      begin: const Offset(0, 0.14),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _entrance, curve: Curves.easeOutCubic));
+
+    return FadeTransition(
+      opacity: opacity,
+      child: SlideTransition(
+        position: slide,
+        child: AnimatedScale(
+          scale: _pressed ? 0.97 : 1.0,
+          duration: const Duration(milliseconds: 80),
+          curve: Curves.easeOut,
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: Material(
+              color: AppColors.card,
+              borderRadius: BorderRadius.circular(16),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: widget.onTap,
+                onTapDown: (_) => setState(() => _pressed = true),
+                onTapUp: (_) => setState(() => _pressed = false),
+                onTapCancel: () => setState(() => _pressed = false),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
                   ),
-                  alignment: Alignment.center,
-                  child: Text(food.emoji, style: const TextStyle(fontSize: 22)),
-                ),
-                const SizedBox(width: 14),
-                // Info
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
                     children: [
-                      Text(
-                        food.name,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
+                      // Emoji
+                      Container(
+                        width: 46,
+                        height: 46,
+                        decoration: BoxDecoration(
+                          color: AppColors.cardLight,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          widget.food.emoji,
+                          style: const TextStyle(fontSize: 22),
                         ),
                       ),
-                      const SizedBox(height: 3),
-                      Text(
-                        '${food.servingSize} · ${FoodDatabase.regionLabel(food.region)}',
-                        style: const TextStyle(
-                          color: AppColors.textTertiary,
-                          fontSize: 12,
+                      const SizedBox(width: 14),
+                      // Info
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.food.name,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              '${widget.food.servingSize} · ${FoodDatabase.regionLabel(widget.food.region)}',
+                              style: const TextStyle(
+                                color: AppColors.textTertiary,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Calories badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withAlpha(20),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          '${widget.food.calories.toInt()} kcal',
+                          style: const TextStyle(
+                            color: AppColors.primary,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                // Calories badge
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withAlpha(20),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    '${food.calories.toInt()} kcal',
-                    style: const TextStyle(
-                      color: AppColors.primary,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
