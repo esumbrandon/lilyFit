@@ -89,74 +89,74 @@ class _DashboardScreenState extends State<DashboardScreen>
               child: _buildAnimatedSection(
                 0,
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                  child: Row(
+                  padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _greeting(now),
-                              style: TextStyle(
-                                color: Colors.white.withAlpha(150),
-                                fontSize: 14,
-                              ),
+                      // Top meta row — date · streak
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            DateFormat('EEEE, MMMM d').format(now),
+                            style: const TextStyle(
+                              color: AppColors.textTertiary,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: 0.2,
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              profile.name.isNotEmpty ? profile.name : 'User',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                              ),
+                          ),
+                          if (provider.currentStreak > 0)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  '🔥',
+                                  style: TextStyle(fontSize: 13),
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${provider.currentStreak} day streak',
+                                  style: const TextStyle(
+                                    color: AppColors.carbs,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.1,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 22),
+                      // Greeting label
+                      Text(
+                        _greetingLabel(now),
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.4,
                         ),
                       ),
-                      // Streak badge
-                      if (provider.currentStreak > 0)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.carbs.withAlpha(25),
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text('🔥', style: TextStyle(fontSize: 16)),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${provider.currentStreak}',
-                                style: const TextStyle(
-                                  color: AppColors.carbs,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ],
+                      const SizedBox(height: 4),
+                      // Name — gradient shimmer
+                      ShaderMask(
+                        shaderCallback: (bounds) =>
+                            AppColors.primaryGradient.createShader(bounds),
+                        blendMode: BlendMode.srcIn,
+                        child: Text(
+                          profile.name.isNotEmpty ? profile.name : 'User',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 32,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -1.0,
+                            height: 1.05,
                           ),
                         ),
+                      ),
                     ],
-                  ),
-                ),
-              ),
-            ),
-
-            // Date display
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
-                child: Text(
-                  DateFormat('EEEE, MMMM d').format(now),
-                  style: const TextStyle(
-                    color: AppColors.textTertiary,
-                    fontSize: 13,
                   ),
                 ),
               ),
@@ -305,11 +305,11 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  String _greeting(DateTime now) {
+  String _greetingLabel(DateTime now) {
     final hour = now.hour;
-    if (hour < 12) return 'Good Morning ☀️';
-    if (hour < 17) return 'Good Afternoon 🌤️';
-    return 'Good Evening 🌙';
+    if (hour < 12) return 'Good morning,';
+    if (hour < 17) return 'Good afternoon,';
+    return 'Good evening,';
   }
 
   void _navigateToFoodSearch(BuildContext context, MealType mealType) {
