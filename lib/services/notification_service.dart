@@ -28,8 +28,8 @@ class NotificationService {
     // Build timezone database and resolve the device's local timezone.
     tz.initializeTimeZones();
     try {
-      final timeZoneName = await FlutterTimezone.getLocalTimezone();
-      tz.setLocalLocation(tz.getLocation(timeZoneName));
+      final tzInfo = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(tzInfo.identifier));
     } catch (_) {
       // Fallback: keep UTC-based local – notifications will still fire, just
       // calculated from UTC offset rather than the named zone.
