@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
@@ -147,7 +148,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
                 child: ElevatedButton.icon(
-                  onPressed: () => _showLogWeightDialog(context),
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    _showLogWeightDialog(context);
+                  },
                   icon: const Icon(Icons.add_rounded, size: 20),
                   label: const Text('Log Today\'s Weight'),
                   style: ElevatedButton.styleFrom(
@@ -647,6 +651,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             onPressed: () {
               final inputWeight = double.tryParse(_weightController.text);
               if (inputWeight != null && inputWeight > 0) {
+                HapticFeedback.mediumImpact();
                 // Convert to kg if needed before saving
                 final weightInKg = weightUnit == 'lbs'
                     ? UnitConverter.lbsToKg(inputWeight)

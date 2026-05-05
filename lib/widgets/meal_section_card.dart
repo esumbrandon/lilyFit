@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
 import '../models/meal_log.dart';
 
@@ -33,10 +34,7 @@ class MealSectionCard extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 16, 12, 8),
             child: Row(
               children: [
-                Text(
-                  mealType.emoji,
-                  style: const TextStyle(fontSize: 24),
-                ),
+                Text(mealType.emoji, style: const TextStyle(fontSize: 24)),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -67,7 +65,10 @@ class MealSectionCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(12),
-                    onTap: onAddFood,
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      onAddFood();
+                    },
                     child: const Padding(
                       padding: EdgeInsets.all(10),
                       child: Icon(
@@ -84,11 +85,18 @@ class MealSectionCard extends StatelessWidget {
 
           // Food items
           if (meals.isNotEmpty) ...[
-            const Divider(color: AppColors.cardLight, height: 1, indent: 20, endIndent: 20),
-            ...meals.map((meal) => _FoodItemTile(
-              meal: meal,
-              onRemove: () => onRemoveFood(meal.id),
-            )),
+            const Divider(
+              color: AppColors.cardLight,
+              height: 1,
+              indent: 20,
+              endIndent: 20,
+            ),
+            ...meals.map(
+              (meal) => _FoodItemTile(
+                meal: meal,
+                onRemove: () => onRemoveFood(meal.id),
+              ),
+            ),
           ] else
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
@@ -117,7 +125,10 @@ class _FoodItemTile extends StatelessWidget {
     return Dismissible(
       key: Key(meal.id),
       direction: DismissDirection.endToStart,
-      onDismissed: (_) => onRemove(),
+      onDismissed: (_) {
+        HapticFeedback.mediumImpact();
+        onRemove();
+      },
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
@@ -131,10 +142,7 @@ class _FoodItemTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Row(
           children: [
-            Text(
-              meal.food.emoji,
-              style: const TextStyle(fontSize: 20),
-            ),
+            Text(meal.food.emoji, style: const TextStyle(fontSize: 20)),
             const SizedBox(width: 12),
             Expanded(
               child: Column(

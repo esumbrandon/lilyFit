@@ -77,6 +77,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
 
     if (_currentPage < _totalPages - 1) {
+      HapticFeedback.lightImpact();
       _pageController.animateToPage(
         _currentPage + 1,
         duration: const Duration(milliseconds: 420),
@@ -87,6 +88,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void _prevPage() {
     if (_currentPage > 0) {
+      HapticFeedback.lightImpact();
       _pageController.animateToPage(
         _currentPage - 1,
         duration: const Duration(milliseconds: 420),
@@ -96,6 +98,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _completeOnboarding() async {
+    HapticFeedback.mediumImpact();
     // Final validation
     final nameValidation = Validators.validateName(_name);
 
@@ -562,7 +565,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _unitToggle(String label, bool isSelected, VoidCallback onTap) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
@@ -644,6 +650,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 _weight = double.parse(_weight.toStringAsFixed(1));
               });
             },
+            onChangeEnd: (_) => HapticFeedback.selectionClick(),
           ),
         ),
       ],
@@ -710,6 +717,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 _height = double.parse(_height.toStringAsFixed(0));
               });
             },
+            onChangeEnd: (_) => HapticFeedback.selectionClick(),
           ),
         ),
       ],
@@ -764,7 +772,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             thumbColor: AppColors.primary,
             overlayColor: AppColors.primary.withAlpha(30),
           ),
-          child: Slider(value: value, min: min, max: max, onChanged: onChanged),
+          child: Slider(
+            value: value,
+            min: min,
+            max: max,
+            onChanged: onChanged,
+            onChangeEnd: (_) => HapticFeedback.selectionClick(),
+          ),
         ),
       ],
     );
@@ -1633,6 +1647,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 divisions: 30,
                 onChanged: (v) =>
                     setState(() => _waterGoalMl = (v / 100).round() * 100),
+                onChangeEnd: (_) => HapticFeedback.selectionClick(),
               ),
             ),
             const SizedBox(height: 20),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../models/user_profile.dart';
@@ -221,7 +222,10 @@ class ProfileScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
                 child: ElevatedButton.icon(
-                  onPressed: () => _showEditProfileDialog(context, provider),
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    _showEditProfileDialog(context, provider);
+                  },
                   icon: const Icon(Icons.edit_rounded, size: 18),
                   label: const Text('Edit Profile'),
                   style: ElevatedButton.styleFrom(
@@ -249,7 +253,10 @@ class ProfileScreen extends StatelessWidget {
                         Icons.water_drop_outlined,
                         'Water Goal',
                         '${provider.waterGoal.toInt()} ml/day',
-                        () => _showWaterGoalDialog(context, provider),
+                        () {
+                          HapticFeedback.lightImpact();
+                          _showWaterGoalDialog(context, provider);
+                        },
                       ),
                       _divider(),
                       _settingsTile(
@@ -258,26 +265,35 @@ class ProfileScreen extends StatelessWidget {
                         provider.waterRemindersEnabled
                             ? 'Every ${provider.waterReminderIntervalMinutes} min · On'
                             : 'Off',
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const WaterReminderScreen(),
-                          ),
-                        ),
+                        () {
+                          HapticFeedback.lightImpact();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const WaterReminderScreen(),
+                            ),
+                          );
+                        },
                       ),
                       _divider(),
                       _settingsTile(
                         Icons.info_outline_rounded,
                         'About LilyFit',
                         'Version 1.0.0',
-                        () => _showAboutDialog(context),
+                        () {
+                          HapticFeedback.lightImpact();
+                          _showAboutDialog(context);
+                        },
                       ),
                       _divider(),
                       _settingsTile(
                         Icons.logout_rounded,
                         'Logout',
                         'Sign out of your account',
-                        () => _handleLogout(context, provider),
+                        () {
+                          HapticFeedback.lightImpact();
+                          _handleLogout(context, provider);
+                        },
                         isDestructive: false,
                       ),
                       _divider(),
@@ -285,7 +301,10 @@ class ProfileScreen extends StatelessWidget {
                         Icons.restart_alt_rounded,
                         'Reset All Data',
                         'Start fresh',
-                        () => _showResetDialog(context, provider),
+                        () {
+                          HapticFeedback.lightImpact();
+                          _showResetDialog(context, provider);
+                        },
                         isDestructive: true,
                       ),
                     ],
@@ -569,6 +588,7 @@ class ProfileScreen extends StatelessWidget {
                             weightUnit: profile.weightUnit,
                             heightUnit: profile.heightUnit,
                           );
+                          HapticFeedback.mediumImpact();
                           provider.updateProfile(updated);
                           Navigator.pop(ctx);
                         },
@@ -630,7 +650,10 @@ class ProfileScreen extends StatelessWidget {
     final selected = current == value;
     return Expanded(
       child: GestureDetector(
-        onTap: () => onChanged(value),
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onChanged(value);
+        },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
@@ -698,6 +721,7 @@ class ProfileScreen extends StatelessWidget {
             onPressed: () {
               final ml = double.tryParse(controller.text);
               if (ml != null && ml > 0) {
+                HapticFeedback.mediumImpact();
                 provider.setWaterGoal(ml);
                 Navigator.pop(ctx);
               }
@@ -777,6 +801,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () async {
+              HapticFeedback.mediumImpact();
               Navigator.pop(ctx); // Close dialog
 
               // Show loading
@@ -842,6 +867,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () async {
+              HapticFeedback.heavyImpact();
               await provider.resetAllData();
               if (!context.mounted) return;
               Navigator.pop(ctx);

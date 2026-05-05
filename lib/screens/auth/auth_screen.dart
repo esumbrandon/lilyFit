@@ -68,6 +68,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   }
 
   Future<void> _handleLogin() async {
+    HapticFeedback.mediumImpact();
     final emailError = Validators.validateEmail(_loginEmailController.text);
     final passwordError = Validators.validatePassword(
       _loginPasswordController.text,
@@ -124,6 +125,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   }
 
   Future<void> _handleSignup() async {
+    HapticFeedback.mediumImpact();
     final nameError = Validators.validateName(_signupNameController.text);
     final emailError = Validators.validateEmail(_signupEmailController.text);
     final passwordError = Validators.validatePassword(
@@ -193,6 +195,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   }
 
   Future<void> _handleForgotPassword() async {
+    HapticFeedback.lightImpact();
     final emailController = TextEditingController();
 
     final result = await showDialog<String?>(
@@ -634,6 +637,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                     size: 20,
                   ),
                   onPressed: () {
+                    HapticFeedback.selectionClick();
                     setState(
                       () => _loginPasswordVisible = !_loginPasswordVisible,
                     );
@@ -819,6 +823,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                     size: 20,
                   ),
                   onPressed: () {
+                    HapticFeedback.selectionClick();
                     setState(
                       () => _signupPasswordVisible = !_signupPasswordVisible,
                     );
@@ -860,6 +865,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                     size: 20,
                   ),
                   onPressed: () {
+                    HapticFeedback.selectionClick();
                     setState(
                       () => _signupConfirmPasswordVisible =
                           !_signupConfirmPasswordVisible,

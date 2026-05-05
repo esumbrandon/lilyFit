@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/app_provider.dart';
@@ -97,6 +98,7 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
   }
 
   Future<void> _save() async {
+    HapticFeedback.mediumImpact();
     setState(() => _saving = true);
 
     // Request permission when the user turns reminders on.
@@ -361,7 +363,10 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
         ),
         Switch(
           value: _enabled,
-          onChanged: (v) => setState(() => _enabled = v),
+          onChanged: (v) {
+            HapticFeedback.selectionClick();
+            setState(() => _enabled = v);
+          },
           activeThumbColor: AppColors.primary,
           activeTrackColor: AppColors.primary.withAlpha(100),
         ),
@@ -376,7 +381,10 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
       children: _intervalOptions.map((minutes) {
         final selected = _intervalMinutes == minutes;
         return GestureDetector(
-          onTap: () => setState(() => _intervalMinutes = minutes),
+          onTap: () {
+            HapticFeedback.selectionClick();
+            setState(() => _intervalMinutes = minutes);
+          },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -421,7 +429,10 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
 
   Widget _buildTimeTile(String label, TimeOfDay time, bool isStart) {
     return GestureDetector(
-      onTap: () => _pickTime(isStart),
+      onTap: () {
+        HapticFeedback.lightImpact();
+        _pickTime(isStart);
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
         decoration: BoxDecoration(

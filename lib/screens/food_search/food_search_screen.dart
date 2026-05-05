@@ -131,7 +131,12 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                     ),
                   )
                 : const Icon(Icons.refresh_rounded),
-            onPressed: _isRefreshing ? null : _refreshFoods,
+            onPressed: _isRefreshing
+                ? null
+                : () {
+                    HapticFeedback.lightImpact();
+                    _refreshFoods();
+                  },
             tooltip: 'Refresh food database',
           ),
         ],
@@ -161,6 +166,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                                 color: AppColors.textTertiary,
                               ),
                               onPressed: () {
+                                HapticFeedback.lightImpact();
                                 _searchController.clear();
                                 setState(() => _searchQuery = '');
                               },
@@ -446,7 +452,10 @@ class _FoodItemCardState extends State<_FoodItemCard>
               borderRadius: BorderRadius.circular(16),
               child: InkWell(
                 borderRadius: BorderRadius.circular(16),
-                onTap: widget.onTap,
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  widget.onTap();
+                },
                 onTapDown: (_) => setState(() => _pressed = true),
                 onTapUp: (_) => setState(() => _pressed = false),
                 onTapCancel: () => setState(() => _pressed = false),
@@ -697,6 +706,7 @@ class _FoodDetailSheetState extends State<_FoodDetailSheet> {
             max: 5.0,
             divisions: 9,
             onChanged: (v) => setState(() => _servings = v),
+            onChangeEnd: (_) => HapticFeedback.selectionClick(),
           ),
 
           // Meal type selector (if not pre-selected)
@@ -719,7 +729,10 @@ class _FoodDetailSheetState extends State<_FoodDetailSheet> {
                 final selected = _selectedMealType == type;
                 return Expanded(
                   child: GestureDetector(
-                    onTap: () => setState(() => _selectedMealType = type),
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      setState(() => _selectedMealType = type);
+                    },
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 3),
                       padding: const EdgeInsets.symmetric(vertical: 10),

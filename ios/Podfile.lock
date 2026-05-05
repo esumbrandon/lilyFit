@@ -1,5 +1,5 @@
 PODS:
-  - app_links (6.4.1):
+  - app_links (7.0.0):
     - Flutter
   - Flutter (1.0.0)
   - flutter_local_notifications (0.0.1):
@@ -56,10 +56,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
-  app_links: 3dbc685f76b1693c66a6d9dd1e9ab6f73d97dc0a
+  app_links: a754cbec3c255bd4bbb4d236ecc06f28cd9a7ce8
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   flutter_local_notifications: 395056b3175ba4f08480a7c5de30cd36d69827e4
-  flutter_timezone: ee50ce7786b5fde27e2fe5375bbc8c9661ffc13f
+  flutter_timezone: 7c838e17ffd4645d261e87037e5bebf6d38fe544
   geocoding_ios: 33776c9ebb98d037b5e025bb0e7537f6dd19646e
   geolocator_apple: ab36aa0e8b7d7a2d7639b3b4e48308394e8cef5e
   image_picker_ios: e0ece4aa2a75771a7de3fa735d26d90817041326
