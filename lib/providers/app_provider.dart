@@ -134,6 +134,11 @@ class AppProvider extends ChangeNotifier {
     _waterReminderEndHour = _prefs.getInt('waterReminderEndHour') ?? 22;
     _waterReminderEndMinute = _prefs.getInt('waterReminderEndMinute') ?? 0;
 
+    final savedLocale = _prefs.getString('locale');
+    if (savedLocale != null) {
+      _currentLocale = Locale(savedLocale);
+    }
+
     final weightJson = _prefs.getString('weightEntries');
     if (weightJson != null) {
       try {
@@ -323,6 +328,7 @@ class AppProvider extends ChangeNotifier {
   // ─── Locale Management ──────────────────────────────────────────
   void setLocale(Locale locale) {
     _currentLocale = locale;
+    _prefs.setString('locale', locale.languageCode);
     notifyListeners();
   }
 }

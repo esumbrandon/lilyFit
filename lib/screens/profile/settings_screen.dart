@@ -6,6 +6,7 @@ import '../../theme/app_theme.dart';
 import '../../providers/app_provider.dart';
 import '../../services/language_service.dart';
 import '../../services/notification_service.dart';
+import '../../l10n/app_localizations.dart';
 import 'water_reminder_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -14,6 +15,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -34,9 +36,9 @@ class SettingsScreen extends StatelessWidget {
                       ),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    const Text(
-                      'Settings',
-                      style: TextStyle(
+                    Text(
+                      l10n.settings,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
@@ -59,7 +61,7 @@ class SettingsScreen extends StatelessWidget {
                 subtitle: _currentLanguageName(provider),
                 onTap: () {
                   HapticFeedback.lightImpact();
-                  _showLanguagePicker(context, provider);
+                  _showLanguagePicker(context, provider, l10n);
                 },
               ),
               _divider(),
@@ -338,7 +340,11 @@ class SettingsScreen extends StatelessWidget {
 
   // ── Language Picker ───────────────────────────────────────────────
 
-  void _showLanguagePicker(BuildContext context, AppProvider provider) {
+  void _showLanguagePicker(
+    BuildContext context,
+    AppProvider provider,
+    AppLocalizations l10n,
+  ) {
     final languages = LanguageService.getAvailableLanguages();
     final currentCode = provider.currentLocale.languageCode;
 

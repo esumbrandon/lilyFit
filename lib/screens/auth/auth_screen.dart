@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import '../../theme/app_theme.dart';
 import '../../services/supabase_service.dart';
 import '../../utils/validators.dart';
+import '../../l10n/app_localizations.dart';
 import '../onboarding/onboarding_screen.dart';
 import '../home/home_screen.dart';
 
@@ -120,7 +121,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       if (!mounted) return;
       Navigator.of(context).pop(); // Close loading
 
-      _showErrorDialog('Login Failed', e.toString());
+      _showErrorDialog(AppLocalizations.of(context)!.loginFailed, e.toString());
     }
   }
 
@@ -190,7 +191,10 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       if (!mounted) return;
       Navigator.of(context).pop(); // Close loading
 
-      _showErrorDialog('Signup Failed', e.toString());
+      _showErrorDialog(
+        AppLocalizations.of(context)!.signUpFailed,
+        e.toString(),
+      );
     }
   }
 
@@ -460,6 +464,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     final taglineSize = isSmallScreen ? 13.0 : 15.0;
     final iconPadding = isSmallScreen ? 16.0 : 20.0;
     final spaceBetween = isSmallScreen ? 12.0 : 20.0;
+    final l10n = AppLocalizations.of(context)!;
 
     return AnimatedBuilder(
       animation: _floatingController,
@@ -498,7 +503,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 shaderCallback: (bounds) =>
                     AppColors.primaryGradient.createShader(bounds),
                 child: Text(
-                  'LilyFit',
+                  l10n.appName,
                   style: TextStyle(
                     fontSize: titleSize,
                     fontWeight: FontWeight.w800,
@@ -511,7 +516,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
 
               // Tagline
               Text(
-                'Smart calorie management',
+                l10n.tagline,
                 style: TextStyle(
                   fontSize: taglineSize,
                   color: Colors.white.withOpacity(0.7),
@@ -526,6 +531,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildGlassTabBar() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(4),
@@ -560,9 +566,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         unselectedLabelColor: Colors.white.withOpacity(0.5),
         labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
         padding: EdgeInsets.zero,
-        tabs: const [
-          Tab(text: 'Login', height: 44),
-          Tab(text: 'Sign Up', height: 44),
+        tabs: [
+          Tab(text: l10n.login, height: 44),
+          Tab(text: l10n.signUp, height: 44),
         ],
       ),
     );
@@ -571,6 +577,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   Widget _buildLoginForm(bool isSmallScreen) {
     final fieldSpacing = isSmallScreen ? 14.0 : 18.0;
     final formPadding = isSmallScreen ? 20.0 : 24.0;
+    final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -598,8 +605,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                labelText: 'Email',
-                hintText: 'Enter your email',
+                labelText: l10n.email,
+                hintText: l10n.enterEmail,
                 prefixIcon: const Icon(Icons.email_outlined, size: 20),
                 errorText: _loginEmailError,
                 filled: true,
@@ -625,8 +632,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _handleLogin(),
               decoration: InputDecoration(
-                labelText: 'Password',
-                hintText: 'Enter your password',
+                labelText: l10n.password,
+                hintText: l10n.enterPassword,
                 prefixIcon: const Icon(Icons.lock_outline, size: 20),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -711,9 +718,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   ),
                   child: Container(
                     alignment: Alignment.center,
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
+                    child: Text(
+                      l10n.login,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -733,6 +740,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   Widget _buildSignupForm(bool isSmallScreen) {
     final fieldSpacing = isSmallScreen ? 14.0 : 16.0;
     final formPadding = isSmallScreen ? 20.0 : 24.0;
+    final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -759,8 +767,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               style: const TextStyle(color: Colors.white, fontSize: 15),
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                labelText: 'Full Name',
-                hintText: 'Enter your full name',
+                labelText: l10n.fullName,
+                hintText: l10n.enterFullName,
                 prefixIcon: const Icon(Icons.person_outline, size: 20),
                 errorText: _signupNameError,
                 filled: true,
@@ -785,8 +793,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                labelText: 'Email',
-                hintText: 'Enter your email',
+                labelText: l10n.email,
+                hintText: l10n.enterEmail,
                 prefixIcon: const Icon(Icons.email_outlined, size: 20),
                 errorText: _signupEmailError,
                 filled: true,
@@ -811,8 +819,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               obscureText: !_signupPasswordVisible,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                labelText: 'Password',
-                hintText: 'Min. 6 characters',
+                labelText: l10n.password,
+                hintText: l10n.createPasswordHint,
                 prefixIcon: const Icon(Icons.lock_outline, size: 20),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -853,8 +861,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _handleSignup(),
               decoration: InputDecoration(
-                labelText: 'Confirm Password',
-                hintText: 'Re-enter your password',
+                labelText: l10n.confirmPassword,
+                hintText: l10n.reenterPassword,
                 prefixIcon: const Icon(Icons.lock_outline, size: 20),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -915,9 +923,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   ),
                   child: Container(
                     alignment: Alignment.center,
-                    child: const Text(
-                      'Create Account',
-                      style: TextStyle(
+                    child: Text(
+                      l10n.createAccount,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,

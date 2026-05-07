@@ -6,6 +6,7 @@ import '../../models/food_item.dart';
 import '../../models/meal_log.dart';
 import '../../data/food_database.dart';
 import '../../providers/app_provider.dart';
+import '../../l10n/app_localizations.dart';
 
 class FoodSearchScreen extends StatefulWidget {
   final MealType? mealType;
@@ -115,8 +116,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       appBar: AppBar(
         title: Text(
           widget.mealType != null
-              ? 'Add to ${widget.mealType!.label}'
-              : 'Food Database',
+              ? '${AppLocalizations.of(context)!.addFood} — ${widget.mealType!.label}'
+              : AppLocalizations.of(context)!.searchFood,
         ),
         automaticallyImplyLeading: false,
         actions: [
@@ -154,7 +155,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                     controller: _searchController,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      hintText: 'Search foods...',
+                      hintText: AppLocalizations.of(context)!.searchHint,
                       prefixIcon: const Icon(
                         Icons.search_rounded,
                         color: AppColors.textTertiary,

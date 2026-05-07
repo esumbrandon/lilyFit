@@ -6,6 +6,7 @@ import '../../models/user_profile.dart';
 import '../../providers/app_provider.dart';
 import '../../services/supabase_service.dart';
 import '../../utils/unit_converter.dart';
+import '../../l10n/app_localizations.dart';
 import '../auth/auth_screen.dart';
 import '../onboarding/onboarding_screen.dart';
 import 'settings_screen.dart';
@@ -17,18 +18,19 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
     final profile = provider.userProfile;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
             // Header
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
                 child: Text(
-                  'Profile',
-                  style: TextStyle(
+                  l10n.profile,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
@@ -75,7 +77,9 @@ class ProfileScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              profile.name.isNotEmpty ? profile.name : 'User',
+                              profile.name.isNotEmpty
+                                  ? profile.name
+                                  : l10n.user,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 22,
@@ -227,7 +231,7 @@ class ProfileScreen extends StatelessWidget {
                     _showEditProfileDialog(context, provider);
                   },
                   icon: const Icon(Icons.edit_rounded, size: 18),
-                  label: const Text('Edit Profile'),
+                  label: Text(l10n.editProfile),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -251,7 +255,7 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       _settingsTile(
                         Icons.settings_rounded,
-                        'Settings',
+                        l10n.settings,
                         'Language, notifications, privacy & more',
                         () {
                           HapticFeedback.lightImpact();
@@ -266,7 +270,7 @@ class ProfileScreen extends StatelessWidget {
                       _divider(),
                       _settingsTile(
                         Icons.water_drop_outlined,
-                        'Water Goal',
+                        l10n.waterGoal,
                         '${provider.waterGoal.toInt()} ml/day',
                         () {
                           HapticFeedback.lightImpact();
@@ -286,7 +290,7 @@ class ProfileScreen extends StatelessWidget {
                       _divider(),
                       _settingsTile(
                         Icons.logout_rounded,
-                        'Logout',
+                        l10n.logout,
                         'Sign out of your account',
                         () {
                           HapticFeedback.lightImpact();
@@ -297,7 +301,7 @@ class ProfileScreen extends StatelessWidget {
                       _divider(),
                       _settingsTile(
                         Icons.restart_alt_rounded,
-                        'Reset All Data',
+                        l10n.resetData,
                         'Start fresh',
                         () {
                           HapticFeedback.lightImpact();

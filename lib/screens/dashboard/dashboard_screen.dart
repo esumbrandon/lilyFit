@@ -8,6 +8,7 @@ import '../../widgets/calorie_ring_painter.dart';
 import '../../widgets/macro_progress_bar.dart';
 import '../../widgets/meal_section_card.dart';
 import '../../widgets/water_tracker_card.dart';
+import '../../l10n/app_localizations.dart';
 import '../food_search/food_search_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -79,6 +80,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     final provider = context.watch<AppProvider>();
     final profile = provider.userProfile;
     final now = DateTime.now();
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: SafeArea(
@@ -131,7 +133,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       const SizedBox(height: 22),
                       // Greeting label
                       Text(
-                        _greetingLabel(now),
+                        _greetingLabel(now, l10n),
                         style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 14,
@@ -146,7 +148,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                             AppColors.primaryGradient.createShader(bounds),
                         blendMode: BlendMode.srcIn,
                         child: Text(
-                          profile.name.isNotEmpty ? profile.name : 'User',
+                          profile.name.isNotEmpty ? profile.name : l10n.user,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 32,
@@ -189,7 +191,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                     children: [
                       Expanded(
                         child: MacroProgressBar(
-                          label: 'PROTEIN',
+                          label: l10n.protein.toUpperCase(),
                           current: provider.consumedProtein,
                           target: profile.targetProtein,
                           color: AppColors.protein,
@@ -198,7 +200,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       const SizedBox(width: 10),
                       Expanded(
                         child: MacroProgressBar(
-                          label: 'CARBS',
+                          label: l10n.carbs.toUpperCase(),
                           current: provider.consumedCarbs,
                           target: profile.targetCarbs,
                           color: AppColors.carbs,
@@ -207,7 +209,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       const SizedBox(width: 10),
                       Expanded(
                         child: MacroProgressBar(
-                          label: 'FAT',
+                          label: l10n.fat.toUpperCase(),
                           current: provider.consumedFat,
                           target: profile.targetFat,
                           color: AppColors.fat,
@@ -223,11 +225,11 @@ class _DashboardScreenState extends State<DashboardScreen>
             SliverToBoxAdapter(
               child: _buildAnimatedSection(
                 3,
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(24, 28, 24, 12),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 28, 24, 12),
                   child: Text(
-                    'Today\'s Meals',
-                    style: TextStyle(
+                    l10n.todaysMeals,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -269,11 +271,11 @@ class _DashboardScreenState extends State<DashboardScreen>
             SliverToBoxAdapter(
               child: _buildAnimatedSection(
                 4,
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(24, 16, 24, 12),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
                   child: Text(
-                    'Hydration',
-                    style: TextStyle(
+                    l10n.hydration,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -305,11 +307,11 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  String _greetingLabel(DateTime now) {
+  String _greetingLabel(DateTime now, AppLocalizations l10n) {
     final hour = now.hour;
-    if (hour < 12) return 'Good morning,';
-    if (hour < 17) return 'Good afternoon,';
-    return 'Good evening,';
+    if (hour < 12) return '${l10n.goodMorning},';
+    if (hour < 17) return '${l10n.goodAfternoon},';
+    return '${l10n.goodEvening},';
   }
 
   void _navigateToFoodSearch(BuildContext context, MealType mealType) {

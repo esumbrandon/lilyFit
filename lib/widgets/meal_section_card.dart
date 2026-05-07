@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
 import '../models/meal_log.dart';
+import '../l10n/app_localizations.dart';
 
 class MealSectionCard extends StatelessWidget {
   final MealType mealType;
@@ -20,6 +21,13 @@ class MealSectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final totalCalories = meals.fold(0.0, (sum, m) => sum + m.totalCalories);
+    final l10n = AppLocalizations.of(context)!;
+    final mealLabel = switch (mealType) {
+      MealType.breakfast => l10n.breakfast,
+      MealType.lunch => l10n.lunch,
+      MealType.dinner => l10n.dinner,
+      MealType.snack => l10n.snacks,
+    };
 
     return Container(
       decoration: BoxDecoration(
@@ -41,7 +49,7 @@ class MealSectionCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        mealType.label,
+                        mealLabel,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -101,7 +109,7 @@ class MealSectionCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
               child: Text(
-                'Tap + to add food',
+                l10n.addFood,
                 style: TextStyle(
                   color: AppColors.textTertiary.withAlpha(120),
                   fontSize: 13,

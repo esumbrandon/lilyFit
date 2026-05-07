@@ -7,6 +7,7 @@ import '../../theme/app_theme.dart';
 import '../../providers/app_provider.dart';
 import '../../models/meal_log.dart';
 import '../../utils/unit_converter.dart';
+import '../../l10n/app_localizations.dart';
 
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
@@ -29,18 +30,19 @@ class _ProgressScreenState extends State<ProgressScreen> {
     final provider = context.watch<AppProvider>();
     final weightEntries = provider.weightEntries;
     final weeklyCalories = provider.weeklyCalories;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
             // Header
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
                 child: Text(
-                  'Progress',
-                  style: TextStyle(
+                  l10n.progress,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
