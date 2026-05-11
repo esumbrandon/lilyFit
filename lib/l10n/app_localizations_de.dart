@@ -467,4 +467,25 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get addTo => 'Add to';
+
+  @override
+  String get forgotPassword => 'Forgot Password?';
+
+  @override
+  String get resetPassword => 'Reset Password';
+
+  @override
+  String get sendResetLink => 'Send Reset Link';
+
+  @override
+  String get invalidEmail => 'Invalid Email';
+
+  @override
+  String get verifyEmail => 'Verify Your Email';
+
+  @override
+  String get resetLinkSent => 'Reset Link Sent';
+
+  @override
+  String get resetFailed => 'Reset Failed';
 }

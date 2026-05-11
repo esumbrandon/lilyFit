@@ -176,7 +176,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       // Check if email confirmation is required
       if (response.session == null) {
         _showInfoDialog(
-          'Verify Your Email',
+          AppLocalizations.of(context)!.verifyEmail,
           'We sent a verification email to ${_signupEmailController.text.trim()}. Please check your inbox and click the verification link to complete your registration.',
         );
         return;
@@ -203,9 +203,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.card,
-        title: const Text(
-          'Reset Password',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          AppLocalizations.of(context)!.resetPassword,
+          style: const TextStyle(color: Colors.white),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -222,8 +222,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               keyboardType: TextInputType.emailAddress,
               autofocus: true,
               decoration: InputDecoration(
-                labelText: 'Email',
-                hintText: 'Enter your email',
+                labelText: AppLocalizations.of(context)!.email,
+                hintText: AppLocalizations.of(context)!.enterEmail,
                 prefixIcon: const Icon(Icons.email_outlined),
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.05),
@@ -234,16 +234,16 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: AppColors.textSecondary),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: const TextStyle(color: AppColors.textSecondary),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, emailController.text),
-            child: const Text(
-              'Send Reset Link',
-              style: TextStyle(color: AppColors.primary),
+            child: Text(
+              AppLocalizations.of(context)!.sendResetLink,
+              style: const TextStyle(color: AppColors.primary),
             ),
           ),
         ],
@@ -255,7 +255,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     // Validate email
     final emailError = Validators.validateEmail(result);
     if (emailError != null) {
-      _showErrorDialog('Invalid Email', emailError);
+      _showErrorDialog(AppLocalizations.of(context)!.invalidEmail, emailError);
       return;
     }
 
@@ -275,14 +275,14 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       Navigator.of(context).pop(); // Close loading
 
       _showInfoDialog(
-        'Reset Link Sent',
+        AppLocalizations.of(context)!.resetLinkSent,
         'We\'ve sent a password reset link to $result. Please check your email and follow the instructions.',
       );
     } catch (e) {
       if (!mounted) return;
       Navigator.of(context).pop(); // Close loading
 
-      _showErrorDialog('Reset Failed', e.toString());
+      _showErrorDialog(AppLocalizations.of(context)!.resetFailed, e.toString());
     }
   }
 
@@ -299,7 +299,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK', style: TextStyle(color: AppColors.primary)),
+            child: Text(AppLocalizations.of(context)!.ok, style: const TextStyle(color: AppColors.primary)),
           ),
         ],
       ),
@@ -673,9 +673,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: const Text(
-                  'Forgot Password?',
-                  style: TextStyle(
+                child: Text(
+                  AppLocalizations.of(context)!.forgotPassword,
+                  style: const TextStyle(
                     color: AppColors.primary,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -712,9 +712,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   ),
                   child: Container(
                     alignment: Alignment.center,
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context)!.login,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,

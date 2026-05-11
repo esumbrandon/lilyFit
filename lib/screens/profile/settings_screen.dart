@@ -655,9 +655,9 @@ class _NotificationSettingsScreen extends StatelessWidget {
                       ),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    const Text(
-                      'Notifications',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.notifications,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 26,
                         fontWeight: FontWeight.w700,

@@ -713,11 +713,11 @@ class _FoodDetailSheetState extends State<_FoodDetailSheet> {
           // Meal type selector (if not pre-selected)
           if (widget.mealType == null) ...[
             const SizedBox(height: 8),
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Add to',
-                style: TextStyle(
+                AppLocalizations.of(context)!.addTo,
+                style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,

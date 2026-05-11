@@ -164,5 +164,12 @@
   "searchHint": "Search foods...",
   "add": "Add",
   "weightHistory": "Weight History",
-  "addTo": "Add to"
+  "addTo": "Add to",
+  "forgotPassword": "Forgot Password?",
+  "resetPassword": "Reset Password",
+  "sendResetLink": "Send Reset Link",
+  "invalidEmail": "Invalid Email",
+  "verifyEmail": "Verify Your Email",
+  "resetLinkSent": "Reset Link Sent",
+  "resetFailed": "Reset Failed"
 }
