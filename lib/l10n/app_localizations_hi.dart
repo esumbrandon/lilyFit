@@ -238,7 +238,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get searchFood => 'भोजन खोजें';
 
   @override
-  String get searchHint => 'खाद्य पदार्थ खोजें...';
+  String get searchHint => 'Search foods...';
 
   @override
   String get recentFoods => 'हाल के खाद्य पदार्थ';
@@ -256,7 +256,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get servingSize => 'सर्विंग साइज';
 
   @override
-  String get add => 'जोड़ें';
+  String get add => 'Add';
 
   @override
   String get cancel => 'रद्द करें';
@@ -362,4 +362,108 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get user => 'उपयोगकर्ता';
+
+  @override
+  String get bodyInformation => 'शारीरिक जानकारी';
+
+  @override
+  String get dailyTargets => 'दैनिक लक्ष्य';
+
+  @override
+  String get bmi => 'बीएमआई';
+
+  @override
+  String get language => 'भाषा';
+
+  @override
+  String get notifications => 'सूचनाएं';
+
+  @override
+  String get chooseLanguage => 'भाषा चुनें';
+
+  @override
+  String get applyLanguage => 'भाषा लागू करें';
+
+  @override
+  String get preferences => 'प्राथमिकताएं';
+
+  @override
+  String get membership => 'सदस्यता';
+
+  @override
+  String get support => 'समर्थन';
+
+  @override
+  String get helpAndSupport => 'सहायता और समर्थन';
+
+  @override
+  String get privacyAndSecurity => 'गोपनीयता और सुरक्षा';
+
+  @override
+  String get foodDatabase => 'खाद्य डेटाबेस';
+
+  @override
+  String get noFoodsFound => 'कोई खाद्य पदार्थ नहीं मिला';
+
+  @override
+  String get waterIntake => 'पानी का सेवन';
+
+  @override
+  String get addGlass => 'गिलास जोड़ें';
+
+  @override
+  String get removeGlass => 'हटाएं';
+
+  @override
+  String get tapToAddFood => 'जोड़ने के लिए + दबाएं';
+
+  @override
+  String dayStreak(int count) {
+    return '$count दिन की लकीर';
+  }
+
+  @override
+  String get streak => 'लकीर';
+
+  @override
+  String get current => 'वर्तमान';
+
+  @override
+  String get servings => 'सर्विंग';
+
+  @override
+  String get addToLog => 'लॉग में जोड़ें';
+
+  @override
+  String get selectMealType => 'भोजन प्रकार चुनें';
+
+  @override
+  String get waterRemindersActive => 'Water reminders active';
+
+  @override
+  String get configureReminders => 'Configure reminders';
+
+  @override
+  String get logWeight => 'Log Today\'s Weight';
+
+  @override
+  String get weeklyCalories => 'Weekly Calories';
+
+  @override
+  String get weeklySummary => 'Weekly Summary';
+
+  @override
+  String get avgDailyCalories => 'Average Daily Calories';
+
+  @override
+  String get totalMealsLogged => 'Total Meals Logged';
+
+  @override
+  String get weightChange => 'Weight Change';
+
+  @override
+  String get weightHistory => 'Weight History';
+
+  @override
+  String get addTo => 'Add to';
 }

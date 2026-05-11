@@ -237,7 +237,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get searchFood => '食事を検索';
 
   @override
-  String get searchHint => '食品を検索...';
+  String get searchHint => 'Search foods...';
 
   @override
   String get recentFoods => '最近の食品';
@@ -255,7 +255,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get servingSize => '1食分のサイズ';
 
   @override
-  String get add => '追加';
+  String get add => 'Add';
 
   @override
   String get cancel => 'キャンセル';
@@ -361,4 +361,108 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get user => 'ユーザー';
+
+  @override
+  String get bodyInformation => '体の情報';
+
+  @override
+  String get dailyTargets => '毎日の目標';
+
+  @override
+  String get bmi => 'BMI';
+
+  @override
+  String get language => '言語';
+
+  @override
+  String get notifications => '通知';
+
+  @override
+  String get chooseLanguage => '言語を選択';
+
+  @override
+  String get applyLanguage => '言語を適用';
+
+  @override
+  String get preferences => '環境設定';
+
+  @override
+  String get membership => 'メンバーシップ';
+
+  @override
+  String get support => 'サポート';
+
+  @override
+  String get helpAndSupport => 'ヘルプとサポート';
+
+  @override
+  String get privacyAndSecurity => 'プライバシーとセキュリティ';
+
+  @override
+  String get foodDatabase => '食品データベース';
+
+  @override
+  String get noFoodsFound => '食品が見つかりません';
+
+  @override
+  String get waterIntake => '水分摂取量';
+
+  @override
+  String get addGlass => 'グラスを追加';
+
+  @override
+  String get removeGlass => '削除';
+
+  @override
+  String get tapToAddFood => '＋をタップして追加';
+
+  @override
+  String dayStreak(int count) {
+    return '$count日連続';
+  }
+
+  @override
+  String get streak => '連続';
+
+  @override
+  String get current => '現在';
+
+  @override
+  String get servings => 'サービング数';
+
+  @override
+  String get addToLog => 'ログに追加';
+
+  @override
+  String get selectMealType => '食事の種類を選択';
+
+  @override
+  String get waterRemindersActive => 'Water reminders active';
+
+  @override
+  String get configureReminders => 'Configure reminders';
+
+  @override
+  String get logWeight => 'Log Today\'s Weight';
+
+  @override
+  String get weeklyCalories => 'Weekly Calories';
+
+  @override
+  String get weeklySummary => 'Weekly Summary';
+
+  @override
+  String get avgDailyCalories => 'Average Daily Calories';
+
+  @override
+  String get totalMealsLogged => 'Total Meals Logged';
+
+  @override
+  String get weightChange => 'Weight Change';
+
+  @override
+  String get weightHistory => 'Weight History';
+
+  @override
+  String get addTo => 'Add to';
 }

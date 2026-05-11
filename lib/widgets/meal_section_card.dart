@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../models/meal_log.dart';
 
@@ -101,7 +102,7 @@ class MealSectionCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
               child: Text(
-                'Tap + to add food',
+                AppLocalizations.of(context)!.tapToAddFood,
                 style: TextStyle(
                   color: AppColors.textTertiary.withAlpha(120),
                   fontSize: 13,

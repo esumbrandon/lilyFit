@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../food_search/food_search_screen.dart';
@@ -58,29 +59,19 @@ class _HomeScreenState extends State<HomeScreen>
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _navItem(
-                  0,
-                  Icons.dashboard_rounded,
-                  Icons.dashboard_outlined,
-                  'Home',
-                ),
-                _navItem(1, Icons.search_rounded, Icons.search_rounded, 'Food'),
-                _navItem(
-                  2,
-                  Icons.insights_rounded,
-                  Icons.insights_outlined,
-                  'Progress',
-                ),
-                _navItem(
-                  3,
-                  Icons.person_rounded,
-                  Icons.person_outline_rounded,
-                  'Profile',
-                ),
-              ],
+            child: Builder(
+              builder: (context) {
+                final l10n = AppLocalizations.of(context)!;
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _navItem(0, Icons.dashboard_rounded, Icons.dashboard_outlined, l10n.home),
+                    _navItem(1, Icons.search_rounded, Icons.search_rounded, l10n.food),
+                    _navItem(2, Icons.insights_rounded, Icons.insights_outlined, l10n.progress),
+                    _navItem(3, Icons.person_rounded, Icons.person_outline_rounded, l10n.profile),
+                  ],
+                );
+              },
             ),
           ),
         ),

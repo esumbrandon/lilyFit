@@ -107,6 +107,11 @@ class AppProvider extends ChangeNotifier {
   void _loadData() {
     _isOnboarded = _prefs.getBool('isOnboarded') ?? false;
 
+    final savedLang = _prefs.getString('selected_language');
+    if (savedLang != null) {
+      _currentLocale = Locale(savedLang);
+    }
+
     final profileJson = _prefs.getString('userProfile');
     if (profileJson != null) {
       _userProfile = UserProfile.decode(profileJson);
@@ -321,8 +326,9 @@ class AppProvider extends ChangeNotifier {
   }
 
   // ─── Locale Management ──────────────────────────────────────────
-  void setLocale(Locale locale) {
+  Future<void> setLocale(Locale locale) async {
     _currentLocale = locale;
+    await _prefs.setString('selected_language', locale.languageCode);
     notifyListeners();
   }
 }

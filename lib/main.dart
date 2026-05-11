@@ -110,13 +110,7 @@ class _AppInitializerState extends State<AppInitializer> {
         _isChecking = false;
       });
     } else {
-      // Not first launch - load saved language and proceed
-      final savedLanguage = await LanguageService.getSavedLanguage();
-      if (savedLanguage != null && mounted) {
-        final provider = context.read<AppProvider>();
-        provider.setLocale(Locale(savedLanguage));
-      }
-
+      // Not first launch - locale is already loaded by AppProvider.initialize()
       setState(() {
         _showLanguageSelection = false;
         _isChecking = false;

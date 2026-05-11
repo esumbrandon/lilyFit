@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/app_provider.dart';
 import '../../models/meal_log.dart';
@@ -35,12 +36,12 @@ class _ProgressScreenState extends State<ProgressScreen> {
         child: CustomScrollView(
           slivers: [
             // Header
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
                 child: Text(
-                  'Progress',
-                  style: TextStyle(
+                  AppLocalizations.of(context)!.progress,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
@@ -56,7 +57,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 child: Row(
                   children: [
                     _statCard(
-                      'Current',
+                      AppLocalizations.of(context)!.current,
                       weightEntries.isNotEmpty
                           ? UnitConverter.formatWeight(
                               weightEntries.last.weight,
@@ -68,14 +69,14 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     ),
                     const SizedBox(width: 10),
                     _statCard(
-                      'BMI',
+                      AppLocalizations.of(context)!.bmi,
                       provider.userProfile.bmi.toStringAsFixed(1),
                       Icons.speed_rounded,
                       AppColors.secondary,
                     ),
                     const SizedBox(width: 10),
                     _statCard(
-                      'Streak',
+                      AppLocalizations.of(context)!.streak,
                       '${provider.currentStreak} days',
                       Icons.local_fire_department_rounded,
                       AppColors.carbs,
@@ -98,17 +99,17 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Row(
+                      Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.show_chart_rounded,
                             color: AppColors.primary,
                             size: 20,
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Text(
-                            'Weight History',
-                            style: TextStyle(
+                            AppLocalizations.of(context)!.weightHistory,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -153,7 +154,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     _showLogWeightDialog(context);
                   },
                   icon: const Icon(Icons.add_rounded, size: 20),
-                  label: const Text('Log Today\'s Weight'),
+                  label: Text(AppLocalizations.of(context)!.logWeight),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -177,17 +178,17 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Row(
+                      Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.bar_chart_rounded,
                             color: AppColors.secondary,
                             size: 20,
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Text(
-                            'Weekly Calories',
-                            style: TextStyle(
+                            AppLocalizations.of(context)!.weeklyCalories,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -222,9 +223,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Weekly Summary',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.weeklySummary,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -232,19 +233,19 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       ),
                       const SizedBox(height: 16),
                       _summaryRow(
-                        'Average Daily Calories',
+                        AppLocalizations.of(context)!.avgDailyCalories,
                         '${_weeklyAverage(weeklyCalories).toInt()} kcal',
                         AppColors.primary,
                       ),
                       const Divider(color: AppColors.cardLight, height: 24),
                       _summaryRow(
-                        'Total Meals Logged',
+                        AppLocalizations.of(context)!.totalMealsLogged,
                         '${provider.allMealLogs.length}',
                         AppColors.secondary,
                       ),
                       const Divider(color: AppColors.cardLight, height: 24),
                       _summaryRow(
-                        'Weight Change',
+                        AppLocalizations.of(context)!.weightChange,
                         _weightChange(
                           weightEntries,
                           provider.userProfile.weightUnit,

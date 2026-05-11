@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/app_provider.dart';
 import '../../services/language_service.dart';
@@ -34,8 +35,8 @@ class SettingsScreen extends StatelessWidget {
                       ),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    const Text(
-                      'Settings',
+                    Text(
+                      AppLocalizations.of(context)!.settings,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 26,
@@ -50,12 +51,12 @@ class SettingsScreen extends StatelessWidget {
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
             // ── Preferences section ───────────────────────────────────
-            _sectionHeader('Preferences'),
+            _sectionHeader(context, AppLocalizations.of(context)!.preferences),
             _sectionCard([
               _settingsTile(
                 icon: Icons.language_rounded,
                 iconColor: AppColors.primary,
-                title: 'Language',
+                title: AppLocalizations.of(context)!.language,
                 subtitle: _currentLanguageName(provider),
                 onTap: () {
                   HapticFeedback.lightImpact();
@@ -66,10 +67,10 @@ class SettingsScreen extends StatelessWidget {
               _settingsTile(
                 icon: Icons.notifications_rounded,
                 iconColor: const Color(0xFFFBBF24),
-                title: 'Notifications',
+                title: AppLocalizations.of(context)!.notifications,
                 subtitle: provider.waterRemindersEnabled
-                    ? 'Water reminders active'
-                    : 'Configure reminders',
+                    ? AppLocalizations.of(context)!.waterRemindersActive
+                    : AppLocalizations.of(context)!.configureReminders,
                 onTap: () {
                   HapticFeedback.lightImpact();
                   Navigator.push(
@@ -98,18 +99,18 @@ class SettingsScreen extends StatelessWidget {
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
             // ── Subscription section ──────────────────────────────────
-            _sectionHeader('Membership'),
+            _sectionHeader(context, AppLocalizations.of(context)!.membership),
             _sectionCard([_premiumTile(context)]),
 
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
             // ── Support section ───────────────────────────────────────
-            _sectionHeader('Support'),
+            _sectionHeader(context, AppLocalizations.of(context)!.support),
             _sectionCard([
               _settingsTile(
                 icon: Icons.help_rounded,
                 iconColor: const Color(0xFF818CF8),
-                title: 'Help & Support',
+                title: AppLocalizations.of(context)!.helpAndSupport,
                 subtitle: 'FAQs, contact us',
                 onTap: () {
                   HapticFeedback.lightImpact();
@@ -125,7 +126,7 @@ class SettingsScreen extends StatelessWidget {
               _settingsTile(
                 icon: Icons.security_rounded,
                 iconColor: const Color(0xFF06D6A0),
-                title: 'Privacy & Security',
+                title: AppLocalizations.of(context)!.privacyAndSecurity,
                 subtitle: 'Data, permissions, privacy policy',
                 onTap: () {
                   HapticFeedback.lightImpact();
@@ -158,7 +159,7 @@ class SettingsScreen extends StatelessWidget {
     return '${match['flag']} ${match['name']}';
   }
 
-  SliverToBoxAdapter _sectionHeader(String title) {
+  SliverToBoxAdapter _sectionHeader(BuildContext context, String title) {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
@@ -378,8 +379,8 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
-                    'Choose Language',
+                  Text(
+                    AppLocalizations.of(ctx)!.chooseLanguage,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -441,8 +442,7 @@ class SettingsScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () async {
                         HapticFeedback.mediumImpact();
-                        await LanguageService.saveLanguage(selected);
-                        provider.setLocale(Locale(selected));
+                        await provider.setLocale(Locale(selected));
                         if (ctx.mounted) Navigator.pop(ctx);
                       },
                       style: ElevatedButton.styleFrom(
@@ -451,7 +451,7 @@ class SettingsScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      child: const Text('Apply Language'),
+                      child: Text(AppLocalizations.of(ctx)!.applyLanguage),
                     ),
                   ),
                 ],

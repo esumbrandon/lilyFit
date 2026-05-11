@@ -238,7 +238,7 @@ class AppLocalizationsSw extends AppLocalizations {
   String get searchFood => 'Tafuta chakula';
 
   @override
-  String get searchHint => 'Tafuta vyakula...';
+  String get searchHint => 'Search foods...';
 
   @override
   String get recentFoods => 'Vyakula vya hivi karibuni';
@@ -256,7 +256,7 @@ class AppLocalizationsSw extends AppLocalizations {
   String get servingSize => 'Ukubwa wa sehemu';
 
   @override
-  String get add => 'Ongeza';
+  String get add => 'Add';
 
   @override
   String get cancel => 'Ghairi';
@@ -362,4 +362,108 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get user => 'Mtumiaji';
+
+  @override
+  String get bodyInformation => 'Taarifa za mwili';
+
+  @override
+  String get dailyTargets => 'Malengo ya kila siku';
+
+  @override
+  String get bmi => 'BMI';
+
+  @override
+  String get language => 'Lugha';
+
+  @override
+  String get notifications => 'Arifa';
+
+  @override
+  String get chooseLanguage => 'Chagua lugha';
+
+  @override
+  String get applyLanguage => 'Tumia lugha';
+
+  @override
+  String get preferences => 'Mipangilio';
+
+  @override
+  String get membership => 'Uanachama';
+
+  @override
+  String get support => 'Msaada';
+
+  @override
+  String get helpAndSupport => 'Msaada na usaidizi';
+
+  @override
+  String get privacyAndSecurity => 'Faragha na usalama';
+
+  @override
+  String get foodDatabase => 'Hifadhidata ya chakula';
+
+  @override
+  String get noFoodsFound => 'Hakuna chakula kilichopatikana';
+
+  @override
+  String get waterIntake => 'Unywaji wa maji';
+
+  @override
+  String get addGlass => 'Ongeza glasi';
+
+  @override
+  String get removeGlass => 'Ondoa';
+
+  @override
+  String get tapToAddFood => 'Gonga + kuongeza';
+
+  @override
+  String dayStreak(int count) {
+    return 'siku $count mfululizo';
+  }
+
+  @override
+  String get streak => 'Mfululizo';
+
+  @override
+  String get current => 'Sasa hivi';
+
+  @override
+  String get servings => 'Sehemu';
+
+  @override
+  String get addToLog => 'Ongeza kwenye kumbukumbu';
+
+  @override
+  String get selectMealType => 'Chagua aina ya mlo';
+
+  @override
+  String get waterRemindersActive => 'Water reminders active';
+
+  @override
+  String get configureReminders => 'Configure reminders';
+
+  @override
+  String get logWeight => 'Log Today\'s Weight';
+
+  @override
+  String get weeklyCalories => 'Weekly Calories';
+
+  @override
+  String get weeklySummary => 'Weekly Summary';
+
+  @override
+  String get avgDailyCalories => 'Average Daily Calories';
+
+  @override
+  String get totalMealsLogged => 'Total Meals Logged';
+
+  @override
+  String get weightChange => 'Weight Change';
+
+  @override
+  String get weightHistory => 'Weight History';
+
+  @override
+  String get addTo => 'Add to';
 }

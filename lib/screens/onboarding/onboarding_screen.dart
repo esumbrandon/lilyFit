@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../models/user_profile.dart';
 import '../../providers/app_provider.dart';
@@ -171,9 +172,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         context: context,
         builder: (context) => AlertDialog(
           backgroundColor: AppColors.card,
-          title: const Text(
-            'Sign Up Failed',
-            style: TextStyle(color: Colors.white),
+          title: Text(
+            AppLocalizations.of(context)!.signUpFailed,
+            style: const TextStyle(color: Colors.white),
           ),
           content: Text(
             e.toString().replaceAll('Exception: ', ''),
@@ -182,9 +183,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text(
-                'OK',
-                style: TextStyle(color: AppColors.primary),
+              child: Text(
+                AppLocalizations.of(context)!.ok,
+                style: const TextStyle(color: AppColors.primary),
               ),
             ),
           ],
@@ -287,7 +288,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       flex: 1,
                       child: OutlinedButton(
                         onPressed: _prevPage,
-                        child: const Text('Back'),
+                        child: Text(AppLocalizations.of(context)!.back),
                       ),
                     ),
                   if (_currentPage > 0) const SizedBox(width: 12),
@@ -299,8 +300,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           : _nextPage,
                       child: Text(
                         _currentPage == _totalPages - 1
-                            ? 'Start Tracking!'
-                            : 'Continue',
+                            ? AppLocalizations.of(context)!.startTracking
+                            : AppLocalizations.of(context)!.continueButton,
                       ),
                     ),
                   ),
@@ -323,9 +324,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 40),
-            const Text(
-              'About You',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.aboutYou,
+              style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
@@ -333,7 +334,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Let\'s personalize your calorie management plan',
+              AppLocalizations.of(context)!.personalizeMessage,
               style: TextStyle(
                 fontSize: 15,
                 color: Colors.white.withAlpha(150),
@@ -376,9 +377,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             const SizedBox(height: 32),
 
             // Gender
-            const Text(
-              'Gender',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.gender,
+              style: const TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -387,11 +388,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             const SizedBox(height: 12),
             Row(
               children: [
-                _genderCard('male', 'Male', Icons.male_rounded),
+                _genderCard('male', AppLocalizations.of(context)!.male, Icons.male_rounded),
                 const SizedBox(width: 12),
-                _genderCard('female', 'Female', Icons.female_rounded),
+                _genderCard('female', AppLocalizations.of(context)!.female, Icons.female_rounded),
                 const SizedBox(width: 12),
-                _genderCard('other', 'Other', Icons.person_rounded),
+                _genderCard('other', AppLocalizations.of(context)!.other, Icons.person_rounded),
               ],
             ),
             const SizedBox(height: 20),
@@ -451,9 +452,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 40),
-            const Text(
-              'Body Metrics',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.bodyMetrics,
+              style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
@@ -461,7 +462,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'We\'ll use this to calculate your targets',
+              AppLocalizations.of(context)!.enterMetricsMessage,
               style: TextStyle(
                 fontSize: 15,
                 color: Colors.white.withAlpha(150),
@@ -471,11 +472,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
             // Age
             _metricSlider(
-              label: 'Age',
+              label: AppLocalizations.of(context)!.age,
               value: _age.toDouble(),
               min: 14,
               max: 80,
-              unit: 'years',
+              unit: AppLocalizations.of(context)!.years,
               onChanged: (v) => setState(() => _age = v.round()),
             ),
             const SizedBox(height: 24),
@@ -484,9 +485,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Weight',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.weight,
+                  style: const TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -523,9 +524,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Height',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.height,
+                  style: const TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -792,50 +793,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 40),
-          const Text(
-            'Activity Level',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 8),
           Text(
-            'How active are you on a typical day?',
+              AppLocalizations.of(context)!.activityLevel,
+              style: const TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              AppLocalizations.of(context)!.activityMessage,
             style: TextStyle(fontSize: 15, color: Colors.white.withAlpha(150)),
           ),
           const SizedBox(height: 28),
-          _activityOption(
-            'sedentary',
-            'Sedentary',
-            'Little or no exercise',
-            '🪑',
-          ),
-          _activityOption(
-            'light',
-            'Lightly Active',
-            'Light exercise 1-3 days/week',
-            '🚶',
-          ),
-          _activityOption(
-            'moderate',
-            'Moderately Active',
-            'Moderate exercise 3-5 days/week',
-            '🏃',
-          ),
-          _activityOption(
-            'active',
-            'Very Active',
-            'Hard exercise 6-7 days/week',
-            '💪',
-          ),
-          _activityOption(
-            'veryActive',
-            'Extremely Active',
-            'Very hard exercise & physical job',
-            '🏋️',
-          ),
+          _activityOption('sedentary', AppLocalizations.of(context)!.sedentary, AppLocalizations.of(context)!.sedentaryDesc, '🪑'),
+          _activityOption('light', AppLocalizations.of(context)!.light, AppLocalizations.of(context)!.lightDesc, '🚶'),
+          _activityOption('moderate', AppLocalizations.of(context)!.moderate, AppLocalizations.of(context)!.moderateDesc, '🏃'),
+          _activityOption('active', AppLocalizations.of(context)!.active, AppLocalizations.of(context)!.activeDesc, '💪'),
+          _activityOption('veryActive', AppLocalizations.of(context)!.veryActive, AppLocalizations.of(context)!.veryActiveDesc, '🏋️'),
         ],
       ),
     );
@@ -912,41 +888,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 40),
-          const Text(
-            'Your Goal',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 8),
           Text(
-            'What would you like to achieve?',
+              AppLocalizations.of(context)!.goal,
+              style: const TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              AppLocalizations.of(context)!.goalMessage,
             style: TextStyle(fontSize: 15, color: Colors.white.withAlpha(150)),
           ),
           const SizedBox(height: 32),
-          _goalCard(
-            'fatLoss',
-            'Lose Weight',
-            'Calorie deficit to help you lose weight safely',
-            Icons.trending_down_rounded,
-            const Color(0xFFFF6B6B),
-          ),
-          _goalCard(
-            'maintenance',
-            'Maintain Weight',
-            'Stay at your current weight with balanced nutrition',
-            Icons.balance_rounded,
-            const Color(0xFF06D6A0),
-          ),
-          _goalCard(
-            'muscleGain',
-            'Gain Weight',
-            'Calorie surplus to help you gain weight healthily',
-            Icons.trending_up_rounded,
-            const Color(0xFF4F8EF7),
-          ),
+          _goalCard('fatLoss', AppLocalizations.of(context)!.loseWeight, AppLocalizations.of(context)!.loseWeightDesc, Icons.trending_down_rounded, const Color(0xFFFF6B6B)),
+          _goalCard('maintenance', AppLocalizations.of(context)!.maintainWeight, AppLocalizations.of(context)!.maintainWeightDesc, Icons.balance_rounded, const Color(0xFF06D6A0)),
+          _goalCard('muscleGain', AppLocalizations.of(context)!.gainWeight, AppLocalizations.of(context)!.gainWeightDesc, Icons.trending_up_rounded, const Color(0xFF4F8EF7)),
         ],
       ),
     );
@@ -1077,9 +1035,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             child: Column(
               children: [
-                const Text(
-                  'Daily Calorie Target',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.dailyCalorieTarget,
+                  style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -1111,21 +1069,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           // Macro targets
           Row(
             children: [
-              _macroResultCard(
-                'Protein',
-                profile.targetProtein,
-                'g',
-                AppColors.protein,
-              ),
+              _macroResultCard(AppLocalizations.of(context)!.protein, profile.targetProtein, 'g', AppColors.protein),
               const SizedBox(width: 10),
-              _macroResultCard(
-                'Carbs',
-                profile.targetCarbs,
-                'g',
-                AppColors.carbs,
-              ),
+              _macroResultCard(AppLocalizations.of(context)!.carbs, profile.targetCarbs, 'g', AppColors.carbs),
               const SizedBox(width: 10),
-              _macroResultCard('Fat', profile.targetFat, 'g', AppColors.fat),
+              _macroResultCard(AppLocalizations.of(context)!.fat, profile.targetFat, 'g', AppColors.fat),
             ],
           ),
           const SizedBox(height: 24),
@@ -1141,11 +1089,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _statItem('BMI', profile.bmi.toStringAsFixed(1)),
+                _statItem(AppLocalizations.of(context)!.bmi, profile.bmi.toStringAsFixed(1)),
                 Container(width: 1, height: 30, color: AppColors.cardLight),
                 _statItem('Status', profile.bmiCategory),
                 Container(width: 1, height: 30, color: AppColors.cardLight),
-                _statItem('Goal', _goalLabel),
+                _statItem(AppLocalizations.of(context)!.goal, _goalLabel(context)),
               ],
             ),
           ),
@@ -1220,10 +1168,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  String get _goalLabel => switch (_goal) {
-    'fatLoss' => 'Lose Weight',
-    'muscleGain' => 'Gain Weight',
-    _ => 'Maintain',
+  String _goalLabel(BuildContext context) => switch (_goal) {
+    'fatLoss' => AppLocalizations.of(context)!.loseWeight,
+    'muscleGain' => AppLocalizations.of(context)!.gainWeight,
+    _ => AppLocalizations.of(context)!.maintainWeight,
   };
 
   // ─── Page 0: Welcome ──────────────────────────────────────────

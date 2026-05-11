@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/supabase_service.dart';
 import '../../utils/validators.dart';
@@ -120,7 +121,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       if (!mounted) return;
       Navigator.of(context).pop(); // Close loading
 
-      _showErrorDialog('Login Failed', e.toString());
+      _showErrorDialog(AppLocalizations.of(context)!.loginFailed, e.toString());
     }
   }
 
@@ -133,7 +134,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     );
     final confirmPasswordError =
         _signupPasswordController.text != _signupConfirmPasswordController.text
-        ? 'Passwords do not match'
+        ? AppLocalizations.of(context)!.confirmPassword
         : null;
 
     setState(() {
@@ -190,7 +191,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       if (!mounted) return;
       Navigator.of(context).pop(); // Close loading
 
-      _showErrorDialog('Signup Failed', e.toString());
+      _showErrorDialog(AppLocalizations.of(context)!.signUpFailed, e.toString());
     }
   }
 
@@ -318,7 +319,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK', style: TextStyle(color: AppColors.primary)),
+            child: Text(AppLocalizations.of(context)!.ok, style: const TextStyle(color: AppColors.primary)),
           ),
         ],
       ),
@@ -498,7 +499,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 shaderCallback: (bounds) =>
                     AppColors.primaryGradient.createShader(bounds),
                 child: Text(
-                  'LilyFit',
+                  AppLocalizations.of(context)!.appName,
                   style: TextStyle(
                     fontSize: titleSize,
                     fontWeight: FontWeight.w800,
@@ -511,7 +512,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
 
               // Tagline
               Text(
-                'Smart calorie management',
+                AppLocalizations.of(context)!.tagline,
                 style: TextStyle(
                   fontSize: taglineSize,
                   color: Colors.white.withOpacity(0.7),
@@ -560,9 +561,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         unselectedLabelColor: Colors.white.withOpacity(0.5),
         labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
         padding: EdgeInsets.zero,
-        tabs: const [
-          Tab(text: 'Login', height: 44),
-          Tab(text: 'Sign Up', height: 44),
+        tabs: [
+          Tab(text: AppLocalizations.of(context)!.login, height: 44),
+          Tab(text: AppLocalizations.of(context)!.signUp, height: 44),
         ],
       ),
     );
@@ -598,8 +599,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                labelText: 'Email',
-                hintText: 'Enter your email',
+                labelText: AppLocalizations.of(context)!.email,
+                hintText: AppLocalizations.of(context)!.enterEmail,
                 prefixIcon: const Icon(Icons.email_outlined, size: 20),
                 errorText: _loginEmailError,
                 filled: true,
@@ -625,8 +626,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _handleLogin(),
               decoration: InputDecoration(
-                labelText: 'Password',
-                hintText: 'Enter your password',
+                labelText: AppLocalizations.of(context)!.password,
+                hintText: AppLocalizations.of(context)!.enterPassword,
                 prefixIcon: const Icon(Icons.lock_outline, size: 20),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -759,8 +760,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               style: const TextStyle(color: Colors.white, fontSize: 15),
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                labelText: 'Full Name',
-                hintText: 'Enter your full name',
+                labelText: AppLocalizations.of(context)!.fullName,
+                hintText: AppLocalizations.of(context)!.enterFullName,
                 prefixIcon: const Icon(Icons.person_outline, size: 20),
                 errorText: _signupNameError,
                 filled: true,
@@ -785,8 +786,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                labelText: 'Email',
-                hintText: 'Enter your email',
+                labelText: AppLocalizations.of(context)!.email,
+                hintText: AppLocalizations.of(context)!.enterEmail,
                 prefixIcon: const Icon(Icons.email_outlined, size: 20),
                 errorText: _signupEmailError,
                 filled: true,
@@ -811,8 +812,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               obscureText: !_signupPasswordVisible,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                labelText: 'Password',
-                hintText: 'Min. 6 characters',
+                labelText: AppLocalizations.of(context)!.password,
+                hintText: AppLocalizations.of(context)!.createPasswordHint,
                 prefixIcon: const Icon(Icons.lock_outline, size: 20),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -853,8 +854,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _handleSignup(),
               decoration: InputDecoration(
-                labelText: 'Confirm Password',
-                hintText: 'Re-enter your password',
+                labelText: AppLocalizations.of(context)!.confirmPassword,
+                hintText: AppLocalizations.of(context)!.reenterPassword,
                 prefixIcon: const Icon(Icons.lock_outline, size: 20),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -915,9 +916,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   ),
                   child: Container(
                     alignment: Alignment.center,
-                    child: const Text(
-                      'Create Account',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context)!.createAccount,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,

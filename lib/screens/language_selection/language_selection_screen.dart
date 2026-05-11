@@ -92,14 +92,12 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
       return;
     }
 
-    // Save language preference
-    await LanguageService.saveLanguage(_selectedLanguage!);
+    // Mark as no longer first launch, then update locale via provider (persists automatically)
     await LanguageService.setNotFirstLaunch();
 
     if (mounted) {
-      // Update app locale
       final provider = context.read<AppProvider>();
-      provider.setLocale(Locale(_selectedLanguage!));
+      await provider.setLocale(Locale(_selectedLanguage!));
 
       // Navigate to auth screen
       Navigator.of(context).pushReplacementNamed('/auth');

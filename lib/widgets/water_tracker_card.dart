@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 
 class WaterTrackerCard extends StatelessWidget {
@@ -34,10 +35,10 @@ class WaterTrackerCard extends StatelessWidget {
             children: [
               const Text('💧', style: TextStyle(fontSize: 24)),
               const SizedBox(width: 10),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Water Intake',
-                  style: TextStyle(
+                  AppLocalizations.of(context)!.waterIntake,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -128,7 +129,7 @@ class WaterTrackerCard extends StatelessWidget {
                     onRemove();
                   },
                   icon: const Icon(Icons.remove, size: 18),
-                  label: const Text('Remove'),
+                  label: Text(AppLocalizations.of(context)!.removeGlass),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.textSecondary,
                     side: BorderSide(color: Colors.white.withAlpha(20)),
@@ -147,7 +148,7 @@ class WaterTrackerCard extends StatelessWidget {
                     onAdd();
                   },
                   icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Add Glass'),
+                  label: Text(AppLocalizations.of(context)!.addGlass),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.secondary,
                     foregroundColor: Colors.white,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../models/meal_log.dart';
 import '../../providers/app_provider.dart';
@@ -116,7 +117,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  '${provider.currentStreak} day streak',
+                                  AppLocalizations.of(context)!.dayStreak(provider.currentStreak),
                                   style: const TextStyle(
                                     color: AppColors.carbs,
                                     fontSize: 12,
@@ -131,7 +132,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       const SizedBox(height: 22),
                       // Greeting label
                       Text(
-                        _greetingLabel(now),
+                        _greetingLabel(context, now),
                         style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 14,
@@ -146,7 +147,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                             AppColors.primaryGradient.createShader(bounds),
                         blendMode: BlendMode.srcIn,
                         child: Text(
-                          profile.name.isNotEmpty ? profile.name : 'User',
+                          profile.name.isNotEmpty ? profile.name : AppLocalizations.of(context)!.user,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 32,
@@ -189,7 +190,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                     children: [
                       Expanded(
                         child: MacroProgressBar(
-                          label: 'PROTEIN',
+                          label: AppLocalizations.of(context)!.protein.toUpperCase(),
                           current: provider.consumedProtein,
                           target: profile.targetProtein,
                           color: AppColors.protein,
@@ -198,7 +199,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       const SizedBox(width: 10),
                       Expanded(
                         child: MacroProgressBar(
-                          label: 'CARBS',
+                          label: AppLocalizations.of(context)!.carbs.toUpperCase(),
                           current: provider.consumedCarbs,
                           target: profile.targetCarbs,
                           color: AppColors.carbs,
@@ -207,7 +208,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       const SizedBox(width: 10),
                       Expanded(
                         child: MacroProgressBar(
-                          label: 'FAT',
+                          label: AppLocalizations.of(context)!.fat.toUpperCase(),
                           current: provider.consumedFat,
                           target: profile.targetFat,
                           color: AppColors.fat,
@@ -223,11 +224,11 @@ class _DashboardScreenState extends State<DashboardScreen>
             SliverToBoxAdapter(
               child: _buildAnimatedSection(
                 3,
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(24, 28, 24, 12),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 28, 24, 12),
                   child: Text(
-                    'Today\'s Meals',
-                    style: TextStyle(
+                    AppLocalizations.of(context)!.todaysMeals,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -269,11 +270,11 @@ class _DashboardScreenState extends State<DashboardScreen>
             SliverToBoxAdapter(
               child: _buildAnimatedSection(
                 4,
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(24, 16, 24, 12),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
                   child: Text(
-                    'Hydration',
-                    style: TextStyle(
+                    AppLocalizations.of(context)!.hydration,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -305,11 +306,12 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  String _greetingLabel(DateTime now) {
+  String _greetingLabel(BuildContext context, DateTime now) {
+    final l10n = AppLocalizations.of(context)!;
     final hour = now.hour;
-    if (hour < 12) return 'Good morning,';
-    if (hour < 17) return 'Good afternoon,';
-    return 'Good evening,';
+    if (hour < 12) return l10n.goodMorning;
+    if (hour < 17) return l10n.goodAfternoon;
+    return l10n.goodEvening;
   }
 
   void _navigateToFoodSearch(BuildContext context, MealType mealType) {

@@ -573,7 +573,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search for foods...'**
+  /// **'Search foods...'**
   String get searchHint;
 
   /// No description provided for @recentFoods.
@@ -821,6 +821,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'User'**
   String get user;
+
+  /// No description provided for @bodyInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Body Information'**
+  String get bodyInformation;
+
+  /// No description provided for @dailyTargets.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Targets'**
+  String get dailyTargets;
+
+  /// No description provided for @bmi.
+  ///
+  /// In en, this message translates to:
+  /// **'BMI'**
+  String get bmi;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @chooseLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Language'**
+  String get chooseLanguage;
+
+  /// No description provided for @applyLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Language'**
+  String get applyLanguage;
+
+  /// No description provided for @preferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get preferences;
+
+  /// No description provided for @membership.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership'**
+  String get membership;
+
+  /// No description provided for @support.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get support;
+
+  /// No description provided for @helpAndSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get helpAndSupport;
+
+  /// No description provided for @privacyAndSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & Security'**
+  String get privacyAndSecurity;
+
+  /// No description provided for @foodDatabase.
+  ///
+  /// In en, this message translates to:
+  /// **'Food Database'**
+  String get foodDatabase;
+
+  /// No description provided for @noFoodsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No foods found'**
+  String get noFoodsFound;
+
+  /// No description provided for @waterIntake.
+  ///
+  /// In en, this message translates to:
+  /// **'Water Intake'**
+  String get waterIntake;
+
+  /// No description provided for @addGlass.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Glass'**
+  String get addGlass;
+
+  /// No description provided for @removeGlass.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removeGlass;
+
+  /// No description provided for @tapToAddFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap + to add food'**
+  String get tapToAddFood;
+
+  /// No description provided for @dayStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} day streak'**
+  String dayStreak(int count);
+
+  /// No description provided for @streak.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak'**
+  String get streak;
+
+  /// No description provided for @current.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get current;
+
+  /// No description provided for @servings.
+  ///
+  /// In en, this message translates to:
+  /// **'Servings'**
+  String get servings;
+
+  /// No description provided for @addToLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Log'**
+  String get addToLog;
+
+  /// No description provided for @selectMealType.
+  ///
+  /// In en, this message translates to:
+  /// **'Select meal type'**
+  String get selectMealType;
+
+  /// No description provided for @waterRemindersActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Water reminders active'**
+  String get waterRemindersActive;
+
+  /// No description provided for @configureReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure reminders'**
+  String get configureReminders;
+
+  /// No description provided for @logWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Today\'s Weight'**
+  String get logWeight;
+
+  /// No description provided for @weeklyCalories.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Calories'**
+  String get weeklyCalories;
+
+  /// No description provided for @weeklySummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Summary'**
+  String get weeklySummary;
+
+  /// No description provided for @avgDailyCalories.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Daily Calories'**
+  String get avgDailyCalories;
+
+  /// No description provided for @totalMealsLogged.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Meals Logged'**
+  String get totalMealsLogged;
+
+  /// No description provided for @weightChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Change'**
+  String get weightChange;
+
+  /// No description provided for @weightHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight History'**
+  String get weightHistory;
+
+  /// No description provided for @addTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to'**
+  String get addTo;
 }
 
 class _AppLocalizationsDelegate

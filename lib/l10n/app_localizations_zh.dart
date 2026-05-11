@@ -237,7 +237,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get searchFood => '搜索食物';
 
   @override
-  String get searchHint => '搜索食物...';
+  String get searchHint => 'Search foods...';
 
   @override
   String get recentFoods => '最近的食物';
@@ -255,7 +255,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get servingSize => '份量';
 
   @override
-  String get add => '添加';
+  String get add => 'Add';
 
   @override
   String get cancel => '取消';
@@ -361,4 +361,108 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get user => '用户';
+
+  @override
+  String get bodyInformation => '身体信息';
+
+  @override
+  String get dailyTargets => '每日目标';
+
+  @override
+  String get bmi => '体重指数';
+
+  @override
+  String get language => '语言';
+
+  @override
+  String get notifications => '通知';
+
+  @override
+  String get chooseLanguage => '选择语言';
+
+  @override
+  String get applyLanguage => '应用语言';
+
+  @override
+  String get preferences => '偏好设置';
+
+  @override
+  String get membership => '会员资格';
+
+  @override
+  String get support => '支持';
+
+  @override
+  String get helpAndSupport => '帮助与支持';
+
+  @override
+  String get privacyAndSecurity => '隐私与安全';
+
+  @override
+  String get foodDatabase => '食物数据库';
+
+  @override
+  String get noFoodsFound => '未找到食物';
+
+  @override
+  String get waterIntake => '饮水量';
+
+  @override
+  String get addGlass => '加一杯';
+
+  @override
+  String get removeGlass => '减少';
+
+  @override
+  String get tapToAddFood => '点击+添加食物';
+
+  @override
+  String dayStreak(int count) {
+    return '$count 天连续';
+  }
+
+  @override
+  String get streak => '连续';
+
+  @override
+  String get current => '当前';
+
+  @override
+  String get servings => '份量';
+
+  @override
+  String get addToLog => '添加到日志';
+
+  @override
+  String get selectMealType => '选择餐型';
+
+  @override
+  String get waterRemindersActive => 'Water reminders active';
+
+  @override
+  String get configureReminders => 'Configure reminders';
+
+  @override
+  String get logWeight => 'Log Today\'s Weight';
+
+  @override
+  String get weeklyCalories => 'Weekly Calories';
+
+  @override
+  String get weeklySummary => 'Weekly Summary';
+
+  @override
+  String get avgDailyCalories => 'Average Daily Calories';
+
+  @override
+  String get totalMealsLogged => 'Total Meals Logged';
+
+  @override
+  String get weightChange => 'Weight Change';
+
+  @override
+  String get weightHistory => 'Weight History';
+
+  @override
+  String get addTo => 'Add to';
 }

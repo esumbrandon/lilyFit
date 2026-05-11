@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../models/user_profile.dart';
 import '../../providers/app_provider.dart';
@@ -23,12 +24,12 @@ class ProfileScreen extends StatelessWidget {
         child: CustomScrollView(
           slivers: [
             // Header
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
                 child: Text(
-                  'Profile',
-                  style: TextStyle(
+                  AppLocalizations.of(context)!.profile,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
@@ -75,7 +76,7 @@ class ProfileScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              profile.name.isNotEmpty ? profile.name : 'User',
+                              profile.name.isNotEmpty ? profile.name : AppLocalizations.of(context)!.user,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 22,
@@ -93,7 +94,7 @@ class ProfileScreen extends StatelessWidget {
                               ),
                             const SizedBox(height: 2),
                             Text(
-                              '${_goalLabel(profile.goal)} · ${_activityLabel(profile.activityLevel)}',
+                              '${_goalLabel(context, profile.goal)} · ${_activityLabel(context, profile.activityLevel)}',
                               style: TextStyle(
                                 color: Colors.white.withAlpha(200),
                                 fontSize: 13,
@@ -121,9 +122,9 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Body Information',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.bodyInformation,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -132,12 +133,12 @@ class ProfileScreen extends StatelessWidget {
                       const SizedBox(height: 16),
                       _infoRow(
                         Icons.cake_outlined,
-                        'Age',
-                        '${profile.age} years',
+                        AppLocalizations.of(context)!.age,
+                        '${profile.age} ${AppLocalizations.of(context)!.years}',
                       ),
                       _infoRow(
                         Icons.monitor_weight_outlined,
-                        'Weight',
+                        AppLocalizations.of(context)!.weight,
                         UnitConverter.formatWeight(
                           profile.weight,
                           profile.weightUnit,
@@ -145,7 +146,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       _infoRow(
                         Icons.height_rounded,
-                        'Height',
+                        AppLocalizations.of(context)!.height,
                         UnitConverter.formatHeight(
                           profile.height,
                           profile.heightUnit,
@@ -153,14 +154,14 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       _infoRow(
                         Icons.wc_rounded,
-                        'Gender',
+                        AppLocalizations.of(context)!.gender,
                         profile.gender == 'male'
-                            ? 'Male'
-                            : (profile.gender == 'female' ? 'Female' : 'Other'),
+                            ? AppLocalizations.of(context)!.male
+                            : (profile.gender == 'female' ? AppLocalizations.of(context)!.female : AppLocalizations.of(context)!.other),
                       ),
                       _infoRow(
                         Icons.speed_rounded,
-                        'BMI',
+                        AppLocalizations.of(context)!.bmi,
                         '${profile.bmi.toStringAsFixed(1)} (${profile.bmiCategory})',
                       ),
                     ],
@@ -182,9 +183,9 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Daily Targets',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.dailyTargets,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -192,22 +193,22 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       _targetRow(
-                        'Calories',
+                        AppLocalizations.of(context)!.calories,
                         '${profile.targetCalories.toInt()} kcal',
                         AppColors.primary,
                       ),
                       _targetRow(
-                        'Protein',
+                        AppLocalizations.of(context)!.protein,
                         '${profile.targetProtein.toInt()} g',
                         AppColors.protein,
                       ),
                       _targetRow(
-                        'Carbs',
+                        AppLocalizations.of(context)!.carbs,
                         '${profile.targetCarbs.toInt()} g',
                         AppColors.carbs,
                       ),
                       _targetRow(
-                        'Fat',
+                        AppLocalizations.of(context)!.fat,
                         '${profile.targetFat.toInt()} g',
                         AppColors.fat,
                       ),
@@ -227,7 +228,7 @@ class ProfileScreen extends StatelessWidget {
                     _showEditProfileDialog(context, provider);
                   },
                   icon: const Icon(Icons.edit_rounded, size: 18),
-                  label: const Text('Edit Profile'),
+                  label: Text(AppLocalizations.of(context)!.editProfile),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -251,7 +252,7 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       _settingsTile(
                         Icons.settings_rounded,
-                        'Settings',
+                        AppLocalizations.of(context)!.settings,
                         'Language, notifications, privacy & more',
                         () {
                           HapticFeedback.lightImpact();
@@ -266,7 +267,7 @@ class ProfileScreen extends StatelessWidget {
                       _divider(),
                       _settingsTile(
                         Icons.water_drop_outlined,
-                        'Water Goal',
+                        AppLocalizations.of(context)!.waterGoal,
                         '${provider.waterGoal.toInt()} ml/day',
                         () {
                           HapticFeedback.lightImpact();
@@ -276,7 +277,7 @@ class ProfileScreen extends StatelessWidget {
                       _divider(),
                       _settingsTile(
                         Icons.info_outline_rounded,
-                        'About LilyFit',
+                        AppLocalizations.of(context)!.about,
                         'Version 1.0.0',
                         () {
                           HapticFeedback.lightImpact();
@@ -286,7 +287,7 @@ class ProfileScreen extends StatelessWidget {
                       _divider(),
                       _settingsTile(
                         Icons.logout_rounded,
-                        'Logout',
+                        AppLocalizations.of(context)!.logout,
                         'Sign out of your account',
                         () {
                           HapticFeedback.lightImpact();
@@ -297,7 +298,7 @@ class ProfileScreen extends StatelessWidget {
                       _divider(),
                       _settingsTile(
                         Icons.restart_alt_rounded,
-                        'Reset All Data',
+                        AppLocalizations.of(context)!.resetData,
                         'Start fresh',
                         () {
                           HapticFeedback.lightImpact();
@@ -427,19 +428,19 @@ class ProfileScreen extends StatelessWidget {
     return const Divider(color: AppColors.cardLight, height: 1, indent: 56);
   }
 
-  String _goalLabel(String goal) => switch (goal) {
-    'fatLoss' => 'Lose Weight',
-    'muscleGain' => 'Gain Weight',
-    _ => 'Maintain Weight',
+  String _goalLabel(BuildContext context, String goal) => switch (goal) {
+    'fatLoss' => AppLocalizations.of(context)!.loseWeight,
+    'muscleGain' => AppLocalizations.of(context)!.gainWeight,
+    _ => AppLocalizations.of(context)!.maintainWeight,
   };
 
-  String _activityLabel(String level) => switch (level) {
-    'sedentary' => 'Sedentary',
-    'light' => 'Light Activity',
-    'moderate' => 'Moderate Activity',
-    'active' => 'Very Active',
-    'veryActive' => 'Extremely Active',
-    _ => 'Moderate',
+  String _activityLabel(BuildContext context, String level) => switch (level) {
+    'sedentary' => AppLocalizations.of(context)!.sedentary,
+    'light' => AppLocalizations.of(context)!.light,
+    'moderate' => AppLocalizations.of(context)!.moderate,
+    'active' => AppLocalizations.of(context)!.active,
+    'veryActive' => AppLocalizations.of(context)!.veryActive,
+    _ => AppLocalizations.of(context)!.moderate,
   };
 
   void _showEditProfileDialog(BuildContext context, AppProvider provider) {
@@ -484,9 +485,9 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
-                      'Edit Profile',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(ctx)!.editProfile,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
@@ -590,7 +591,7 @@ class ProfileScreen extends StatelessWidget {
                           provider.updateProfile(updated);
                           Navigator.pop(ctx);
                         },
-                        child: const Text('Save Changes'),
+                        child: Text(AppLocalizations.of(ctx)!.updateProfile),
                       ),
                     ),
                   ],

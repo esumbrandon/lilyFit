@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../models/food_item.dart';
 import '../../models/meal_log.dart';
@@ -115,8 +116,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       appBar: AppBar(
         title: Text(
           widget.mealType != null
-              ? 'Add to ${widget.mealType!.label}'
-              : 'Food Database',
+              ? '${AppLocalizations.of(context)!.addTo} ${widget.mealType!.label}'
+              : AppLocalizations.of(context)!.foodDatabase,
         ),
         automaticallyImplyLeading: false,
         actions: [
@@ -154,7 +155,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                     controller: _searchController,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      hintText: 'Search foods...',
+                      hintText: AppLocalizations.of(context)!.searchHint,
                       prefixIcon: const Icon(
                         Icons.search_rounded,
                         color: AppColors.textTertiary,
@@ -341,7 +342,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  'No foods found',
+                                  AppLocalizations.of(context)!.noFoodsFound,
                                   style: TextStyle(
                                     color: AppColors.textTertiary.withAlpha(
                                       150,
@@ -670,9 +671,9 @@ class _FoodDetailSheetState extends State<_FoodDetailSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Servings',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.servings,
+                style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -812,7 +813,7 @@ class _FoodDetailSheetState extends State<_FoodDetailSheet> {
                 ),
               ),
               child: Text(
-                'Add ${cals.toInt()} kcal',
+                '${AppLocalizations.of(context)!.add} ${cals.toInt()} kcal',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
