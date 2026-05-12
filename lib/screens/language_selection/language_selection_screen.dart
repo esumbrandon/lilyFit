@@ -194,9 +194,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
-            'Choose Your Language',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.chooseYourLanguage,
+            style: const TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -217,7 +217,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
               ),
             ),
             child: Text(
-              'Select your preferred language to get started',
+              AppLocalizations.of(context)!.selectPreferredLanguage,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.white.withValues(alpha: 0.95),
@@ -255,7 +255,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
               ),
               const SizedBox(width: 12),
               Text(
-                'Detecting your location...',
+                AppLocalizations.of(context)!.detectingLocation,
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.9),
                   fontSize: 14,
@@ -348,7 +348,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            'Location: $_countryName',
+                            AppLocalizations.of(context)!.locationLabel(_countryName!),
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
@@ -368,7 +368,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              '${languageInfo['name']} suggested',
+                              AppLocalizations.of(context)!.languageSuggested(languageInfo['name']!),
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.9),
                                 fontSize: 13,
@@ -597,7 +597,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'Suggested',
+                        AppLocalizations.of(context)!.suggested,
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,

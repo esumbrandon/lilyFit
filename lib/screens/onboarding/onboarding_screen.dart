@@ -126,7 +126,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       final user = supabaseService.getCurrentUser();
 
       if (user == null) {
-        throw Exception('No user logged in. Please login first.');
+        throw Exception(AppLocalizations.of(context)!.noUserLoggedIn);
       }
 
       // Create user profile with calculated targets

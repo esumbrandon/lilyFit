@@ -706,4 +706,160 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get welcomeTagline => 'Your personal nutrition &\nfitness companion';
+
+  @override
+  String get chooseYourLanguage => 'Choose Your Language';
+
+  @override
+  String get selectPreferredLanguage =>
+      'Select your preferred language to get started';
+
+  @override
+  String get detectingLocation => 'Detecting your location...';
+
+  @override
+  String locationLabel(String country) {
+    return 'Location: $country';
+  }
+
+  @override
+  String languageSuggested(String language) {
+    return '$language suggested';
+  }
+
+  @override
+  String get suggested => 'Suggested';
+
+  @override
+  String failedToLoadFoods(String error) {
+    return 'Failed to load foods: $error';
+  }
+
+  @override
+  String get foodDatabaseUpdated => 'Food database updated!';
+
+  @override
+  String failedToUpdate(String error) {
+    return 'Failed to update: $error';
+  }
+
+  @override
+  String get refreshFoodDatabase => 'Refresh food database';
+
+  @override
+  String foodAddedToMeal(String food, String meal) {
+    return '$food added to $meal';
+  }
+
+  @override
+  String logoutFailed(String error) {
+    return 'Logout failed: $error';
+  }
+
+  @override
+  String get pleaseEnterValidEmail => 'Please enter a valid email';
+
+  @override
+  String get supportEmail => 'support@lilyfit.app';
+
+  @override
+  String comingSoon(String title) {
+    return '$title coming soon!';
+  }
+
+  @override
+  String lastUpdated(String date) {
+    return 'Last updated: $date';
+  }
+
+  @override
+  String get dataWeCollect => 'Data We Collect';
+
+  @override
+  String get dataWeCollectBody =>
+      'We collect information you provide directly to us, including your profile details (name, age, gender, weight, height), dietary preferences, and meal logs. We also collect data about your app usage to improve your experience.';
+
+  @override
+  String get howWeUseData => 'How We Use Your Data';
+
+  @override
+  String get howWeUseDataBody =>
+      'Your data is used to calculate personalized calorie targets, track your progress, and provide nutritional insights. We do not sell your personal information to third parties.';
+
+  @override
+  String get dataStorageTitle => 'Data Storage';
+
+  @override
+  String get dataStorageBody =>
+      'Your data is securely stored using Supabase cloud infrastructure with encryption. You can export or delete your data at any time from the app settings.';
+
+  @override
+  String get yourRights => 'Your Rights';
+
+  @override
+  String get yourRightsBody =>
+      'You have the right to access, modify, or delete your personal data. You can manage your data directly within the app or contact us for assistance.';
+
+  @override
+  String get contactUs => 'Contact Us';
+
+  @override
+  String get contactUsBody =>
+      'If you have questions about our privacy practices, please contact us at support@lilyfit.app.';
+
+  @override
+  String get acceptanceOfTerms => 'Acceptance of Terms';
+
+  @override
+  String get acceptanceOfTermsBody =>
+      'By using LilyFit, you agree to these terms of service. If you do not agree, please do not use the app.';
+
+  @override
+  String get useOfApp => 'Use of the App';
+
+  @override
+  String get useOfAppBody =>
+      'LilyFit is provided for personal, non-commercial use. You agree not to misuse the app or interfere with its operation.';
+
+  @override
+  String get healthDisclaimer => 'Health Disclaimer';
+
+  @override
+  String get healthDisclaimerBody =>
+      'LilyFit provides general nutritional information and is not a substitute for professional medical advice. Consult a healthcare provider before making significant dietary changes.';
+
+  @override
+  String get accountResponsibility => 'Account Responsibility';
+
+  @override
+  String get accountResponsibilityBody =>
+      'You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.';
+
+  @override
+  String get contactLabel => 'Contact';
+
+  @override
+  String get contactLabelBody =>
+      'For questions about these terms, contact us at support@lilyfit.app.';
+
+  @override
+  String get waterRemindersTitle => 'Water Reminders';
+
+  @override
+  String waterRemindersEnabled(int count) {
+    return 'Water reminders enabled ($count reminders/day)';
+  }
+
+  @override
+  String get waterRemindersDisabled => 'Water reminders disabled';
+
+  @override
+  String get failedToCreateAccount => 'Failed to create account';
+
+  @override
+  String get resetPasswordInstructions =>
+      'Enter your email address and we\'ll send you a link to reset your password.';
+
+  @override
+  String get noUserLoggedIn => 'No user logged in. Please login first.';
 }

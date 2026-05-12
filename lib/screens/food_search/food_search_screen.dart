@@ -47,7 +47,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to load foods: ${e.toString()}'),
+            content: Text(AppLocalizations.of(context)!.failedToLoadFoods(e.toString())),
             backgroundColor: AppColors.error,
           ),
         );
@@ -65,10 +65,10 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Food database updated!'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.foodDatabaseUpdated),
             backgroundColor: AppColors.success,
-            duration: Duration(seconds: 2),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -77,7 +77,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to update: ${e.toString()}'),
+            content: Text(AppLocalizations.of(context)!.failedToUpdate(e.toString())),
             backgroundColor: AppColors.error,
           ),
         );
@@ -138,7 +138,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                     HapticFeedback.lightImpact();
                     _refreshFoods();
                   },
-            tooltip: 'Refresh food database',
+            tooltip: AppLocalizations.of(context)!.refreshFoodDatabase,
           ),
         ],
       ),
@@ -636,28 +636,28 @@ class _FoodDetailSheetState extends State<_FoodDetailSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _nutritionItem(
-                  'Calories',
+                  AppLocalizations.of(context)!.calories,
                   '${cals.toInt()}',
                   'kcal',
                   AppColors.primary,
                 ),
                 _divider(),
                 _nutritionItem(
-                  'Protein',
+                  AppLocalizations.of(context)!.protein,
                   protein.toStringAsFixed(1),
                   'g',
                   AppColors.protein,
                 ),
                 _divider(),
                 _nutritionItem(
-                  'Carbs',
+                  AppLocalizations.of(context)!.carbs,
                   carbs.toStringAsFixed(1),
                   'g',
                   AppColors.carbs,
                 ),
                 _divider(),
                 _nutritionItem(
-                  'Fat',
+                  AppLocalizations.of(context)!.fat,
                   fat.toStringAsFixed(1),
                   'g',
                   AppColors.fat,
@@ -794,7 +794,7 @@ class _FoodDetailSheetState extends State<_FoodDetailSheet> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            '${food.name} added to ${_selectedMealType!.label}',
+                            AppLocalizations.of(context)!.foodAddedToMeal(food.name, _selectedMealType!.label),
                           ),
                           backgroundColor: AppColors.primary,
                           behavior: SnackBarBehavior.floating,

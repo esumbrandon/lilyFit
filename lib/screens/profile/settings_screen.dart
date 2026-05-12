@@ -557,7 +557,7 @@ class SettingsScreen extends StatelessWidget {
                                     !newEmail.contains('@')) {
                                   setSheetState(
                                     () =>
-                                        errorMsg = 'Please enter a valid email',
+                                        errorMsg = AppLocalizations.of(context)!.pleaseEnterValidEmail,
                                   );
                                   return;
                                 }
@@ -983,7 +983,7 @@ class _HelpSupportScreen extends StatelessWidget {
         HapticFeedback.lightImpact();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$title coming soon!'),
+            content: Text(AppLocalizations.of(context)!.comingSoon(title)),
             backgroundColor: AppColors.primary,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -1478,31 +1478,26 @@ class _PrivacySecurityScreen extends StatelessWidget {
               Expanded(
                 child: ListView(
                   controller: controller,
-                  children: const [
+                  children: [
                     _PolicySection(
-                      title: 'Data We Collect',
-                      body:
-                          'We collect information you provide directly to us, such as your name, email address, height, weight, age, and fitness goals. We also collect the food logs and nutrition data you enter into the app.',
+                      title: AppLocalizations.of(context)!.dataWeCollect,
+                      body: AppLocalizations.of(context)!.dataWeCollectBody,
                     ),
                     _PolicySection(
-                      title: 'How We Use Your Data',
-                      body:
-                          'Your data is used solely to provide and improve the LilyFit service — calculating your nutrition targets, tracking your progress, and personalizing your experience. We do not sell your personal data to third parties.',
+                      title: AppLocalizations.of(context)!.howWeUseData,
+                      body: AppLocalizations.of(context)!.howWeUseDataBody,
                     ),
                     _PolicySection(
-                      title: 'Data Storage',
-                      body:
-                          'Your data is stored locally on your device and, if you are signed in, securely backed up to our servers using Supabase. All data at rest and in transit is encrypted.',
+                      title: AppLocalizations.of(context)!.dataStorageTitle,
+                      body: AppLocalizations.of(context)!.dataStorageBody,
                     ),
                     _PolicySection(
-                      title: 'Your Rights',
-                      body:
-                          'You have the right to access, correct, or delete your personal data at any time. You can delete your account and all associated data from the Privacy & Security settings.',
+                      title: AppLocalizations.of(context)!.yourRights,
+                      body: AppLocalizations.of(context)!.yourRightsBody,
                     ),
                     _PolicySection(
-                      title: 'Contact Us',
-                      body:
-                          'If you have any questions about this privacy policy, please contact us at privacy@lilyfit.app.',
+                      title: AppLocalizations.of(context)!.contactUs,
+                      body: AppLocalizations.of(context)!.contactUsBody,
                     ),
                   ],
                 ),
@@ -1552,39 +1547,34 @@ class _PrivacySecurityScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
-                'Last updated: May 2026',
-                style: TextStyle(color: AppColors.textTertiary, fontSize: 12),
+              Text(
+                AppLocalizations.of(context)!.lastUpdated('May 2026'),
+                style: const TextStyle(color: AppColors.textTertiary, fontSize: 12),
               ),
               const SizedBox(height: 16),
               Expanded(
                 child: ListView(
                   controller: controller,
-                  children: const [
+                  children: [
                     _PolicySection(
-                      title: 'Acceptance of Terms',
-                      body:
-                          'By using LilyFit, you agree to these Terms of Service. If you do not agree, please do not use the app.',
+                      title: AppLocalizations.of(context)!.acceptanceOfTerms,
+                      body: AppLocalizations.of(context)!.acceptanceOfTermsBody,
                     ),
                     _PolicySection(
-                      title: 'Use of the App',
-                      body:
-                          'LilyFit is intended for personal, non-commercial use. You agree not to misuse the service or attempt to access it using a method other than the interface and instructions we provide.',
+                      title: AppLocalizations.of(context)!.useOfApp,
+                      body: AppLocalizations.of(context)!.useOfAppBody,
                     ),
                     _PolicySection(
-                      title: 'Health Disclaimer',
-                      body:
-                          'LilyFit provides general nutrition information only. It is not a substitute for professional medical advice. Always consult a healthcare provider before making significant changes to your diet or exercise routine.',
+                      title: AppLocalizations.of(context)!.healthDisclaimer,
+                      body: AppLocalizations.of(context)!.healthDisclaimerBody,
                     ),
                     _PolicySection(
-                      title: 'Account Responsibility',
-                      body:
-                          'You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.',
+                      title: AppLocalizations.of(context)!.accountResponsibility,
+                      body: AppLocalizations.of(context)!.accountResponsibilityBody,
                     ),
                     _PolicySection(
-                      title: 'Contact',
-                      body:
-                          'For questions about these terms, contact us at legal@lilyfit.app.',
+                      title: AppLocalizations.of(context)!.contactLabel,
+                      body: AppLocalizations.of(context)!.contactLabelBody,
                     ),
                   ],
                 ),

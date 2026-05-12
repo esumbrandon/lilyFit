@@ -242,5 +242,93 @@
   "macroAnalysisDesc": "Balance protein, carbs & fats perfectly",
   "progressInsights": "Progress Insights",
   "progressInsightsDesc": "Track your transformation over time",
-  "welcomeTagline": "Your personal nutrition &\nfitness companion"
+  "welcomeTagline": "Your personal nutrition &\nfitness companion",
+  "chooseYourLanguage": "Choose Your Language",
+  "selectPreferredLanguage": "Select your preferred language to get started",
+  "detectingLocation": "Detecting your location...",
+  "locationLabel": "Location: {country}",
+  "@locationLabel": {
+    "placeholders": {
+      "country": { "type": "String" }
+    }
+  },
+  "languageSuggested": "{language} suggested",
+  "@languageSuggested": {
+    "placeholders": {
+      "language": { "type": "String" }
+    }
+  },
+  "suggested": "Suggested",
+  "failedToLoadFoods": "Failed to load foods: {error}",
+  "@failedToLoadFoods": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "foodDatabaseUpdated": "Food database updated!",
+  "failedToUpdate": "Failed to update: {error}",
+  "@failedToUpdate": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "refreshFoodDatabase": "Refresh food database",
+  "foodAddedToMeal": "{food} added to {meal}",
+  "@foodAddedToMeal": {
+    "placeholders": {
+      "food": { "type": "String" },
+      "meal": { "type": "String" }
+    }
+  },
+  "logoutFailed": "Logout failed: {error}",
+  "@logoutFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "pleaseEnterValidEmail": "Please enter a valid email",
+  "supportEmail": "support@lilyfit.app",
+  "comingSoon": "{title} coming soon!",
+  "@comingSoon": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "lastUpdated": "Last updated: {date}",
+  "@lastUpdated": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "dataWeCollect": "Data We Collect",
+  "dataWeCollectBody": "We collect information you provide directly to us, including your profile details (name, age, gender, weight, height), dietary preferences, and meal logs. We also collect data about your app usage to improve your experience.",
+  "howWeUseData": "How We Use Your Data",
+  "howWeUseDataBody": "Your data is used to calculate personalized calorie targets, track your progress, and provide nutritional insights. We do not sell your personal information to third parties.",
+  "dataStorageTitle": "Data Storage",
+  "dataStorageBody": "Your data is securely stored using Supabase cloud infrastructure with encryption. You can export or delete your data at any time from the app settings.",
+  "yourRights": "Your Rights",
+  "yourRightsBody": "You have the right to access, modify, or delete your personal data. You can manage your data directly within the app or contact us for assistance.",
+  "contactUs": "Contact Us",
+  "contactUsBody": "If you have questions about our privacy practices, please contact us at support@lilyfit.app.",
+  "acceptanceOfTerms": "Acceptance of Terms",
+  "acceptanceOfTermsBody": "By using LilyFit, you agree to these terms of service. If you do not agree, please do not use the app.",
+  "useOfApp": "Use of the App",
+  "useOfAppBody": "LilyFit is provided for personal, non-commercial use. You agree not to misuse the app or interfere with its operation.",
+  "healthDisclaimer": "Health Disclaimer",
+  "healthDisclaimerBody": "LilyFit provides general nutritional information and is not a substitute for professional medical advice. Consult a healthcare provider before making significant dietary changes.",
+  "accountResponsibility": "Account Responsibility",
+  "accountResponsibilityBody": "You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.",
+  "contactLabel": "Contact",
+  "contactLabelBody": "For questions about these terms, contact us at support@lilyfit.app.",
+  "waterRemindersTitle": "Water Reminders",
+  "waterRemindersEnabled": "Water reminders enabled ({count} reminders/day)",
+  "@waterRemindersEnabled": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "waterRemindersDisabled": "Water reminders disabled",
+  "failedToCreateAccount": "Failed to create account",
+  "resetPasswordInstructions": "Enter your email address and we'll send you a link to reset your password.",
+  "noUserLoggedIn": "No user logged in. Please login first."
 }

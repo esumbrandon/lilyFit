@@ -706,4 +706,161 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get welcomeTagline => 'Your personal nutrition & fitness companion';
+
+  @override
+  String get chooseYourLanguage => 'Escolha seu idioma';
+
+  @override
+  String get selectPreferredLanguage =>
+      'Selecione seu idioma preferido para começar';
+
+  @override
+  String get detectingLocation => 'Detectando sua localização...';
+
+  @override
+  String locationLabel(String country) {
+    return 'Localização: $country';
+  }
+
+  @override
+  String languageSuggested(String language) {
+    return '$language sugerido';
+  }
+
+  @override
+  String get suggested => 'Sugerido';
+
+  @override
+  String failedToLoadFoods(String error) {
+    return 'Falha ao carregar alimentos: $error';
+  }
+
+  @override
+  String get foodDatabaseUpdated => 'Banco de dados de alimentos atualizado!';
+
+  @override
+  String failedToUpdate(String error) {
+    return 'Falha ao atualizar: $error';
+  }
+
+  @override
+  String get refreshFoodDatabase => 'Atualizar banco de dados de alimentos';
+
+  @override
+  String foodAddedToMeal(String food, String meal) {
+    return '$food adicionado a $meal';
+  }
+
+  @override
+  String logoutFailed(String error) {
+    return 'Falha ao sair: $error';
+  }
+
+  @override
+  String get pleaseEnterValidEmail => 'Por favor, insira um e-mail válido';
+
+  @override
+  String get supportEmail => 'support@lilyfit.app';
+
+  @override
+  String comingSoon(String title) {
+    return '$title em breve!';
+  }
+
+  @override
+  String lastUpdated(String date) {
+    return 'Última atualização: $date';
+  }
+
+  @override
+  String get dataWeCollect => 'Dados que coletamos';
+
+  @override
+  String get dataWeCollectBody =>
+      'Coletamos informações que você nos fornece diretamente, incluindo detalhes do seu perfil (nome, idade, sexo, peso, altura), preferências alimentares e registros de refeições. Também coletamos dados sobre o uso do aplicativo para melhorar sua experiência.';
+
+  @override
+  String get howWeUseData => 'Como usamos seus dados';
+
+  @override
+  String get howWeUseDataBody =>
+      'Seus dados são usados para calcular metas de calorias personalizadas, acompanhar seu progresso e fornecer insights nutricionais. Não vendemos suas informações pessoais a terceiros.';
+
+  @override
+  String get dataStorageTitle => 'Armazenamento de dados';
+
+  @override
+  String get dataStorageBody =>
+      'Seus dados são armazenados com segurança usando a infraestrutura em nuvem Supabase com criptografia. Você pode exportar ou excluir seus dados a qualquer momento nas configurações do aplicativo.';
+
+  @override
+  String get yourRights => 'Seus direitos';
+
+  @override
+  String get yourRightsBody =>
+      'Você tem o direito de acessar, modificar ou excluir seus dados pessoais. Você pode gerenciar seus dados diretamente no aplicativo ou entrar em contato conosco para obter assistência.';
+
+  @override
+  String get contactUs => 'Entre em contato';
+
+  @override
+  String get contactUsBody =>
+      'Se você tiver dúvidas sobre nossas práticas de privacidade, entre em contato conosco em support@lilyfit.app.';
+
+  @override
+  String get acceptanceOfTerms => 'Aceitação dos termos';
+
+  @override
+  String get acceptanceOfTermsBody =>
+      'Ao usar o LilyFit, você concorda com estes termos de serviço. Se você não concordar, não use o aplicativo.';
+
+  @override
+  String get useOfApp => 'Uso do aplicativo';
+
+  @override
+  String get useOfAppBody =>
+      'O LilyFit é fornecido para uso pessoal e não comercial. Você concorda em não fazer uso indevido do aplicativo ou interferir em sua operação.';
+
+  @override
+  String get healthDisclaimer => 'Aviso de saúde';
+
+  @override
+  String get healthDisclaimerBody =>
+      'O LilyFit fornece informações nutricionais gerais e não substitui o aconselhamento médico profissional. Consulte um profissional de saúde antes de fazer mudanças dietéticas significativas.';
+
+  @override
+  String get accountResponsibility => 'Responsabilidade da conta';
+
+  @override
+  String get accountResponsibilityBody =>
+      'Você é responsável por manter a confidencialidade das credenciais da sua conta e por todas as atividades que ocorrem sob sua conta.';
+
+  @override
+  String get contactLabel => 'Contato';
+
+  @override
+  String get contactLabelBody =>
+      'Para perguntas sobre estes termos, entre em contato conosco em support@lilyfit.app.';
+
+  @override
+  String get waterRemindersTitle => 'Lembretes de água';
+
+  @override
+  String waterRemindersEnabled(int count) {
+    return 'Lembretes de água ativados ($count lembretes/dia)';
+  }
+
+  @override
+  String get waterRemindersDisabled => 'Lembretes de água desativados';
+
+  @override
+  String get failedToCreateAccount => 'Falha ao criar conta';
+
+  @override
+  String get resetPasswordInstructions =>
+      'Digite seu endereço de e-mail e enviaremos um link para redefinir sua senha.';
+
+  @override
+  String get noUserLoggedIn =>
+      'Nenhum usuário conectado. Por favor, faça login primeiro.';
 }

@@ -170,7 +170,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       Navigator.of(context).pop(); // Close loading
 
       if (response.user == null) {
-        throw Exception('Failed to create account');
+        throw Exception(AppLocalizations.of(context)!.failedToCreateAccount);
       }
 
       // Check if email confirmation is required
@@ -211,9 +211,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Enter your email address and we\'ll send you a link to reset your password.',
-              style: TextStyle(color: AppColors.textSecondary),
+            Text(
+              AppLocalizations.of(context)!.resetPasswordInstructions,
+              style: const TextStyle(color: AppColors.textSecondary),
             ),
             const SizedBox(height: 16),
             TextField(

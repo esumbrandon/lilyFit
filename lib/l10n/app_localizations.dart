@@ -1477,6 +1477,258 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your personal nutrition &\nfitness companion'**
   String get welcomeTagline;
+
+  /// No description provided for @chooseYourLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Your Language'**
+  String get chooseYourLanguage;
+
+  /// No description provided for @selectPreferredLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your preferred language to get started'**
+  String get selectPreferredLanguage;
+
+  /// No description provided for @detectingLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Detecting your location...'**
+  String get detectingLocation;
+
+  /// No description provided for @locationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Location: {country}'**
+  String locationLabel(String country);
+
+  /// No description provided for @languageSuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'{language} suggested'**
+  String languageSuggested(String language);
+
+  /// No description provided for @suggested.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested'**
+  String get suggested;
+
+  /// No description provided for @failedToLoadFoods.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load foods: {error}'**
+  String failedToLoadFoods(String error);
+
+  /// No description provided for @foodDatabaseUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Food database updated!'**
+  String get foodDatabaseUpdated;
+
+  /// No description provided for @failedToUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update: {error}'**
+  String failedToUpdate(String error);
+
+  /// No description provided for @refreshFoodDatabase.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh food database'**
+  String get refreshFoodDatabase;
+
+  /// No description provided for @foodAddedToMeal.
+  ///
+  /// In en, this message translates to:
+  /// **'{food} added to {meal}'**
+  String foodAddedToMeal(String food, String meal);
+
+  /// No description provided for @logoutFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout failed: {error}'**
+  String logoutFailed(String error);
+
+  /// No description provided for @pleaseEnterValidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email'**
+  String get pleaseEnterValidEmail;
+
+  /// No description provided for @supportEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'support@lilyfit.app'**
+  String get supportEmail;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'{title} coming soon!'**
+  String comingSoon(String title);
+
+  /// No description provided for @lastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: {date}'**
+  String lastUpdated(String date);
+
+  /// No description provided for @dataWeCollect.
+  ///
+  /// In en, this message translates to:
+  /// **'Data We Collect'**
+  String get dataWeCollect;
+
+  /// No description provided for @dataWeCollectBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We collect information you provide directly to us, including your profile details (name, age, gender, weight, height), dietary preferences, and meal logs. We also collect data about your app usage to improve your experience.'**
+  String get dataWeCollectBody;
+
+  /// No description provided for @howWeUseData.
+  ///
+  /// In en, this message translates to:
+  /// **'How We Use Your Data'**
+  String get howWeUseData;
+
+  /// No description provided for @howWeUseDataBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is used to calculate personalized calorie targets, track your progress, and provide nutritional insights. We do not sell your personal information to third parties.'**
+  String get howWeUseDataBody;
+
+  /// No description provided for @dataStorageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Storage'**
+  String get dataStorageTitle;
+
+  /// No description provided for @dataStorageBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is securely stored using Supabase cloud infrastructure with encryption. You can export or delete your data at any time from the app settings.'**
+  String get dataStorageBody;
+
+  /// No description provided for @yourRights.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Rights'**
+  String get yourRights;
+
+  /// No description provided for @yourRightsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have the right to access, modify, or delete your personal data. You can manage your data directly within the app or contact us for assistance.'**
+  String get yourRightsBody;
+
+  /// No description provided for @contactUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Us'**
+  String get contactUs;
+
+  /// No description provided for @contactUsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'If you have questions about our privacy practices, please contact us at support@lilyfit.app.'**
+  String get contactUsBody;
+
+  /// No description provided for @acceptanceOfTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Acceptance of Terms'**
+  String get acceptanceOfTerms;
+
+  /// No description provided for @acceptanceOfTermsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'By using LilyFit, you agree to these terms of service. If you do not agree, please do not use the app.'**
+  String get acceptanceOfTermsBody;
+
+  /// No description provided for @useOfApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Use of the App'**
+  String get useOfApp;
+
+  /// No description provided for @useOfAppBody.
+  ///
+  /// In en, this message translates to:
+  /// **'LilyFit is provided for personal, non-commercial use. You agree not to misuse the app or interfere with its operation.'**
+  String get useOfAppBody;
+
+  /// No description provided for @healthDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Disclaimer'**
+  String get healthDisclaimer;
+
+  /// No description provided for @healthDisclaimerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'LilyFit provides general nutritional information and is not a substitute for professional medical advice. Consult a healthcare provider before making significant dietary changes.'**
+  String get healthDisclaimerBody;
+
+  /// No description provided for @accountResponsibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Responsibility'**
+  String get accountResponsibility;
+
+  /// No description provided for @accountResponsibilityBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.'**
+  String get accountResponsibilityBody;
+
+  /// No description provided for @contactLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get contactLabel;
+
+  /// No description provided for @contactLabelBody.
+  ///
+  /// In en, this message translates to:
+  /// **'For questions about these terms, contact us at support@lilyfit.app.'**
+  String get contactLabelBody;
+
+  /// No description provided for @waterRemindersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Water Reminders'**
+  String get waterRemindersTitle;
+
+  /// No description provided for @waterRemindersEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Water reminders enabled ({count} reminders/day)'**
+  String waterRemindersEnabled(int count);
+
+  /// No description provided for @waterRemindersDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Water reminders disabled'**
+  String get waterRemindersDisabled;
+
+  /// No description provided for @failedToCreateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create account'**
+  String get failedToCreateAccount;
+
+  /// No description provided for @resetPasswordInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address and we\'ll send you a link to reset your password.'**
+  String get resetPasswordInstructions;
+
+  /// No description provided for @noUserLoggedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'No user logged in. Please login first.'**
+  String get noUserLoggedIn;
 }
 
 class _AppLocalizationsDelegate

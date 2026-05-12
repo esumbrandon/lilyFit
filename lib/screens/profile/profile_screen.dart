@@ -829,7 +829,7 @@ class ProfileScreen extends StatelessWidget {
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Logout failed: $e'),
+                    content: Text(AppLocalizations.of(context)!.logoutFailed(e.toString())),
                     backgroundColor: AppColors.error,
                   ),
                 );

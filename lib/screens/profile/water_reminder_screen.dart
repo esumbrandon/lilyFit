@@ -148,8 +148,8 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
         SnackBar(
           content: Text(
             _enabled
-                ? 'Water reminders enabled (${_totalDailyReminders()} reminders/day)'
-                : 'Water reminders disabled',
+                ? AppLocalizations.of(context)!.waterRemindersEnabled(_totalDailyReminders())
+                : AppLocalizations.of(context)!.waterRemindersDisabled,
           ),
           backgroundColor: AppColors.secondary,
         ),
@@ -165,9 +165,9 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
-        title: const Text(
-          'Water Reminders',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+        title: Text(
+          AppLocalizations.of(context)!.waterRemindersTitle,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
