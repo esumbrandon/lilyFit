@@ -68,11 +68,11 @@ class LanguageService {
       // Swahili speaking countries → fallback to English
       'KE': 'en', 'TZ': 'en', 'UG': 'en', 'RW': 'en',
 
-      // Arabic speaking countries
-      'SA': 'ar', 'EG': 'ar', 'AE': 'ar', 'IQ': 'ar', 'MA': 'ar',
-      'SD': 'ar', 'DZ': 'ar', 'SY': 'ar', 'YE': 'ar', 'JO': 'ar',
-      'TN': 'ar', 'LY': 'ar', 'LB': 'ar', 'OM': 'ar', 'KW': 'ar',
-      'QA': 'ar', 'BH': 'ar',
+      // Arabic speaking countries → fallback to English
+      'SA': 'en', 'EG': 'en', 'AE': 'en', 'IQ': 'en', 'MA': 'en',
+      'SD': 'en', 'DZ': 'en', 'SY': 'en', 'YE': 'en', 'JO': 'en',
+      'TN': 'en', 'LY': 'en', 'LB': 'en', 'OM': 'en', 'KW': 'en',
+      'QA': 'en', 'BH': 'en',
 
       // Chinese/Hindi/Japanese speaking countries → fallback to English
       'CN': 'en', 'TW': 'en', 'HK': 'en', 'SG': 'en',
@@ -95,7 +95,6 @@ class LanguageService {
       {'code': 'de', 'name': 'German', 'flag': '🇩🇪', 'native': 'Deutsch'},
       {'code': 'es', 'name': 'Spanish', 'flag': '🇪🇸', 'native': 'Español'},
       {'code': 'pt', 'name': 'Portuguese', 'flag': '🇵🇹', 'native': 'Português'},
-      {'code': 'ar', 'name': 'Arabic', 'flag': '🇸🇦', 'native': 'العربية'},
     ];
   }
 }
