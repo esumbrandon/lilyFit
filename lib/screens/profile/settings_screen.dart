@@ -85,10 +85,10 @@ class SettingsScreen extends StatelessWidget {
               _settingsTile(
                 icon: Icons.email_rounded,
                 iconColor: AppColors.secondary,
-                title: 'Email Update',
+                title: AppLocalizations.of(context)!.emailUpdate,
                 subtitle: provider.userProfile.email.isNotEmpty
                     ? provider.userProfile.email
-                    : 'Update your email address',
+                    : AppLocalizations.of(context)!.updateEmailAddress,
                 onTap: () {
                   HapticFeedback.lightImpact();
                   _showEmailUpdateSheet(context, provider);
@@ -111,7 +111,7 @@ class SettingsScreen extends StatelessWidget {
                 icon: Icons.help_rounded,
                 iconColor: const Color(0xFF818CF8),
                 title: AppLocalizations.of(context)!.helpAndSupport,
-                subtitle: 'FAQs, contact us',
+                subtitle: AppLocalizations.of(context)!.faqsContactUs,
                 onTap: () {
                   HapticFeedback.lightImpact();
                   Navigator.push(
@@ -127,7 +127,7 @@ class SettingsScreen extends StatelessWidget {
                 icon: Icons.security_rounded,
                 iconColor: const Color(0xFF06D6A0),
                 title: AppLocalizations.of(context)!.privacyAndSecurity,
-                subtitle: 'Data, permissions, privacy policy',
+                subtitle: AppLocalizations.of(context)!.dataPermissionsPrivacy,
                 onTap: () {
                   HapticFeedback.lightImpact();
                   Navigator.push(
@@ -328,7 +328,7 @@ class SettingsScreen extends StatelessWidget {
   void _showComingSoonSnackBar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Premium subscription coming soon!'),
+        content: Text(AppLocalizations.of(context)!.premiumComingSoon),
         backgroundColor: AppColors.primary,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -531,7 +531,7 @@ class SettingsScreen extends StatelessWidget {
                       autofillHints: const [AutofillHints.email],
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        labelText: 'New Email Address',
+                        labelText: AppLocalizations.of(context)!.newEmailAddress,
                         prefixIcon: const Icon(
                           Icons.email_outlined,
                           color: AppColors.textSecondary,
@@ -612,7 +612,7 @@ class SettingsScreen extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                               )
-                            : const Text('Send Confirmation'),
+                            : Text(AppLocalizations.of(context)!.sendConfirmation),
                       ),
                     ),
                   ],
@@ -681,10 +681,10 @@ class _NotificationSettingsScreen extends StatelessWidget {
                       _switchTile(
                         icon: Icons.water_drop_rounded,
                         iconColor: AppColors.primary,
-                        title: 'Water Reminders',
+                        title: AppLocalizations.of(context)!.waterReminders,
                         subtitle: provider.waterRemindersEnabled
                             ? 'Every ${provider.waterReminderIntervalMinutes} min'
-                            : 'Remind me to drink water',
+                            : AppLocalizations.of(context)!.remindToDrinkWater,
                         value: provider.waterRemindersEnabled,
                         onChanged: (val) async {
                           HapticFeedback.selectionClick();
@@ -896,8 +896,8 @@ class _HelpSupportScreen extends StatelessWidget {
                         context,
                         icon: Icons.chat_bubble_rounded,
                         color: AppColors.primary,
-                        title: 'Live Chat',
-                        subtitle: 'Chat with us',
+                        title: AppLocalizations.of(context)!.liveChat,
+                        subtitle: AppLocalizations.of(context)!.chatWithUs,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -906,7 +906,7 @@ class _HelpSupportScreen extends StatelessWidget {
                         context,
                         icon: Icons.mail_rounded,
                         color: AppColors.secondary,
-                        title: 'Email Us',
+                        title: AppLocalizations.of(context)!.emailUs,
                         subtitle: 'support@lilyfit.app',
                       ),
                     ),
@@ -1171,7 +1171,7 @@ class _PrivacySecurityScreen extends StatelessWidget {
                       _infoTile(
                         icon: Icons.storage_rounded,
                         iconColor: AppColors.primary,
-                        title: 'Data Storage',
+                        title: AppLocalizations.of(context)!.dataStorage,
                         subtitle:
                             'Your data is stored locally and securely synced to our servers',
                       ),
@@ -1183,7 +1183,7 @@ class _PrivacySecurityScreen extends StatelessWidget {
                       _infoTile(
                         icon: Icons.sync_rounded,
                         iconColor: AppColors.secondary,
-                        title: 'Data Sync',
+                        title: AppLocalizations.of(context)!.dataSync,
                         subtitle:
                             'Automatically synced when you are connected to the internet',
                       ),
@@ -1195,8 +1195,8 @@ class _PrivacySecurityScreen extends StatelessWidget {
                       _actionTile(
                         icon: Icons.delete_sweep_rounded,
                         iconColor: AppColors.warning,
-                        title: 'Clear Local Cache',
-                        subtitle: 'Remove cached food data and images',
+                        title: AppLocalizations.of(context)!.clearLocalCache,
+                        subtitle: AppLocalizations.of(context)!.clearCacheSubtitle,
                         onTap: () {
                           HapticFeedback.lightImpact();
                           _showClearCacheDialog(context);
@@ -1238,8 +1238,8 @@ class _PrivacySecurityScreen extends StatelessWidget {
                       _actionTile(
                         icon: Icons.policy_rounded,
                         iconColor: AppColors.primary,
-                        title: 'Privacy Policy',
-                        subtitle: 'How we collect and use your data',
+                        title: AppLocalizations.of(context)!.privacyPolicy,
+                        subtitle: AppLocalizations.of(context)!.privacyPolicySubtitle,
                         onTap: () {
                           HapticFeedback.lightImpact();
                           _showPrivacyPolicy(context);
@@ -1253,8 +1253,8 @@ class _PrivacySecurityScreen extends StatelessWidget {
                       _actionTile(
                         icon: Icons.description_rounded,
                         iconColor: const Color(0xFF818CF8),
-                        title: 'Terms of Service',
-                        subtitle: 'Read our terms and conditions',
+                        title: AppLocalizations.of(context)!.termsOfService,
+                        subtitle: AppLocalizations.of(context)!.termsOfServiceSubtitle,
                         onTap: () {
                           HapticFeedback.lightImpact();
                           _showTermsOfService(context);
@@ -1294,8 +1294,8 @@ class _PrivacySecurityScreen extends StatelessWidget {
                   child: _actionTile(
                     icon: Icons.no_accounts_rounded,
                     iconColor: AppColors.error,
-                    title: 'Delete Account',
-                    subtitle: 'Permanently delete your account and all data',
+                    title: AppLocalizations.of(context)!.deleteAccount,
+                    subtitle: AppLocalizations.of(context)!.deleteAccountSubtitle,
                     onTap: () {
                       HapticFeedback.lightImpact();
                       _showDeleteAccountDialog(context, provider);
@@ -1398,25 +1398,25 @@ class _PrivacySecurityScreen extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text(
-          'Clear Cache?',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+        title: Text(
+          AppLocalizations.of(context)!.clearCacheQuestion,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
         ),
-        content: const Text(
-          'This will remove cached food data. Your personal data and meal logs will not be affected.',
-          style: TextStyle(color: AppColors.textSecondary),
+        content: Text(
+          AppLocalizations.of(context)!.clearCacheBody,
+          style: const TextStyle(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: const Text('Cache cleared successfully'),
+                  content: Text(AppLocalizations.of(context)!.cacheClearedMsg),
                   backgroundColor: AppColors.success,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
@@ -1425,7 +1425,7 @@ class _PrivacySecurityScreen extends StatelessWidget {
                 ),
               );
             },
-            child: const Text('Clear'),
+            child: Text(AppLocalizations.of(context)!.clear),
           ),
         ],
       ),
@@ -1461,9 +1461,9 @@ class _PrivacySecurityScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                'Privacy Policy',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.privacyPolicy,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
@@ -1543,9 +1543,9 @@ class _PrivacySecurityScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                'Terms of Service',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.termsOfService,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
@@ -1602,18 +1602,18 @@ class _PrivacySecurityScreen extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text(
-          'Delete Account?',
-          style: TextStyle(color: AppColors.error, fontWeight: FontWeight.w700),
+        title: Text(
+          AppLocalizations.of(context)!.deleteAccountQuestion,
+          style: const TextStyle(color: AppColors.error, fontWeight: FontWeight.w700),
         ),
-        content: const Text(
-          'This will permanently delete your account and all associated data. This action cannot be undone.',
-          style: TextStyle(color: AppColors.textSecondary),
+        content: Text(
+          AppLocalizations.of(context)!.deleteAccountBody,
+          style: const TextStyle(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
@@ -1629,7 +1629,7 @@ class _PrivacySecurityScreen extends StatelessWidget {
                 await Supabase.instance.client.auth.signOut();
               }
             },
-            child: const Text('Delete Account'),
+            child: Text(AppLocalizations.of(context)!.deleteAccount),
           ),
         ],
       ),

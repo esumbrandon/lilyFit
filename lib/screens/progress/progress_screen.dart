@@ -77,7 +77,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     const SizedBox(width: 10),
                     _statCard(
                       AppLocalizations.of(context)!.streak,
-                      '${provider.currentStreak} days',
+                      '${provider.currentStreak} ${AppLocalizations.of(context)!.days}',
                       Icons.local_fire_department_rounded,
                       AppColors.carbs,
                     ),
@@ -123,7 +123,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         child: weightEntries.length < 2
                             ? Center(
                                 child: Text(
-                                  'Log at least 2 weights\nto see your chart',
+                                  AppLocalizations.of(context)!.logAtLeast2Weights,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: AppColors.textTertiary.withAlpha(
@@ -202,6 +202,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         child: _buildWeeklyBarChart(
                           weeklyCalories,
                           provider.userProfile.targetCalories,
+                          AppLocalizations.of(context)!.target,
                         ),
                       ),
                     ],
@@ -427,6 +428,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
   Widget _buildWeeklyBarChart(
     List<MapEntry<DateTime, double>> data,
     double target,
+    String targetLabel,
   ) {
     final maxCal = data
         .map((e) => e.value)
@@ -513,7 +515,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               dashArray: [8, 4],
               label: HorizontalLineLabel(
                 show: true,
-                labelResolver: (_) => 'Target',
+                labelResolver: (_) => targetLabel,
                 style: const TextStyle(
                   color: AppColors.carbs,
                   fontSize: 10,
@@ -601,15 +603,15 @@ class _ProgressScreenState extends State<ProgressScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text(
-          'Log Weight',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+        title: Text(
+          AppLocalizations.of(context)!.logWeight,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Enter your current weight',
+              AppLocalizations.of(context)!.enterCurrentWeight,
               style: TextStyle(color: Colors.white.withAlpha(150)),
             ),
             const SizedBox(height: 16),
@@ -643,9 +645,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: AppColors.textTertiary),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: const TextStyle(color: AppColors.textTertiary),
             ),
           ),
           ElevatedButton(
@@ -661,7 +663,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 Navigator.pop(ctx);
               }
             },
-            child: const Text('Save'),
+            child: Text(AppLocalizations.of(context)!.save),
           ),
         ],
       ),

@@ -343,9 +343,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             const SizedBox(height: 40),
 
             // Name
-            const Text(
-              'Your Name',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.yourName,
+              style: const TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -365,7 +365,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               controller: TextEditingController(text: _name)
                 ..selection = TextSelection.collapsed(offset: _name.length),
               decoration: InputDecoration(
-                hintText: 'Enter your name',
+                hintText: AppLocalizations.of(context)!.enterYourName,
                 prefixIcon: const Icon(
                   Icons.person_outline,
                   color: AppColors.textTertiary,
@@ -1001,9 +1001,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ShaderMask(
             shaderCallback: (bounds) =>
                 AppColors.primaryGradient.createShader(bounds),
-            child: const Text(
-              'Your Plan is Ready! 🎉',
-              style: TextStyle(
+            child: Text(
+              AppLocalizations.of(context)!.planReady,
+              style: const TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
@@ -1012,7 +1012,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Based on your profile, here are your daily targets',
+            AppLocalizations.of(context)!.basedOnProfile,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, color: Colors.white.withAlpha(150)),
           ),
@@ -1053,9 +1053,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     height: 1,
                   ),
                 ),
-                const Text(
-                  'kcal',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.kcal,
+                  style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
@@ -1091,7 +1091,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               children: [
                 _statItem(AppLocalizations.of(context)!.bmi, profile.bmi.toStringAsFixed(1)),
                 Container(width: 1, height: 30, color: AppColors.cardLight),
-                _statItem('Status', profile.bmiCategory),
+                _statItem(AppLocalizations.of(context)!.status, profile.bmiCategory),
                 Container(width: 1, height: 30, color: AppColors.cardLight),
                 _statItem(AppLocalizations.of(context)!.goal, _goalLabel(context)),
               ],
@@ -1205,9 +1205,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ShaderMask(
             shaderCallback: (bounds) =>
                 AppColors.primaryGradient.createShader(bounds),
-            child: const Text(
-              'LilyFit',
-              style: TextStyle(
+            child: Text(
+              AppLocalizations.of(context)!.appName,
+              style: const TextStyle(
                 fontSize: 42,
                 fontWeight: FontWeight.w800,
                 color: Colors.white,
@@ -1217,7 +1217,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            'Your personal nutrition &\nfitness companion',
+            AppLocalizations.of(context)!.welcomeTagline,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 17,
@@ -1229,29 +1229,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           _welcomeFeature(
             Icons.track_changes_rounded,
             AppColors.primary,
-            'Calorie Tracking',
-            'Log meals and stay on target every day',
+            AppLocalizations.of(context)!.calorieTracking,
+            AppLocalizations.of(context)!.calorieTrackingDesc,
           ),
           const SizedBox(height: 14),
           _welcomeFeature(
             Icons.pie_chart_rounded,
             AppColors.secondary,
-            'Macro Analysis',
-            'Balance protein, carbs & fats perfectly',
+            AppLocalizations.of(context)!.macroAnalysis,
+            AppLocalizations.of(context)!.macroAnalysisDesc,
           ),
           const SizedBox(height: 14),
           _welcomeFeature(
             Icons.show_chart_rounded,
             AppColors.accent,
-            'Progress Insights',
-            'Track your transformation over time',
+            AppLocalizations.of(context)!.progressInsights,
+            AppLocalizations.of(context)!.progressInsightsDesc,
           ),
           const SizedBox(height: 40),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Swipe or tap Continue to begin',
+                AppLocalizations.of(context)!.swipeToContinue,
                 style: TextStyle(
                   color: Colors.white.withAlpha(100),
                   fontSize: 13,
@@ -1330,9 +1330,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 40),
-          const Text(
-            'Eating Style',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.eatingStyle,
+            style: const TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.w700,
               color: Colors.white,
@@ -1340,7 +1340,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'We\'ll tailor food suggestions to your preferences',
+            AppLocalizations.of(context)!.eatingStyleMessage,
             style: TextStyle(fontSize: 15, color: Colors.white.withAlpha(150)),
           ),
           const SizedBox(height: 28),
@@ -1349,33 +1349,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               children: [
                 _dietOption(
                   'balanced',
-                  'Balanced',
+                  AppLocalizations.of(context)!.balanced,
                   '🍽️',
-                  'Well-rounded nutrition with all food groups',
+                  AppLocalizations.of(context)!.balancedDesc,
                 ),
                 _dietOption(
                   'highProtein',
-                  'High-Protein',
+                  AppLocalizations.of(context)!.highProtein,
                   '💪',
-                  'Prioritises protein for muscle growth & recovery',
+                  AppLocalizations.of(context)!.highProteinDesc,
                 ),
                 _dietOption(
                   'lowCarb',
-                  'Low-Carb / Keto',
+                  AppLocalizations.of(context)!.lowCarbKeto,
                   '🥑',
-                  'Reduced carbohydrates with higher healthy fats',
+                  AppLocalizations.of(context)!.lowCarbKetoDesc,
                 ),
                 _dietOption(
                   'vegetarian',
-                  'Vegetarian',
+                  AppLocalizations.of(context)!.vegetarian,
                   '🌿',
-                  'Plant-based foods with dairy & eggs allowed',
+                  AppLocalizations.of(context)!.vegetarianDesc,
                 ),
                 _dietOption(
                   'vegan',
-                  'Vegan',
+                  AppLocalizations.of(context)!.vegan,
                   '🌱',
-                  '100% plant-based — no animal products',
+                  AppLocalizations.of(context)!.veganDesc,
                 ),
               ],
             ),
@@ -1459,9 +1459,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 40),
-            const Text(
-              'Daily Water Goal',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.dailyWaterGoal,
+              style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
@@ -1469,7 +1469,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Staying hydrated boosts metabolism and energy',
+              AppLocalizations.of(context)!.stayHydratedMessage,
               style: TextStyle(
                 fontSize: 15,
                 color: Colors.white.withAlpha(150),
@@ -1521,9 +1521,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
             const SizedBox(height: 32),
-            const Text(
-              'Quick select',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.quickSelect,
+              style: const TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -1572,9 +1572,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               }).toList(),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Fine-tune',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.fineTune,
+              style: const TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,

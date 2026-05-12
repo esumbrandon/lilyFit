@@ -10,11 +10,7 @@ import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
 import 'app_localizations_fr.dart';
-import 'app_localizations_hi.dart';
-import 'app_localizations_ja.dart';
 import 'app_localizations_pt.dart';
-import 'app_localizations_sw.dart';
-import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -107,11 +103,7 @@ abstract class AppLocalizations {
     Locale('en'),
     Locale('es'),
     Locale('fr'),
-    Locale('hi'),
-    Locale('ja'),
     Locale('pt'),
-    Locale('sw'),
-    Locale('zh'),
   ];
 
   /// The name of the application
@@ -1067,6 +1059,426 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reset Failed'**
   String get resetFailed;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
+
+  /// No description provided for @clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// No description provided for @pleaseSelectLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a language'**
+  String get pleaseSelectLanguage;
+
+  /// No description provided for @reminderInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Interval'**
+  String get reminderInterval;
+
+  /// No description provided for @activeHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Hours'**
+  String get activeHours;
+
+  /// No description provided for @startTimeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Start time must be before end time'**
+  String get startTimeError;
+
+  /// No description provided for @endTimeError.
+  ///
+  /// In en, this message translates to:
+  /// **'End time must be after start time'**
+  String get endTimeError;
+
+  /// No description provided for @emailUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Update'**
+  String get emailUpdate;
+
+  /// No description provided for @updateEmailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your email address'**
+  String get updateEmailAddress;
+
+  /// No description provided for @faqsContactUs.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQs, contact us'**
+  String get faqsContactUs;
+
+  /// No description provided for @dataPermissionsPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Data, permissions, privacy policy'**
+  String get dataPermissionsPrivacy;
+
+  /// No description provided for @waterReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Water Reminders'**
+  String get waterReminders;
+
+  /// No description provided for @remindToDrinkWater.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me to drink water'**
+  String get remindToDrinkWater;
+
+  /// No description provided for @newEmailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'New Email Address'**
+  String get newEmailAddress;
+
+  /// No description provided for @sendConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Confirmation'**
+  String get sendConfirmation;
+
+  /// No description provided for @premiumComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium subscription coming soon!'**
+  String get premiumComingSoon;
+
+  /// No description provided for @liveChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Chat'**
+  String get liveChat;
+
+  /// No description provided for @chatWithUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with us'**
+  String get chatWithUs;
+
+  /// No description provided for @emailUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Us'**
+  String get emailUs;
+
+  /// No description provided for @dataStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Storage'**
+  String get dataStorage;
+
+  /// No description provided for @dataSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Sync'**
+  String get dataSync;
+
+  /// No description provided for @clearLocalCache.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Local Cache'**
+  String get clearLocalCache;
+
+  /// No description provided for @clearCacheSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove cached food data and images'**
+  String get clearCacheSubtitle;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @privacyPolicySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How we collect and use your data'**
+  String get privacyPolicySubtitle;
+
+  /// No description provided for @termsOfService.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get termsOfService;
+
+  /// No description provided for @termsOfServiceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Read our terms and conditions'**
+  String get termsOfServiceSubtitle;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete your account and all data'**
+  String get deleteAccountSubtitle;
+
+  /// No description provided for @clearCacheQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Cache?'**
+  String get clearCacheQuestion;
+
+  /// No description provided for @clearCacheBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will remove cached food data. Your personal data and meal logs will not be affected.'**
+  String get clearCacheBody;
+
+  /// No description provided for @cacheClearedMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache cleared successfully'**
+  String get cacheClearedMsg;
+
+  /// No description provided for @deleteAccountQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account?'**
+  String get deleteAccountQuestion;
+
+  /// No description provided for @deleteAccountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete your account and all associated data. This action cannot be undone.'**
+  String get deleteAccountBody;
+
+  /// No description provided for @resetAllDataQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset All Data?'**
+  String get resetAllDataQuestion;
+
+  /// No description provided for @resetAllDataBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will delete all your data including meals, weight history, and profile. This cannot be undone.'**
+  String get resetAllDataBody;
+
+  /// No description provided for @days.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get days;
+
+  /// No description provided for @logAtLeast2Weights.
+  ///
+  /// In en, this message translates to:
+  /// **'Log at least 2 weights to see your chart'**
+  String get logAtLeast2Weights;
+
+  /// No description provided for @target.
+  ///
+  /// In en, this message translates to:
+  /// **'Target'**
+  String get target;
+
+  /// No description provided for @enterCurrentWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your current weight'**
+  String get enterCurrentWeight;
+
+  /// No description provided for @yourName.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Name'**
+  String get yourName;
+
+  /// No description provided for @enterYourName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your name'**
+  String get enterYourName;
+
+  /// No description provided for @planReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Plan is Ready! 🎉'**
+  String get planReady;
+
+  /// No description provided for @basedOnProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on your profile, here are your daily targets'**
+  String get basedOnProfile;
+
+  /// No description provided for @status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
+
+  /// No description provided for @eatingStyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Eating Style'**
+  String get eatingStyle;
+
+  /// No description provided for @eatingStyleMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll tailor food suggestions to your preferences'**
+  String get eatingStyleMessage;
+
+  /// No description provided for @balanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced'**
+  String get balanced;
+
+  /// No description provided for @balancedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Well-rounded nutrition with all food groups'**
+  String get balancedDesc;
+
+  /// No description provided for @highProtein.
+  ///
+  /// In en, this message translates to:
+  /// **'High-Protein'**
+  String get highProtein;
+
+  /// No description provided for @highProteinDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Prioritises protein for muscle growth & recovery'**
+  String get highProteinDesc;
+
+  /// No description provided for @lowCarbKeto.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-Carb / Keto'**
+  String get lowCarbKeto;
+
+  /// No description provided for @lowCarbKetoDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Reduced carbohydrates with higher healthy fats'**
+  String get lowCarbKetoDesc;
+
+  /// No description provided for @vegetarian.
+  ///
+  /// In en, this message translates to:
+  /// **'Vegetarian'**
+  String get vegetarian;
+
+  /// No description provided for @vegetarianDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Plant-based foods with dairy & eggs allowed'**
+  String get vegetarianDesc;
+
+  /// No description provided for @vegan.
+  ///
+  /// In en, this message translates to:
+  /// **'Vegan'**
+  String get vegan;
+
+  /// No description provided for @veganDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'100% plant-based — no animal products'**
+  String get veganDesc;
+
+  /// No description provided for @dailyWaterGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Water Goal'**
+  String get dailyWaterGoal;
+
+  /// No description provided for @stayHydratedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Staying hydrated boosts metabolism and energy'**
+  String get stayHydratedMessage;
+
+  /// No description provided for @quickSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick select'**
+  String get quickSelect;
+
+  /// No description provided for @fineTune.
+  ///
+  /// In en, this message translates to:
+  /// **'Fine-tune'**
+  String get fineTune;
+
+  /// No description provided for @swipeToContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe or tap Continue to begin'**
+  String get swipeToContinue;
+
+  /// No description provided for @calorieTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Calorie Tracking'**
+  String get calorieTracking;
+
+  /// No description provided for @calorieTrackingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Log meals and stay on target every day'**
+  String get calorieTrackingDesc;
+
+  /// No description provided for @macroAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Macro Analysis'**
+  String get macroAnalysis;
+
+  /// No description provided for @macroAnalysisDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance protein, carbs & fats perfectly'**
+  String get macroAnalysisDesc;
+
+  /// No description provided for @progressInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress Insights'**
+  String get progressInsights;
+
+  /// No description provided for @progressInsightsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your transformation over time'**
+  String get progressInsightsDesc;
+
+  /// No description provided for @welcomeTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Your personal nutrition &\nfitness companion'**
+  String get welcomeTagline;
 }
 
 class _AppLocalizationsDelegate
@@ -1085,11 +1497,7 @@ class _AppLocalizationsDelegate
     'en',
     'es',
     'fr',
-    'hi',
-    'ja',
     'pt',
-    'sw',
-    'zh',
   ].contains(locale.languageCode);
 
   @override
@@ -1109,16 +1517,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEs();
     case 'fr':
       return AppLocalizationsFr();
-    case 'hi':
-      return AppLocalizationsHi();
-    case 'ja':
-      return AppLocalizationsJa();
     case 'pt':
       return AppLocalizationsPt();
-    case 'sw':
-      return AppLocalizationsSw();
-    case 'zh':
-      return AppLocalizationsZh();
   }
 
   throw FlutterError(

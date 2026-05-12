@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/app_provider.dart';
 import '../../services/notification_service.dart';
@@ -76,7 +77,7 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
       if (newMin >= endMin) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Start time must be before end time')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.startTimeError)),
           );
         }
         return;
@@ -88,7 +89,7 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
       if (newMin <= startMin) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('End time must be after start time')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.endTimeError)),
           );
         }
         return;
@@ -192,12 +193,12 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
                 child: Column(
                   children: [
                     _buildSection(
-                      title: 'Reminder Interval',
+                      title: AppLocalizations.of(context)!.reminderInterval,
                       child: _buildIntervalChips(),
                     ),
                     const SizedBox(height: 16),
                     _buildSection(
-                      title: 'Active Hours',
+                      title: AppLocalizations.of(context)!.activeHours,
                       child: _buildTimeRow(),
                     ),
                     const SizedBox(height: 16),

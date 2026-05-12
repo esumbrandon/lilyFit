@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../l10n/app_localizations.dart';
 import '../../services/language_service.dart';
 import '../../services/location_service.dart';
 import '../../providers/app_provider.dart';
@@ -81,7 +82,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
     if (_selectedLanguage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Please select a language'),
+          content: Text(AppLocalizations.of(context)!.pleaseSelectLanguage),
           backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -708,7 +709,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                       ? AppColors.primary
                       : Colors.white.withValues(alpha: 0.5),
                 ),
-                child: const Text('Continue'),
+                child: Text(AppLocalizations.of(context)!.continueButton),
               ),
               const SizedBox(width: 12),
               AnimatedRotation(

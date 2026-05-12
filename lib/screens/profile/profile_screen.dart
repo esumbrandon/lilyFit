@@ -497,7 +497,7 @@ class ProfileScreen extends StatelessWidget {
 
                     // Age
                     _editSlider(
-                      label: 'Age',
+                      label: AppLocalizations.of(context)!.age,
                       value: age.toDouble(),
                       min: 14,
                       max: 80,
@@ -508,7 +508,7 @@ class ProfileScreen extends StatelessWidget {
 
                     // Weight
                     _editSlider(
-                      label: 'Weight',
+                      label: AppLocalizations.of(context)!.weight,
                       value: weight,
                       min: 30,
                       max: 200,
@@ -522,7 +522,7 @@ class ProfileScreen extends StatelessWidget {
 
                     // Height
                     _editSlider(
-                      label: 'Height',
+                      label: AppLocalizations.of(context)!.height,
                       value: height,
                       min: 100,
                       max: 220,
@@ -534,9 +534,9 @@ class ProfileScreen extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     // Goal
-                    const Text(
-                      'Goal',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.goal,
+                      style: const TextStyle(
                         color: AppColors.textSecondary,
                         fontWeight: FontWeight.w500,
                       ),
@@ -725,7 +725,7 @@ class ProfileScreen extends StatelessWidget {
                 Navigator.pop(ctx);
               }
             },
-            child: const Text('Save'),
+            child: Text(AppLocalizations.of(context)!.save),
           ),
         ],
       ),
@@ -769,7 +769,7 @@ class ProfileScreen extends StatelessWidget {
         actions: [
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
         ],
       ),
@@ -782,20 +782,20 @@ class ProfileScreen extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text(
-          'Logout',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+        title: Text(
+          AppLocalizations.of(context)!.logout,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
         ),
         content: Text(
-          'Are you sure you want to logout?',
+          AppLocalizations.of(context)!.logoutConfirm,
           style: TextStyle(color: Colors.white.withAlpha(180)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: AppColors.textTertiary),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: const TextStyle(color: AppColors.textTertiary),
             ),
           ),
           ElevatedButton(
@@ -835,7 +835,7 @@ class ProfileScreen extends StatelessWidget {
                 );
               }
             },
-            child: const Text('Logout'),
+            child: Text(AppLocalizations.of(context)!.logout),
           ),
         ],
       ),
@@ -848,20 +848,20 @@ class ProfileScreen extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text(
-          'Reset All Data?',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+        title: Text(
+          AppLocalizations.of(context)!.resetAllDataQuestion,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
         ),
         content: Text(
-          'This will delete all your data including meals, weight history, and profile. This cannot be undone.',
+          AppLocalizations.of(context)!.resetAllDataBody,
           style: TextStyle(color: Colors.white.withAlpha(180)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: AppColors.textTertiary),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: const TextStyle(color: AppColors.textTertiary),
             ),
           ),
           ElevatedButton(
@@ -876,7 +876,7 @@ class ProfileScreen extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('Reset'),
+            child: Text(AppLocalizations.of(context)!.reset),
           ),
         ],
       ),

@@ -65,8 +65,8 @@ class LanguageService {
       // Portuguese speaking countries
       'PT': 'pt', 'BR': 'pt', 'AO': 'pt', 'MZ': 'pt', 'GW': 'pt',
 
-      // Swahili speaking countries
-      'KE': 'sw', 'TZ': 'sw', 'UG': 'sw', 'RW': 'sw',
+      // Swahili speaking countries → fallback to English
+      'KE': 'en', 'TZ': 'en', 'UG': 'en', 'RW': 'en',
 
       // Arabic speaking countries
       'SA': 'ar', 'EG': 'ar', 'AE': 'ar', 'IQ': 'ar', 'MA': 'ar',
@@ -74,14 +74,14 @@ class LanguageService {
       'TN': 'ar', 'LY': 'ar', 'LB': 'ar', 'OM': 'ar', 'KW': 'ar',
       'QA': 'ar', 'BH': 'ar',
 
-      // Chinese speaking countries/regions
-      'CN': 'zh', 'TW': 'zh', 'HK': 'zh', 'SG': 'zh',
+      // Chinese/Hindi/Japanese speaking countries → fallback to English
+      'CN': 'en', 'TW': 'en', 'HK': 'en', 'SG': 'en',
 
       // Hindi speaking country
-      'IN': 'hi',
+      'IN': 'en',
 
       // Japanese speaking country
-      'JP': 'ja',
+      'JP': 'en',
     };
 
     return languageMap[countryCode.toUpperCase()] ?? 'en';
@@ -94,17 +94,8 @@ class LanguageService {
       {'code': 'fr', 'name': 'French', 'flag': '🇫🇷', 'native': 'Français'},
       {'code': 'de', 'name': 'German', 'flag': '🇩🇪', 'native': 'Deutsch'},
       {'code': 'es', 'name': 'Spanish', 'flag': '🇪🇸', 'native': 'Español'},
-      {
-        'code': 'pt',
-        'name': 'Portuguese',
-        'flag': '🇵🇹',
-        'native': 'Português',
-      },
-      {'code': 'sw', 'name': 'Swahili', 'flag': '🇰🇪', 'native': 'Kiswahili'},
+      {'code': 'pt', 'name': 'Portuguese', 'flag': '🇵🇹', 'native': 'Português'},
       {'code': 'ar', 'name': 'Arabic', 'flag': '🇸🇦', 'native': 'العربية'},
-      {'code': 'zh', 'name': 'Chinese', 'flag': '🇨🇳', 'native': '简体中文'},
-      {'code': 'hi', 'name': 'Hindi', 'flag': '🇮🇳', 'native': 'हिन्दी'},
-      {'code': 'ja', 'name': 'Japanese', 'flag': '🇯🇵', 'native': '日本語'},
     ];
   }
 }
