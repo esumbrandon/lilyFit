@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_profile.dart';
 import '../models/food_item.dart';
 import '../models/meal_log.dart';
+import '../services/notification_service.dart';
 
 class AppProvider extends ChangeNotifier {
   late SharedPreferences _prefs;
@@ -326,9 +327,29 @@ class AppProvider extends ChangeNotifier {
   }
 
   // ─── Locale Management ──────────────────────────────────────────
-  Future<void> setLocale(Locale locale) async {
+  Future<void> setLocale(
+    Locale locale, {
+    String? notificationTitle,
+    String? notificationBody,
+  }) async {
     _currentLocale = locale;
     await _prefs.setString('selected_language', locale.languageCode);
+    
+    // Reschedule water reminders with new language if they're enabled
+    if (_waterRemindersEnabled && 
+        notificationTitle != null && 
+        notificationBody != null) {
+      await NotificationService.scheduleWaterReminders(
+        intervalMinutes: _waterReminderIntervalMinutes,
+        startHour: _waterReminderStartHour,
+        startMinute: _waterReminderStartMinute,
+        endHour: _waterReminderEndHour,
+        endMinute: _waterReminderEndMinute,
+        notificationTitle: notificationTitle,
+        notificationBody: notificationBody,
+      );
+    }
+    
     notifyListeners();
   }
 }

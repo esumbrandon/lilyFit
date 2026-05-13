@@ -278,5 +278,7 @@
   "waterRemindersDisabled": "Recordatorios de agua desactivados",
   "failedToCreateAccount": "Error al crear cuenta",
   "resetPasswordInstructions": "Ingrese su dirección de correo electrónico y le enviaremos un enlace para restablecer su contraseña.",
-  "noUserLoggedIn": "No hay usuario conectado. Por favor, inicie sesión primero."
+  "noUserLoggedIn": "No hay usuario conectado. Por favor, inicie sesión primero.",
+  "waterReminderNotificationTitle": "¡Hora de hidratarse! 💧",
+  "waterReminderNotificationBody": "Mantente en el buen camino: bebe un vaso de agua ahora."
 }

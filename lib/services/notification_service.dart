@@ -98,6 +98,8 @@ class NotificationService {
     required int startMinute,
     required int endHour,
     required int endMinute,
+    required String notificationTitle,
+    required String notificationBody,
   }) async {
     await cancelWaterReminders();
 
@@ -135,8 +137,8 @@ class NotificationService {
 
       await _plugin.zonedSchedule(
         _waterBaseId + slotIndex,
-        'Time to Hydrate! 💧',
-        'Stay on track – drink a glass of water now.',
+        notificationTitle,
+        notificationBody,
         _nextInstanceOfTime(hour, minute),
         details,
         // Inexact alarms work without the SCHEDULE_EXACT_ALARM permission

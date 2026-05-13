@@ -864,4 +864,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get noUserLoggedIn =>
       'Kein Benutzer angemeldet. Bitte melden Sie sich zuerst an.';
+
+  @override
+  String get waterReminderNotificationTitle => 'Zeit zum Hydratisieren! 💧';
+
+  @override
+  String get waterReminderNotificationBody =>
+      'Bleiben Sie auf Kurs – trinken Sie jetzt ein Glas Wasser.';
 }

@@ -98,7 +98,13 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
 
     if (mounted) {
       final provider = context.read<AppProvider>();
-      await provider.setLocale(Locale(_selectedLanguage!));
+      final localizations = AppLocalizations.of(context)!;
+      
+      await provider.setLocale(
+        Locale(_selectedLanguage!),
+        notificationTitle: localizations.waterReminderNotificationTitle,
+        notificationBody: localizations.waterReminderNotificationBody,
+      );
 
       // Navigate to auth screen
       Navigator.of(context).pushReplacementNamed('/auth');

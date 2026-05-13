@@ -442,7 +442,15 @@ class SettingsScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () async {
                         HapticFeedback.mediumImpact();
-                        await provider.setLocale(Locale(selected));
+                        
+                        // Get localized strings for the NEW language before changing
+                        final newLocalizations = lookupAppLocalizations(Locale(selected));
+                        
+                        await provider.setLocale(
+                          Locale(selected),
+                          notificationTitle: newLocalizations.waterReminderNotificationTitle,
+                          notificationBody: newLocalizations.waterReminderNotificationBody,
+                        );
                         if (ctx.mounted) Navigator.pop(ctx);
                       },
                       style: ElevatedButton.styleFrom(
@@ -692,6 +700,7 @@ class _NotificationSettingsScreen extends StatelessWidget {
                             final granted =
                                 await NotificationService.requestPermissions();
                             if (!granted) return;
+                            if (!context.mounted) return;
                             await NotificationService.scheduleWaterReminders(
                               intervalMinutes:
                                   provider.waterReminderIntervalMinutes,
@@ -699,6 +708,8 @@ class _NotificationSettingsScreen extends StatelessWidget {
                               startMinute: provider.waterReminderStartMinute,
                               endHour: provider.waterReminderEndHour,
                               endMinute: provider.waterReminderEndMinute,
+                              notificationTitle: AppLocalizations.of(context)!.waterReminderNotificationTitle,
+                              notificationBody: AppLocalizations.of(context)!.waterReminderNotificationBody,
                             );
                           } else {
                             await NotificationService.cancelWaterReminders();

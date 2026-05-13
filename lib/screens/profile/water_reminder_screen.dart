@@ -102,6 +102,10 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
     HapticFeedback.mediumImpact();
     setState(() => _saving = true);
 
+    // Get localized strings before async operations
+    final notificationTitle = AppLocalizations.of(context)!.waterReminderNotificationTitle;
+    final notificationBody = AppLocalizations.of(context)!.waterReminderNotificationBody;
+
     // Request permission when the user turns reminders on.
     if (_enabled) {
       final granted = await NotificationService.requestPermissions();
@@ -136,6 +140,8 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
         startMinute: _startTime.minute,
         endHour: _endTime.hour,
         endMinute: _endTime.minute,
+        notificationTitle: notificationTitle,
+        notificationBody: notificationBody,
       );
     } else {
       await NotificationService.cancelWaterReminders();

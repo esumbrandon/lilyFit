@@ -330,5 +330,7 @@
   "waterRemindersDisabled": "Water reminders disabled",
   "failedToCreateAccount": "Failed to create account",
   "resetPasswordInstructions": "Enter your email address and we'll send you a link to reset your password.",
-  "noUserLoggedIn": "No user logged in. Please login first."
+  "noUserLoggedIn": "No user logged in. Please login first.",
+  "waterReminderNotificationTitle": "Time to Hydrate! 💧",
+  "waterReminderNotificationBody": "Stay on track – drink a glass of water now."
 }

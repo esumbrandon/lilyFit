@@ -41,12 +41,15 @@ void main() async {
 
   // Re-schedule water reminders if the user had them enabled before.
   if (appProvider.waterRemindersEnabled) {
+    final localizations = lookupAppLocalizations(appProvider.currentLocale);
     await NotificationService.scheduleWaterReminders(
       intervalMinutes: appProvider.waterReminderIntervalMinutes,
       startHour: appProvider.waterReminderStartHour,
       startMinute: appProvider.waterReminderStartMinute,
       endHour: appProvider.waterReminderEndHour,
       endMinute: appProvider.waterReminderEndMinute,
+      notificationTitle: localizations.waterReminderNotificationTitle,
+      notificationBody: localizations.waterReminderNotificationBody,
     );
   }
 

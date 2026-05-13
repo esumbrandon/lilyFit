@@ -1729,6 +1729,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No user logged in. Please login first.'**
   String get noUserLoggedIn;
+
+  /// No description provided for @waterReminderNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to Hydrate! 💧'**
+  String get waterReminderNotificationTitle;
+
+  /// No description provided for @waterReminderNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay on track – drink a glass of water now.'**
+  String get waterReminderNotificationBody;
 }
 
 class _AppLocalizationsDelegate

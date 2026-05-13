@@ -278,5 +278,7 @@
   "waterRemindersDisabled": "Wassererinnerungen deaktiviert",
   "failedToCreateAccount": "Fehler beim Erstellen des Kontos",
   "resetPasswordInstructions": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
-  "noUserLoggedIn": "Kein Benutzer angemeldet. Bitte melden Sie sich zuerst an."
+  "noUserLoggedIn": "Kein Benutzer angemeldet. Bitte melden Sie sich zuerst an.",
+  "waterReminderNotificationTitle": "Zeit zum Hydratisieren! 💧",
+  "waterReminderNotificationBody": "Bleiben Sie auf Kurs – trinken Sie jetzt ein Glas Wasser."
 }
