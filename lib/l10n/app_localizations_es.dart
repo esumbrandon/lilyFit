@@ -67,7 +67,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Personalicemos tu plan de gestión de calorías';
 
   @override
-  String get continueButton => 'Continue';
+  String get continueButton => 'Continuar';
 
   @override
   String get back => 'Atrás';
@@ -238,7 +238,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get searchFood => 'Buscar comida';
 
   @override
-  String get searchHint => 'Search foods...';
+  String get searchHint => 'Buscar alimentos...';
 
   @override
   String get recentFoods => 'Alimentos recientes';
@@ -256,13 +256,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get servingSize => 'Tamaño de la porción';
 
   @override
-  String get add => 'Add';
+  String get add => 'Agregar';
 
   @override
   String get cancel => 'Cancelar';
 
   @override
-  String get save => 'Save';
+  String get save => 'Guardar';
 
   @override
   String get delete => 'Eliminar';
@@ -438,274 +438,285 @@ class AppLocalizationsEs extends AppLocalizations {
   String get selectMealType => 'Tipo de comida';
 
   @override
-  String get waterRemindersActive => 'Water reminders active';
+  String get waterRemindersActive => 'Recordatorios de agua activos';
 
   @override
-  String get configureReminders => 'Configure reminders';
+  String get configureReminders => 'Configurar recordatorios';
 
   @override
-  String get logWeight => 'Log Today\'s Weight';
+  String get logWeight => 'Registrar el peso de hoy';
 
   @override
-  String get weeklyCalories => 'Weekly Calories';
+  String get weeklyCalories => 'Calorías semanales';
 
   @override
-  String get weeklySummary => 'Weekly Summary';
+  String get weeklySummary => 'Resumen semanal';
 
   @override
-  String get avgDailyCalories => 'Average Daily Calories';
+  String get avgDailyCalories => 'Calorías diarias promedio';
 
   @override
-  String get totalMealsLogged => 'Total Meals Logged';
+  String get totalMealsLogged => 'Total de comidas registradas';
 
   @override
-  String get weightChange => 'Weight Change';
+  String get weightChange => 'Cambio de peso';
 
   @override
-  String get weightHistory => 'Weight History';
+  String get weightHistory => 'Historial de peso';
 
   @override
-  String get addTo => 'Add to';
+  String get addTo => 'Agregar a';
 
   @override
-  String get forgotPassword => 'Forgot Password?';
+  String get forgotPassword => '¿Olvidó su contraseña?';
 
   @override
-  String get resetPassword => 'Reset Password';
+  String get resetPassword => 'Restablecer contraseña';
 
   @override
-  String get sendResetLink => 'Send Reset Link';
+  String get sendResetLink => 'Enviar enlace de restablecimiento';
 
   @override
-  String get invalidEmail => 'Invalid Email';
+  String get invalidEmail => 'E-mail inválido';
 
   @override
-  String get verifyEmail => 'Verify Your Email';
+  String get verifyEmail => 'Verificar su correo electrónico';
 
   @override
-  String get resetLinkSent => 'Reset Link Sent';
+  String get resetLinkSent => 'Enlace de restablecimiento enviado';
 
   @override
-  String get resetFailed => 'Reset Failed';
+  String get resetFailed => 'Restablecimiento fallido';
 
   @override
-  String get close => 'Close';
+  String get close => 'Cerrar';
 
   @override
-  String get reset => 'Reset';
+  String get reset => 'Restablecer';
 
   @override
-  String get clear => 'Clear';
+  String get clear => 'Limpiar';
 
   @override
-  String get pleaseSelectLanguage => 'Please select a language';
+  String get pleaseSelectLanguage => 'Por favor seleccione un idioma';
 
   @override
-  String get reminderInterval => 'Reminder Interval';
+  String get reminderInterval => 'Intervalo de recordatorio';
 
   @override
-  String get activeHours => 'Active Hours';
+  String get activeHours => 'Horas activas';
 
   @override
-  String get startTimeError => 'Start time must be before end time';
+  String get startTimeError =>
+      'La hora de inicio debe ser antes de la hora de finalización';
 
   @override
-  String get endTimeError => 'End time must be after start time';
+  String get endTimeError =>
+      'La hora de finalización debe ser después de la hora de inicio';
 
   @override
-  String get emailUpdate => 'Email Update';
+  String get emailUpdate => 'Actualización de correo electrónico';
 
   @override
-  String get updateEmailAddress => 'Update your email address';
+  String get updateEmailAddress =>
+      'Actualice su dirección de correo electrónico';
 
   @override
-  String get faqsContactUs => 'FAQs, contact us';
+  String get faqsContactUs => 'Preguntas frecuentes, contáctenos';
 
   @override
-  String get dataPermissionsPrivacy => 'Data, permissions, privacy policy';
+  String get dataPermissionsPrivacy =>
+      'Datos, permisos, política de privacidad';
 
   @override
-  String get waterReminders => 'Water Reminders';
+  String get waterReminders => 'Recordatorios de agua';
 
   @override
-  String get remindToDrinkWater => 'Remind me to drink water';
+  String get remindToDrinkWater => 'Recuérdame beber agua';
 
   @override
-  String get newEmailAddress => 'New Email Address';
+  String get newEmailAddress => 'Nueva dirección de correo electrónico';
 
   @override
-  String get sendConfirmation => 'Send Confirmation';
+  String get sendConfirmation => 'Enviar confirmación';
 
   @override
-  String get premiumComingSoon => 'Premium subscription coming soon!';
+  String get premiumComingSoon => '¡Suscripción premium próximamente!';
 
   @override
-  String get liveChat => 'Live Chat';
+  String get liveChat => 'Chat en vivo';
 
   @override
-  String get chatWithUs => 'Chat with us';
+  String get chatWithUs => 'Chatea con nosotros';
 
   @override
-  String get emailUs => 'Email Us';
+  String get emailUs => 'Envíanos un correo electrónico';
 
   @override
-  String get dataStorage => 'Data Storage';
+  String get dataStorage => 'Almacenamiento de datos';
 
   @override
-  String get dataSync => 'Data Sync';
+  String get dataSync => 'Sincronización de datos';
 
   @override
-  String get clearLocalCache => 'Clear Local Cache';
+  String get clearLocalCache => 'Borrar caché local';
 
   @override
-  String get clearCacheSubtitle => 'Remove cached food data and images';
+  String get clearCacheSubtitle =>
+      'Eliminar datos y imágenes de alimentos en caché';
 
   @override
-  String get privacyPolicy => 'Privacy Policy';
+  String get privacyPolicy => 'Política de privacidad';
 
   @override
-  String get privacyPolicySubtitle => 'How we collect and use your data';
+  String get privacyPolicySubtitle => 'Cómo recopilamos y usamos sus datos';
 
   @override
-  String get termsOfService => 'Terms of Service';
+  String get termsOfService => 'Términos de servicio';
 
   @override
-  String get termsOfServiceSubtitle => 'Read our terms and conditions';
+  String get termsOfServiceSubtitle => 'Lea nuestros términos y condiciones';
 
   @override
-  String get deleteAccount => 'Delete Account';
+  String get deleteAccount => 'Eliminar cuenta';
 
   @override
   String get deleteAccountSubtitle =>
-      'Permanently delete your account and all data';
+      'Eliminar permanentemente su cuenta y todos los datos';
 
   @override
-  String get clearCacheQuestion => 'Clear Cache?';
+  String get clearCacheQuestion => '¿Borrar caché?';
 
   @override
   String get clearCacheBody =>
-      'This will remove cached food data. Your personal data and meal logs will not be affected.';
+      'Esto eliminará los datos de alimentos en caché. Sus datos personales y registros de comidas no se verán afectados.';
 
   @override
-  String get cacheClearedMsg => 'Cache cleared successfully';
+  String get cacheClearedMsg => 'Caché borrada con éxito';
 
   @override
-  String get deleteAccountQuestion => 'Delete Account?';
+  String get deleteAccountQuestion => '¿Eliminar cuenta?';
 
   @override
   String get deleteAccountBody =>
-      'This will permanently delete your account and all associated data. This action cannot be undone.';
+      'Esto eliminará permanentemente su cuenta y todos los datos asociados. Esta acción no se puede deshacer.';
 
   @override
-  String get resetAllDataQuestion => 'Reset All Data?';
+  String get resetAllDataQuestion => '¿Restablecer todos los datos?';
 
   @override
   String get resetAllDataBody =>
-      'This will delete all your data including meals, weight history, and profile. This cannot be undone.';
+      'Esto eliminará todos sus datos, incluidas las comidas, el historial de peso y el perfil. Esta acción no se puede deshacer.';
 
   @override
-  String get days => 'days';
+  String get days => 'días';
 
   @override
-  String get logAtLeast2Weights => 'Log at least 2 weights to see your chart';
+  String get logAtLeast2Weights =>
+      'Registre al menos 2 pesos para ver su gráfico';
 
   @override
-  String get target => 'Target';
+  String get target => 'Objetivo';
 
   @override
-  String get enterCurrentWeight => 'Enter your current weight';
+  String get enterCurrentWeight => 'Ingrese su peso actual';
 
   @override
-  String get yourName => 'Your Name';
+  String get yourName => 'Su nombre';
 
   @override
-  String get enterYourName => 'Enter your name';
+  String get enterYourName => 'Ingrese su nombre';
 
   @override
-  String get planReady => 'Your Plan is Ready! 🎉';
+  String get planReady => '¡Su plan está listo! 🎉';
 
   @override
   String get basedOnProfile =>
-      'Based on your profile, here are your daily targets';
+      'Según su perfil, estos son sus objetivos diarios';
 
   @override
-  String get status => 'Status';
+  String get status => 'Estado';
 
   @override
-  String get eatingStyle => 'Eating Style';
+  String get eatingStyle => 'Estilo de alimentación';
 
   @override
   String get eatingStyleMessage =>
-      'We\'ll tailor food suggestions to your preferences';
+      'Adaptaremos las sugerencias de alimentos a sus preferencias';
 
   @override
-  String get balanced => 'Balanced';
+  String get balanced => 'Equilibrado';
 
   @override
-  String get balancedDesc => 'Well-rounded nutrition with all food groups';
+  String get balancedDesc =>
+      'Nutrición equilibrada con todos los grupos alimenticios';
 
   @override
-  String get highProtein => 'High-Protein';
+  String get highProtein => 'Alto en proteínas';
 
   @override
   String get highProteinDesc =>
-      'Prioritises protein for muscle growth & recovery';
+      'Prioriza las proteínas para el crecimiento y recuperación muscular';
 
   @override
-  String get lowCarbKeto => 'Low-Carb / Keto';
+  String get lowCarbKeto => 'Bajo en carbohidratos / Keto';
 
   @override
   String get lowCarbKetoDesc =>
-      'Reduced carbohydrates with higher healthy fats';
+      'Carbohidratos reducidos con grasas saludables más altas';
 
   @override
-  String get vegetarian => 'Vegetarian';
+  String get vegetarian => 'Vegetariano';
 
   @override
-  String get vegetarianDesc => 'Plant-based foods with dairy & eggs allowed';
+  String get vegetarianDesc =>
+      'Alimentos de origen vegetal con lácteos y huevos permitidos';
 
   @override
-  String get vegan => 'Vegan';
+  String get vegan => 'Vegano';
 
   @override
-  String get veganDesc => '100% plant-based — no animal products';
+  String get veganDesc => '100% vegetal — sin productos de origen animal';
 
   @override
-  String get dailyWaterGoal => 'Daily Water Goal';
+  String get dailyWaterGoal => 'Objetivo diario de agua';
 
   @override
   String get stayHydratedMessage =>
-      'Staying hydrated boosts metabolism and energy';
+      'Mantenerse hidratado aumenta el metabolismo y la energía';
 
   @override
-  String get quickSelect => 'Quick select';
+  String get quickSelect => 'Selección rápida';
 
   @override
-  String get fineTune => 'Fine-tune';
+  String get fineTune => 'Ajuste fino';
 
   @override
-  String get swipeToContinue => 'Swipe or tap Continue to begin';
+  String get swipeToContinue => 'Deslice o toque Continuar para comenzar';
 
   @override
-  String get calorieTracking => 'Calorie Tracking';
+  String get calorieTracking => 'Seguimiento de calorías';
 
   @override
-  String get calorieTrackingDesc => 'Log meals and stay on target every day';
+  String get calorieTrackingDesc =>
+      'Registre comidas y manténgase en el objetivo cada día';
 
   @override
-  String get macroAnalysis => 'Macro Analysis';
+  String get macroAnalysis => 'Análisis de macros';
 
   @override
-  String get macroAnalysisDesc => 'Balance protein, carbs & fats perfectly';
+  String get macroAnalysisDesc =>
+      'Equilibra perfectamente proteínas, carbohidratos y grasas';
 
   @override
-  String get progressInsights => 'Progress Insights';
+  String get progressInsights => 'Información sobre el progreso';
 
   @override
-  String get progressInsightsDesc => 'Track your transformation over time';
+  String get progressInsightsDesc =>
+      'Rastrea tu transformación a lo largo del tiempo';
 
   @override
-  String get welcomeTagline => 'Your personal nutrition & fitness companion';
+  String get welcomeTagline => 'Su compañero personal de nutrición y fitness';
 
   @override
   String get chooseYourLanguage => 'Elige tu idioma';
