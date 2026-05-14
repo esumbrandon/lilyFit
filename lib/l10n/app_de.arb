@@ -139,7 +139,9 @@
   "dayStreak": "{count} Tage in Folge",
   "@dayStreak": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "streak": "Serie",

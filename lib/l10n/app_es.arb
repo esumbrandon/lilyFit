@@ -139,7 +139,9 @@
   "dayStreak": "{count} días seguidos",
   "@dayStreak": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "streak": "Racha",

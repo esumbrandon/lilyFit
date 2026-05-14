@@ -139,7 +139,9 @@
   "dayStreak": "{count} jour de suite",
   "@dayStreak": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "streak": "Série",
@@ -261,7 +263,7 @@
   "contactUs": "Nous contacter",
   "contactUsBody": "Si vous avez des questions sur nos pratiques de confidentialité, veuillez nous contacter à support@lilyfit.app.",
   "acceptanceOfTerms": "Acceptation des conditions",
-  "acceptanceOfTermsBody": "En utilisant LilyFit, vous acceptez ces conditions d'utilisation. Si vous n'êtes pas d'accord, veuillez ne pas utiliser l'application.",
+  "acceptanceOfTermsBody": "En utilisant LilyFit, vous acceptez ces conditions d'utilisation. Si vous n'êtes pas d'accord, veuillez ne pas ut iliser l'application.",
   "useOfApp": "Utilisation de l'application",
   "useOfAppBody": "LilyFit est fourni pour un usage personnel et non commercial. Vous acceptez de ne pas abuser de l'application ou d'interférer avec son fonctionnement.",
   "healthDisclaimer": "Avis de santé",

@@ -825,7 +825,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get acceptanceOfTermsBody =>
-      'En utilisant LilyFit, vous acceptez ces conditions d\'utilisation. Si vous n\'êtes pas d\'accord, veuillez ne pas utiliser l\'application.';
+      'En utilisant LilyFit, vous acceptez ces conditions d\'utilisation. Si vous n\'êtes pas d\'accord, veuillez ne pas ut iliser l\'application.';
 
   @override
   String get useOfApp => 'Utilisation de l\'application';
