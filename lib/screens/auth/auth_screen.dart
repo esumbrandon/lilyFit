@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'dart:math' as math;
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../services/supabase_service.dart';
 import '../../utils/validators.dart';
+import '../../providers/app_provider.dart';
 import '../onboarding/onboarding_screen.dart';
 import '../home/home_screen.dart';
 
@@ -106,12 +108,18 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
 
         if (!mounted) return;
         if (profile != null) {
-          // User has profile, go to home
-          Navigator.of(context).pushReplacement(
+          // Returning user with profile - load into app state
+          final provider = context.read<AppProvider>();
+          await provider.completeOnboarding(profile);
+
+          // Navigate to home (replace entire navigation stack)
+          if (!mounted) return;
+          Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (_) => const HomeScreen()),
+            (route) => false,
           );
         } else {
-          // User exists but no profile, complete onboarding
+          // User exists but no profile, complete onboarding (new user)
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => const OnboardingScreen()),
           );
@@ -226,7 +234,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 hintText: AppLocalizations.of(context)!.enterEmail,
                 prefixIcon: const Icon(Icons.email_outlined),
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.05),
+                fillColor: Colors.white.withValues(),
               ),
             ),
           ],
@@ -384,6 +392,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                         ],
                       ),
                     ),
+
+                    // Settings section at the bottom
+                    _buildSettingsSection(),
                   ],
                 ),
               ),
@@ -414,8 +425,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      AppColors.primary.withOpacity(0.1),
-                      AppColors.primary.withOpacity(0.0),
+                      AppColors.primary.withValues(alpha: 0.04),
+                      AppColors.primary.withValues(alpha: 0.0),
                     ],
                   ),
                 ),
@@ -442,8 +453,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      AppColors.secondary.withOpacity(0.15),
-                      AppColors.secondary.withOpacity(0.0),
+                      AppColors.secondary.withValues( alpha: 0.05),
+                      AppColors.secondary.withValues(alpha: 0.0),
                     ],
                   ),
                 ),
@@ -480,7 +491,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   gradient: AppColors.primaryGradient,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.3),
+                      color: AppColors.primary.withValues(alpha: 0.3),
                       blurRadius: 24,
                       spreadRadius: 3,
                     ),
@@ -515,7 +526,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 AppLocalizations.of(context)!.tagline,
                 style: TextStyle(
                   fontSize: taglineSize,
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -531,12 +542,12 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.1), width: 1.5),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -549,7 +560,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withOpacity(0.3),
+              color: AppColors.primary.withValues(alpha: 0.3),
               blurRadius: 15,
               offset: const Offset(0, 5),
             ),
@@ -558,7 +569,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         indicatorSize: TabBarIndicatorSize.tab,
         dividerColor: Colors.transparent,
         labelColor: Colors.white,
-        unselectedLabelColor: Colors.white.withOpacity(0.5),
+        unselectedLabelColor: Colors.white.withValues(alpha: 0.5),
         labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
         padding: EdgeInsets.zero,
         tabs: [
@@ -578,12 +589,12 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       child: Container(
         padding: EdgeInsets.all(formPadding),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white.withOpacity(0.1), width: 1.5),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 30,
               offset: const Offset(0, 15),
             ),
@@ -604,7 +615,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 prefixIcon: const Icon(Icons.email_outlined, size: 20),
                 errorText: _loginEmailError,
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.05),
+                fillColor: Colors.white.withValues(alpha: 0.05,),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 16,
@@ -646,7 +657,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 ),
                 errorText: _loginPasswordError,
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.05),
+                fillColor: Colors.white.withValues(alpha: 0.05),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 16,
@@ -704,7 +715,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primary.withOpacity(0.4),
+                        color: AppColors.primary.withValues(alpha: 0.4),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -740,12 +751,12 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       child: Container(
         padding: EdgeInsets.all(formPadding),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white.withOpacity(0.1), width: 1.5),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 30,
               offset: const Offset(0, 15),
             ),
@@ -765,7 +776,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 prefixIcon: const Icon(Icons.person_outline, size: 20),
                 errorText: _signupNameError,
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.05),
+                fillColor: Colors.white.withValues(alpha: 0.05),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 16,
@@ -791,7 +802,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 prefixIcon: const Icon(Icons.email_outlined, size: 20),
                 errorText: _signupEmailError,
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.05),
+                fillColor: Colors.white.withValues(alpha: 0.05),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 16,
@@ -832,7 +843,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 ),
                 errorText: _signupPasswordError,
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.05),
+                fillColor: Colors.white.withValues(alpha: 0.05),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 16,
@@ -875,7 +886,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 ),
                 errorText: _signupConfirmPasswordError,
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.05),
+                fillColor: Colors.white.withValues(alpha: 0.05),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 16,
@@ -908,7 +919,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primary.withOpacity(0.4),
+                        color: AppColors.primary.withValues(alpha: 0.4),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -930,6 +941,265 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               ),
             ),
             SizedBox(height: isSmallScreen ? 8 : 12),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSettingsSection() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8, left: 24, right: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.language_rounded,
+            size: 20,
+            color: Colors.white.withValues(alpha: 0.7),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            AppLocalizations.of(context)!.language,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.7),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(width: 12),
+          GestureDetector(
+            onTap: _showLanguageBottomSheet,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _getCurrentLanguageFlag(),
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    _getCurrentLanguageName(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(
+                    Icons.arrow_drop_down_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getCurrentLanguageFlag() {
+    final locale = context.watch<AppProvider>().currentLocale;
+    final languages = {
+      'en': '🇬🇧',
+      'es': '🇪🇸',
+      'fr': '🇫🇷',
+      'de': '🇩🇪',
+      'pt': '🇵🇹',
+    };
+    return languages[locale.languageCode] ?? '🇬🇧';
+  }
+
+  String _getCurrentLanguageName() {
+    final locale = context.watch<AppProvider>().currentLocale;
+    final languages = {
+      'en': 'English',
+      'es': 'Español',
+      'fr': 'Français',
+      'de': 'Deutsch',
+      'pt': 'Português',
+    };
+    return languages[locale.languageCode] ?? 'English';
+  }
+
+  void _showLanguageBottomSheet() {
+    HapticFeedback.lightImpact();
+
+    final languages = [
+      {'code': 'en', 'name': 'English', 'native': 'English', 'flag': '🇬🇧'},
+      {'code': 'es', 'name': 'Spanish', 'native': 'Español', 'flag': '🇪🇸'},
+      {'code': 'fr', 'name': 'French', 'native': 'Français', 'flag': '🇫🇷'},
+      {'code': 'de', 'name': 'German', 'native': 'Deutsch', 'flag': '🇩🇪'},
+      {'code': 'pt', 'name': 'Portuguese', 'native': 'Português', 'flag': '🇵🇹'},
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+
+            // Title
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.language_rounded,
+                    color: AppColors.primary,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    AppLocalizations.of(context)!.chooseLanguage,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Language list
+            ...languages.map((lang) => _buildLanguageOption(lang)),
+
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageOption(Map<String, String> language) {
+    final currentLocale = context.watch<AppProvider>().currentLocale;
+    final isSelected = currentLocale.languageCode == language['code'];
+
+    return InkWell(
+      onTap: () async {
+        HapticFeedback.selectionClick();
+        final provider = context.read<AppProvider>();
+        final localizations = AppLocalizations.of(context)!;
+
+        await provider.setLocale(
+          Locale(language['code']!),
+          notificationTitle: localizations.waterReminderNotificationTitle,
+          notificationBody: localizations.waterReminderNotificationBody,
+        );
+
+        if (mounted) {
+          Navigator.pop(context);
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.15)
+              : Colors.white.withValues(alpha: 0.03),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected
+                ? AppColors.primary.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.05),
+            width: 1.5,
+          ),
+        ),
+        child: Row(
+          children: [
+            Text(
+              language['flag']!,
+              style: const TextStyle(fontSize: 28),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    language['name']!,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    language['native']!,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.6),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.check_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
           ],
         ),
       ),
