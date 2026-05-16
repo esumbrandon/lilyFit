@@ -6,6 +6,7 @@ import '../dashboard/dashboard_screen.dart';
 import '../food_search/food_search_screen.dart';
 import '../progress/progress_screen.dart';
 import '../profile/profile_screen.dart';
+import '../profile/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen>
     FoodSearchScreen(),
     ProgressScreen(),
     ProfileScreen(),
+    SettingsScreen(),
   ];
 
   @override
@@ -69,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen>
                     _navItem(1, Icons.search_rounded, Icons.search_rounded, l10n.food),
                     _navItem(2, Icons.insights_rounded, Icons.insights_outlined, l10n.progress),
                     _navItem(3, Icons.person_rounded, Icons.person_outline_rounded, l10n.profile),
+                    _navItem(4, Icons.settings_rounded, Icons.settings_outlined, l10n.settings),
                   ],
                 );
               },

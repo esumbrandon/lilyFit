@@ -9,7 +9,6 @@ import '../../services/supabase_service.dart';
 import '../../utils/unit_converter.dart';
 import '../auth/auth_screen.dart';
 import '../onboarding/onboarding_screen.dart';
-import 'settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -298,21 +297,6 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      _settingsTile(
-                        Icons.settings_rounded,
-                        AppLocalizations.of(context)!.settings,
-                        'Language, notifications, privacy & more',
-                        () {
-                          HapticFeedback.lightImpact();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const SettingsScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      _divider(),
                       _settingsTile(
                         Icons.water_drop_outlined,
                         AppLocalizations.of(context)!.waterGoal,
