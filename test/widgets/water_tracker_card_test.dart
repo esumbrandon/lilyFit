@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:lilyfit/widgets/water_tracker_card.dart';
 import 'package:lilyfit/theme/app_theme.dart';
+import 'package:lilyfit/l10n/app_localizations.dart';
 
 Widget _buildCard({
   int currentGlasses = 3,
@@ -12,6 +14,13 @@ Widget _buildCard({
 }) {
   return MaterialApp(
     theme: AppTheme.darkTheme,
+    localizationsDelegates: const [
+      AppLocalizations.delegate,
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+    ],
+    supportedLocales: AppLocalizations.supportedLocales,
     home: Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16),
