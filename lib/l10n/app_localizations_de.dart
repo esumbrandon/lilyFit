@@ -882,4 +882,23 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get waterReminderNotificationBody =>
       'Bleiben Sie auf Kurs – trinken Sie jetzt ein Glas Wasser.';
+
+  @override
+  String get settingsDescription =>
+      'Sprache, Benachrichtigungen, Datenschutz und mehr';
+
+  @override
+  String get logoutDescription => 'Von Ihrem Konto abmelden';
+
+  @override
+  String get resetDataDescription => 'Neu beginnen';
+
+  @override
+  String get member => 'Mitglied';
+
+  @override
+  String get perDay => 'pro Tag';
+
+  @override
+  String get version => 'Version';
 }

@@ -279,5 +279,11 @@
   "resetPasswordInstructions": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
   "noUserLoggedIn": "Kein Benutzer angemeldet. Bitte melden Sie sich zuerst an.",
   "waterReminderNotificationTitle": "Zeit zum Hydratisieren! 💧",
-  "waterReminderNotificationBody": "Bleiben Sie auf Kurs – trinken Sie jetzt ein Glas Wasser."
+  "waterReminderNotificationBody": "Bleiben Sie auf Kurs – trinken Sie jetzt ein Glas Wasser.",
+  "settingsDescription": "Sprache, Benachrichtigungen, Datenschutz und mehr",
+  "logoutDescription": "Von Ihrem Konto abmelden",
+  "resetDataDescription": "Neu beginnen",
+  "member": "Mitglied",
+  "perDay": "pro Tag",
+  "version": "Version"
 }

@@ -279,5 +279,11 @@
   "resetPasswordInstructions": "Digite seu endereço de e-mail e enviaremos um link para redefinir sua senha.",
   "noUserLoggedIn": "Nenhum usuário conectado. Por favor, faça login primeiro.",
   "waterReminderNotificationTitle": "Hora de hidratar! 💧",
-  "waterReminderNotificationBody": "Mantenha-se no caminho certo – beba um copo d'água agora."
+  "waterReminderNotificationBody": "Mantenha-se no caminho certo – beba um copo d'água agora.",
+  "settingsDescription": "Idioma, notificações, privacidade e mais",
+  "logoutDescription": "Sair da sua conta",
+  "resetDataDescription": "Começar do zero",
+  "member": "Membro",
+  "perDay": "por dia",
+  "version": "Versão"
 }

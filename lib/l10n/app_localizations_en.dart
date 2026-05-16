@@ -869,4 +869,22 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get waterReminderNotificationBody =>
       'Stay on track – drink a glass of water now.';
+
+  @override
+  String get settingsDescription => 'Language, notifications, privacy & more';
+
+  @override
+  String get logoutDescription => 'Sign out of your account';
+
+  @override
+  String get resetDataDescription => 'Start fresh';
+
+  @override
+  String get member => 'Member';
+
+  @override
+  String get perDay => 'per day';
+
+  @override
+  String get version => 'Version';
 }

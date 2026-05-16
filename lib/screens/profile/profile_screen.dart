@@ -23,114 +23,163 @@ class ProfileScreen extends StatelessWidget {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            // Header
+            // Header with Avatar & Name - Redesigned
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                child: Text(
-                  AppLocalizations.of(context)!.profile,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                  ),
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                padding: const EdgeInsets.all(28),
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(28),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withAlpha(40),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
-              ),
-            ),
-
-            // Avatar & Name
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                child: Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradient,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(40),
-                          shape: BoxShape.circle,
+                child: Column(
+                  children: [
+                    // Avatar
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withAlpha(50),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white.withAlpha(80),
+                          width: 3,
                         ),
-                        child: Center(
-                          child: Text(
-                            profile.name.isNotEmpty
-                                ? profile.name[0].toUpperCase()
-                                : 'U',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 28,
-                              fontWeight: FontWeight.w700,
-                            ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          profile.name.isNotEmpty
+                              ? profile.name[0].toUpperCase()
+                              : 'U',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 36,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 18),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              profile.name.isNotEmpty ? profile.name : AppLocalizations.of(context)!.user,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            if (profile.email.isNotEmpty)
-                              Text(
-                                profile.email,
-                                style: TextStyle(
-                                  color: Colors.white.withAlpha(180),
-                                  fontSize: 13,
-                                ),
-                              ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '${_goalLabel(context, profile.goal)} · ${_activityLabel(context, profile.activityLevel)}',
-                              style: TextStyle(
-                                color: Colors.white.withAlpha(200),
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
+                    ),
+                    const SizedBox(height: 16),
+                    // Name
+                    Text(
+                      profile.name.isNotEmpty ? profile.name : AppLocalizations.of(context)!.user,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (profile.email.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        profile.email,
+                        style: TextStyle(
+                          color: Colors.white.withAlpha(200),
+                          fontSize: 14,
                         ),
                       ),
                     ],
-                  ),
+                    const SizedBox(height: 12),
+                    // Goal & Activity chips
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _infoChip(
+                          _goalLabel(context, profile.goal),
+                          Icons.flag_rounded,
+                        ),
+                        const SizedBox(width: 8),
+                        _infoChip(
+                          _activityLabel(context, profile.activityLevel),
+                          Icons.directions_run_rounded,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
 
-            // Body Info
+            // Quick Stats Row
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _statCard(
+                        context,
+                        Icons.speed_rounded,
+                        'BMI',
+                        profile.bmi.toStringAsFixed(1),
+                        profile.bmiCategory,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _statCard(
+                        context,
+                        Icons.local_fire_department_rounded,
+                        AppLocalizations.of(context)!.calories,
+                        profile.targetCalories.toInt().toString(),
+                        'kcal/day',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Body Info - Redesigned
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
                 child: Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     color: AppColors.card,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: AppColors.cardLight.withAlpha(50),
+                      width: 1,
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        AppLocalizations.of(context)!.bodyInformation,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withAlpha(25),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.person_outline_rounded,
+                              color: AppColors.primary,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            AppLocalizations.of(context)!.bodyInformation,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 20),
                       _infoRow(
                         Icons.cake_outlined,
                         AppLocalizations.of(context)!.age,
@@ -159,39 +208,55 @@ class ProfileScreen extends StatelessWidget {
                             ? AppLocalizations.of(context)!.male
                             : (profile.gender == 'female' ? AppLocalizations.of(context)!.female : AppLocalizations.of(context)!.other),
                       ),
-                      _infoRow(
-                        Icons.speed_rounded,
-                        AppLocalizations.of(context)!.bmi,
-                        '${profile.bmi.toStringAsFixed(1)} (${profile.bmiCategory})',
-                      ),
                     ],
                   ),
                 ),
               ),
             ),
 
-            // Daily Targets
+            // Daily Targets - Redesigned
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
                 child: Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     color: AppColors.card,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: AppColors.cardLight.withAlpha(50),
+                      width: 1,
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        AppLocalizations.of(context)!.dailyTargets,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withAlpha(25),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.track_changes_rounded,
+                              color: AppColors.primary,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            AppLocalizations.of(context)!.dailyTargets,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 20),
                       _targetRow(
                         AppLocalizations.of(context)!.calories,
                         '${profile.targetCalories.toInt()} kcal',
@@ -218,35 +283,18 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
-            // Edit Profile button
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    _showEditProfileDialog(context, provider);
-                  },
-                  icon: const Icon(Icons.edit_rounded, size: 18),
-                  label: Text(AppLocalizations.of(context)!.editProfile),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
             // Settings section
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
                 child: Container(
                   decoration: BoxDecoration(
                     color: AppColors.card,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: AppColors.cardLight.withAlpha(50),
+                      width: 1,
+                    ),
                   ),
                   child: Column(
                     children: [
@@ -312,9 +360,175 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+            // Edit Profile button - Moved to bottom
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    gradient: AppColors.primaryGradient,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withAlpha(60),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      _showEditProfileDialog(context, provider);
+                    },
+                    icon: const Icon(Icons.edit_rounded, size: 20),
+                    label: Text(
+                      AppLocalizations.of(context)!.editProfile,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      elevation: 0,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _infoChip(String label, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withAlpha(40),
+            Colors.white.withAlpha(20),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withAlpha(80),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(15),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.white, size: 15),
+          const SizedBox(width: 7),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.3,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _statCard(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+    String subtitle,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.card,
+            AppColors.card.withAlpha(200),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppColors.cardLight.withAlpha(50),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(25),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.primary.withAlpha(40),
+                  AppColors.primary.withAlpha(15),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: AppColors.primary, size: 22),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            style: TextStyle(
+              color: AppColors.textTertiary,
+              fontSize: 11,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -425,7 +639,21 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _divider() {
-    return const Divider(color: AppColors.cardLight, height: 1, indent: 56);
+    return Container(
+      height: 1,
+      margin: const EdgeInsets.only(left: 56),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            AppColors.cardLight.withAlpha(100),
+            AppColors.cardLight.withAlpha(20),
+            Colors.transparent,
+          ],
+        ),
+      ),
+    );
   }
 
   String _goalLabel(BuildContext context, String goal) => switch (goal) {

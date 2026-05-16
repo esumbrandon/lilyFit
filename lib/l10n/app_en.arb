@@ -332,5 +332,11 @@
   "resetPasswordInstructions": "Enter your email address and we'll send you a link to reset your password.",
   "noUserLoggedIn": "No user logged in. Please login first.",
   "waterReminderNotificationTitle": "Time to Hydrate! 💧",
-  "waterReminderNotificationBody": "Stay on track – drink a glass of water now."
+  "waterReminderNotificationBody": "Stay on track – drink a glass of water now.",
+  "settingsDescription": "Language, notifications, privacy & more",
+  "logoutDescription": "Sign out of your account",
+  "resetDataDescription": "Start fresh",
+  "member": "Member",
+  "perDay": "per day",
+  "version": "Version"
 }

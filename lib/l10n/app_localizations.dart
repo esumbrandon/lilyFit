@@ -1741,6 +1741,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stay on track – drink a glass of water now.'**
   String get waterReminderNotificationBody;
+
+  /// No description provided for @settingsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Language, notifications, privacy & more'**
+  String get settingsDescription;
+
+  /// No description provided for @logoutDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out of your account'**
+  String get logoutDescription;
+
+  /// No description provided for @resetDataDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Start fresh'**
+  String get resetDataDescription;
+
+  /// No description provided for @member.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get member;
+
+  /// No description provided for @perDay.
+  ///
+  /// In en, this message translates to:
+  /// **'per day'**
+  String get perDay;
+
+  /// No description provided for @version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get version;
 }
 
 class _AppLocalizationsDelegate

@@ -880,4 +880,22 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get waterReminderNotificationBody =>
       'Mantenha-se no caminho certo – beba um copo d\'água agora.';
+
+  @override
+  String get settingsDescription => 'Idioma, notificações, privacidade e mais';
+
+  @override
+  String get logoutDescription => 'Sair da sua conta';
+
+  @override
+  String get resetDataDescription => 'Começar do zero';
+
+  @override
+  String get member => 'Membro';
+
+  @override
+  String get perDay => 'por dia';
+
+  @override
+  String get version => 'Versão';
 }
