@@ -8,7 +8,6 @@ import '../../providers/app_provider.dart';
 import '../../services/supabase_service.dart';
 import '../../utils/unit_converter.dart';
 import '../auth/auth_screen.dart';
-import '../onboarding/onboarding_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -308,16 +307,6 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       _divider(),
                       _settingsTile(
-                        Icons.info_outline_rounded,
-                        AppLocalizations.of(context)!.about,
-                        'Version 1.0.0',
-                        () {
-                          HapticFeedback.lightImpact();
-                          _showAboutDialog(context);
-                        },
-                      ),
-                      _divider(),
-                      _settingsTile(
                         Icons.logout_rounded,
                         AppLocalizations.of(context)!.logout,
                         'Sign out of your account',
@@ -326,17 +315,6 @@ class ProfileScreen extends StatelessWidget {
                           _handleLogout(context, provider);
                         },
                         isDestructive: false,
-                      ),
-                      _divider(),
-                      _settingsTile(
-                        Icons.restart_alt_rounded,
-                        AppLocalizations.of(context)!.resetData,
-                        'Start fresh',
-                        () {
-                          HapticFeedback.lightImpact();
-                          _showResetDialog(context, provider);
-                        },
-                        isDestructive: true,
                       ),
                     ],
                   ),
@@ -944,50 +922,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  void _showAboutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Row(
-          children: [
-            Icon(Icons.restaurant_menu_rounded, color: AppColors.primary),
-            SizedBox(width: 10),
-            Text(
-              'LilyFit',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'A smart calorie and nutrition management app that helps you reach your health goals. Features global food database with strong support for African cuisines.',
-              style: TextStyle(color: Colors.white.withAlpha(180), height: 1.5),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Version 1.0.0',
-              style: TextStyle(color: AppColors.textTertiary, fontSize: 13),
-            ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(AppLocalizations.of(context)!.close),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _handleLogout(BuildContext context, AppProvider provider) {
     showDialog(
       context: context,
@@ -1048,47 +982,6 @@ class ProfileScreen extends StatelessWidget {
               }
             },
             child: Text(AppLocalizations.of(context)!.logout),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showResetDialog(BuildContext context, AppProvider provider) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          AppLocalizations.of(context)!.resetAllDataQuestion,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-        ),
-        content: Text(
-          AppLocalizations.of(context)!.resetAllDataBody,
-          style: TextStyle(color: Colors.white.withAlpha(180)),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              AppLocalizations.of(context)!.cancel,
-              style: const TextStyle(color: AppColors.textTertiary),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              HapticFeedback.heavyImpact();
-              await provider.resetAllData();
-              if (!context.mounted) return;
-              Navigator.pop(ctx);
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-                (route) => false,
-              );
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-            child: Text(AppLocalizations.of(context)!.reset),
           ),
         ],
       ),

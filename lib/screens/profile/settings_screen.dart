@@ -7,7 +7,10 @@ import '../../theme/app_theme.dart';
 import '../../providers/app_provider.dart';
 import '../../services/language_service.dart';
 import '../../services/notification_service.dart';
+import '../../services/supabase_service.dart';
 import 'water_reminder_screen.dart';
+import '../auth/auth_screen.dart';
+import '../onboarding/onboarding_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -126,6 +129,35 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   );
                 },
+              ),
+            ]),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+            // ── App section ───────────────────────────────────────────
+            _sectionHeader(context, AppLocalizations.of(context)!.about),
+            _sectionCard([
+              _settingsTile(
+                icon: Icons.info_outline_rounded,
+                iconColor: const Color(0xFF818CF8),
+                title: AppLocalizations.of(context)!.about,
+                subtitle: 'Version 1.0.0',
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  _showAboutDialog(context);
+                },
+              ),
+              _divider(),
+              _settingsTile(
+                icon: Icons.restart_alt_rounded,
+                iconColor: AppColors.error,
+                title: AppLocalizations.of(context)!.resetData,
+                subtitle: AppLocalizations.of(context)!.resetDataDescription,
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  _showResetDialog(context, provider);
+                },
+                isDestructive: true,
               ),
             ]),
 
@@ -619,6 +651,88 @@ class SettingsScreen extends StatelessWidget {
           },
         );
       },
+    );
+  }
+
+  void _showAboutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Row(
+          children: [
+            Icon(Icons.restaurant_menu_rounded, color: AppColors.primary),
+            SizedBox(width: 10),
+            Text(
+              'LilyFit',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'A smart calorie and nutrition management app that helps you reach your health goals. Features global food database with strong support for African cuisines.',
+              style: TextStyle(color: Colors.white.withAlpha(180), height: 1.5),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Version 1.0.0',
+              style: TextStyle(color: AppColors.textTertiary, fontSize: 13),
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(AppLocalizations.of(context)!.close),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showResetDialog(BuildContext context, AppProvider provider) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text(
+          AppLocalizations.of(context)!.resetAllDataQuestion,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+        ),
+        content: Text(
+          AppLocalizations.of(context)!.resetAllDataBody,
+          style: TextStyle(color: Colors.white.withAlpha(180)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: const TextStyle(color: AppColors.textTertiary),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              HapticFeedback.heavyImpact();
+              await provider.resetAllData();
+              if (!context.mounted) return;
+              Navigator.pop(ctx);
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+                (route) => false,
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
+            child: Text(AppLocalizations.of(context)!.reset),
+          ),
+        ],
+      ),
     );
   }
 }
