@@ -210,7 +210,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                           }
                         },
                         child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
+                          duration: const Duration(milliseconds: 200),
                           curve: Curves.easeOutCubic,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
@@ -247,7 +247,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                               ),
                               const SizedBox(width: 7),
                               AnimatedDefaultTextStyle(
-                                duration: const Duration(milliseconds: 250),
+                                duration: const Duration(milliseconds: 200),
                                 curve: Curves.easeOutCubic,
                                 style: TextStyle(
                                   color: selected
@@ -287,7 +287,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                 // Food list
                 Expanded(
                   child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 380),
+                    duration: const Duration(milliseconds: 100),
                     transitionBuilder: (child, animation) {
                       // Detect incoming vs outgoing by matching the current key
                       final currentKey = ValueKey('list_$_selectedRegion');
@@ -411,10 +411,10 @@ class _FoodItemCardState extends State<_FoodItemCard>
     super.initState();
     _entrance = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 420),
+      duration: const Duration(milliseconds: 280),
     );
     // Stagger first ~9 items; beyond that animate immediately
-    final delay = (widget.index * 45).clamp(0, 360);
+    final delay = (widget.index * 30).clamp(0, 240);
     if (delay == 0) {
       _entrance.forward();
     } else {
@@ -434,7 +434,7 @@ class _FoodItemCardState extends State<_FoodItemCard>
   Widget build(BuildContext context) {
     final opacity = CurvedAnimation(parent: _entrance, curve: Curves.easeOut);
     final slide = Tween<Offset>(
-      begin: const Offset(0, 0.14),
+      begin: const Offset(0, 0.08),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _entrance, curve: Curves.easeOutCubic));
 
