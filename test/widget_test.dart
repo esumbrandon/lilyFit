@@ -4,14 +4,23 @@
 // test/services/, test/providers/, and test/widgets/.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:lilyfit/widgets/macro_progress_bar.dart';
 import 'package:lilyfit/widgets/calorie_ring_painter.dart';
 import 'package:lilyfit/widgets/water_tracker_card.dart';
 import 'package:lilyfit/theme/app_theme.dart';
+import 'package:lilyfit/l10n/app_localizations.dart';
 
 void main() {
   Widget wrap(Widget child) => MaterialApp(
     theme: AppTheme.darkTheme,
+    localizationsDelegates: const [
+      AppLocalizations.delegate,
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+    ],
+    supportedLocales: AppLocalizations.supportedLocales,
     home: Scaffold(
       body: Padding(padding: const EdgeInsets.all(16), child: child),
     ),

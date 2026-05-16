@@ -79,58 +79,58 @@ void main() {
         () => expect(LanguageService.getLanguageFromCountryCode('BR'), 'pt'),
       );
 
-      // Swahili-speaking countries
+      // Swahili-speaking countries (fallback to English - not supported)
       test(
-        'maps KE → sw',
-        () => expect(LanguageService.getLanguageFromCountryCode('KE'), 'sw'),
+        'maps KE → en',
+        () => expect(LanguageService.getLanguageFromCountryCode('KE'), 'en'),
       );
       test(
-        'maps TZ → sw',
-        () => expect(LanguageService.getLanguageFromCountryCode('TZ'), 'sw'),
+        'maps TZ → en',
+        () => expect(LanguageService.getLanguageFromCountryCode('TZ'), 'en'),
       );
       test(
-        'maps UG → sw',
-        () => expect(LanguageService.getLanguageFromCountryCode('UG'), 'sw'),
-      );
-
-      // Arabic-speaking countries
-      test(
-        'maps SA → ar',
-        () => expect(LanguageService.getLanguageFromCountryCode('SA'), 'ar'),
-      );
-      test(
-        'maps EG → ar',
-        () => expect(LanguageService.getLanguageFromCountryCode('EG'), 'ar'),
-      );
-      test(
-        'maps AE → ar',
-        () => expect(LanguageService.getLanguageFromCountryCode('AE'), 'ar'),
+        'maps UG → en',
+        () => expect(LanguageService.getLanguageFromCountryCode('UG'), 'en'),
       );
 
-      // Chinese-speaking regions
+      // Arabic-speaking countries (fallback to English - not supported)
       test(
-        'maps CN → zh',
-        () => expect(LanguageService.getLanguageFromCountryCode('CN'), 'zh'),
+        'maps SA → en',
+        () => expect(LanguageService.getLanguageFromCountryCode('SA'), 'en'),
       );
       test(
-        'maps TW → zh',
-        () => expect(LanguageService.getLanguageFromCountryCode('TW'), 'zh'),
+        'maps EG → en',
+        () => expect(LanguageService.getLanguageFromCountryCode('EG'), 'en'),
       );
       test(
-        'maps HK → zh',
-        () => expect(LanguageService.getLanguageFromCountryCode('HK'), 'zh'),
-      );
-
-      // Hindi
-      test(
-        'maps IN → hi',
-        () => expect(LanguageService.getLanguageFromCountryCode('IN'), 'hi'),
+        'maps AE → en',
+        () => expect(LanguageService.getLanguageFromCountryCode('AE'), 'en'),
       );
 
-      // Japanese
+      // Chinese-speaking regions (fallback to English - not supported)
       test(
-        'maps JP → ja',
-        () => expect(LanguageService.getLanguageFromCountryCode('JP'), 'ja'),
+        'maps CN → en',
+        () => expect(LanguageService.getLanguageFromCountryCode('CN'), 'en'),
+      );
+      test(
+        'maps TW → en',
+        () => expect(LanguageService.getLanguageFromCountryCode('TW'), 'en'),
+      );
+      test(
+        'maps HK → en',
+        () => expect(LanguageService.getLanguageFromCountryCode('HK'), 'en'),
+      );
+
+      // Hindi (fallback to English - not supported)
+      test(
+        'maps IN → en',
+        () => expect(LanguageService.getLanguageFromCountryCode('IN'), 'en'),
+      );
+
+      // Japanese (fallback to English - not supported)
+      test(
+        'maps JP → en',
+        () => expect(LanguageService.getLanguageFromCountryCode('JP'), 'en'),
       );
 
       // Case-insensitive lookup
@@ -152,8 +152,8 @@ void main() {
     });
 
     group('getAvailableLanguages', () {
-      test('returns exactly 10 languages', () {
-        expect(LanguageService.getAvailableLanguages().length, 10);
+      test('returns exactly 5 languages', () {
+        expect(LanguageService.getAvailableLanguages().length, 5);
       });
 
       test('includes English', () {
@@ -180,11 +180,6 @@ void main() {
           'de',
           'es',
           'pt',
-          'sw',
-          'ar',
-          'zh',
-          'hi',
-          'ja',
         ]) {
           expect(codes, contains(expected));
         }
