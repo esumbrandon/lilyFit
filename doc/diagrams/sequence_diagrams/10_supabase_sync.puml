@@ -1,0 +1,369 @@
+@startuml Supabase Sync Flow
+!theme vibrant
+title LilyFit - Cloud Synchronization Flow (Supabase)
+
+actor User
+participant "AppProvider" as Provider
+participant "SupabaseService" as Supabase
+participant "SharedPreferences" as LocalDB
+participant "PostgreSQL\n(Supabase)" as CloudDB
+participant "Auth System" as Auth
+participant "RLS Policies" as RLS
+
+== Initial Authentication ==
+
+User -> Provider: App launches
+activate Provider
+
+Provider -> Supabase: getCurrentUser()
+activate Supabase
+
+Supabase -> Auth: Check session
+activate Auth
+
+alt Session Valid
+    Auth --> Supabase: User object with token
+    deactivate Auth
+
+    Supabase --> Provider: Authenticated user
+
+else Session Expired
+    Auth --> Supabase: null
+    deactivate Auth
+    Supabase --> Provider: Not authenticated
+    Provider --> User: Navigate to login
+end
+
+deactivate Supabase
+
+== Dual Storage Strategy ==
+
+Provider -> Provider: Load from local first
+Provider -> LocalDB: Get cached data
+activate LocalDB
+
+LocalDB --> Provider: - Profile\n- Meal logs\n- Weight entries\n- Settings
+deactivate LocalDB
+
+Provider --> User: Display local data (instant)
+
+Provider -> Supabase: Fetch cloud data
+activate Supabase
+
+Supabase -> Auth: Verify JWT token
+activate Auth
+Auth -> RLS: Check row-level security
+activate RLS
+RLS --> Auth: User authorized
+deactivate RLS
+Auth --> Supabase: Proceed
+deactivate Auth
+
+Supabase -> CloudDB: SELECT * FROM user_profiles\nWHERE id = $user_id
+activate CloudDB
+CloudDB --> Supabase: Profile data
+deactivate CloudDB
+
+Supabase -> CloudDB: SELECT * FROM meal_logs\nWHERE user_id = $user_id\nAND date >= $last_sync
+activate CloudDB
+CloudDB --> Supabase: Recent meals
+deactivate CloudDB
+
+Supabase -> CloudDB: SELECT * FROM weight_logs\nWHERE user_id = $user_id
+activate CloudDB
+CloudDB --> Supabase: Weight history
+deactivate CloudDB
+
+Supabase --> Provider: Cloud data bundle
+deactivate Supabase
+
+Provider -> Provider: Merge strategies:\n- Profile: cloud overwrites local\n- Meals: merge by timestamp\n- Weight: keep latest per day
+
+Provider -> LocalDB: Update cache with merged data
+activate LocalDB
+LocalDB --> Provider: Saved
+deactivate LocalDB
+
+Provider -> Provider: notifyListeners()
+Provider --> User: Update UI with synced data
+
+deactivate Provider
+
+== Save Profile (Write Flow) ==
+
+User -> Provider: Update profile
+activate Provider
+
+Provider -> LocalDB: Save immediately (local-first)
+activate LocalDB
+LocalDB --> Provider: Saved locally ✓
+deactivate LocalDB
+
+Provider --> User: Show success (instant feedback)
+
+Provider -> Supabase: saveUserProfile(profile)
+activate Supabase
+
+Supabase -> Auth: Verify authentication
+activate Auth
+Auth --> Supabase: JWT valid
+deactivate Auth
+
+Supabase -> CloudDB: INSERT INTO user_profiles\nON CONFLICT (id) DO UPDATE\nSET name=$1, age=$2, ...
+activate CloudDB
+
+CloudDB -> RLS: Check policy:\nUSER_ID matches authenticated user
+activate RLS
+RLS --> CloudDB: ✓ Authorized
+deactivate RLS
+
+CloudDB -> CloudDB: Execute UPSERT
+CloudDB -> CloudDB: Trigger: sync email from auth.users
+
+CloudDB --> Supabase: Success (1 row affected)
+deactivate CloudDB
+
+Supabase --> Provider: Profile synced to cloud ✓
+deactivate Supabase
+
+note right of Provider
+  **Local-First Benefits:**
+  1. Instant UI updates
+  2. Works offline
+  3. No waiting for network
+  4. Resilient to failures
+
+  Cloud sync happens in background
+end note
+
+== Log Meal (Write Flow) ==
+
+User -> Provider: addMeal(food, mealType, servings)
+activate Provider
+
+Provider -> Provider: Create MealLog object
+Provider -> LocalDB: Append to meal_logs array
+activate LocalDB
+LocalDB --> Provider: Saved locally ✓
+deactivate LocalDB
+
+Provider -> Provider: Update consumed totals
+Provider -> Provider: notifyListeners()
+Provider --> User: Meal appears in UI immediately
+
+Provider -> Supabase: logMeal({...mealData})
+activate Supabase
+
+Supabase -> Auth: Verify token
+activate Auth
+Auth --> Supabase: Valid
+deactivate Auth
+
+Supabase -> CloudDB: INSERT INTO meal_logs (\n  user_id, meal_type, food_name,\n  calories, protein, carbs, fat,\n  servings, date\n) VALUES ($1, $2, ...)
+activate CloudDB
+
+CloudDB -> RLS: Enforce: user_id = auth.uid()
+activate RLS
+RLS --> CloudDB: ✓ Pass
+deactivate RLS
+
+CloudDB -> CloudDB: Insert meal log
+CloudDB --> Supabase: Inserted (id: abc123)
+deactivate CloudDB
+
+Supabase --> Provider: Meal synced ✓
+deactivate Supabase
+
+alt Sync Failed (Network Error)
+    Supabase --> Provider: Error (timeout)
+    Provider -> Provider: Mark meal as "pending sync"
+    Provider -> LocalDB: Add to sync queue
+    activate LocalDB
+    LocalDB --> Provider: Queued
+    deactivate LocalDB
+
+    note right of Provider
+      Retry later when online:
+      - On app resume
+      - Periodic background check
+      - Manual sync button
+    end note
+end
+
+deactivate Provider
+
+== Real-Time Subscription ==
+
+User -> Provider: App in foreground
+activate Provider
+
+Provider -> Supabase: subscribeToProfile(onUpdate)
+activate Supabase
+
+Supabase -> Supabase: Create WebSocket channel:\n"profile_changes"
+
+Supabase -> CloudDB: LISTEN ON postgres_changes\nFOR user_profiles\nWHERE id = $user_id
+activate CloudDB
+
+CloudDB --> Supabase: Subscribed to changes
+deactivate CloudDB
+
+Supabase --> Provider: Channel active
+deactivate Supabase
+
+... Some time later ...
+
+CloudDB -> Supabase: NOTIFY: Profile updated\n(from another device)
+activate CloudDB
+activate Supabase
+
+Supabase -> Auth: Verify subscription auth
+activate Auth
+Auth --> Supabase: Valid
+deactivate Auth
+
+Supabase -> Provider: onUpdate(newProfile)
+
+Provider -> Provider: Merge remote changes
+Provider -> LocalDB: Update local cache
+activate LocalDB
+LocalDB --> Provider: Updated
+deactivate LocalDB
+
+Provider -> Provider: notifyListeners()
+Provider --> User: UI updates seamlessly\n(sync from other device)
+
+deactivate Supabase
+deactivate CloudDB
+
+deactivate Provider
+
+== Sync Queue (Offline Support) ==
+
+User -> User: Device goes offline
+User -> Provider: Continue using app
+activate Provider
+
+Provider -> LocalDB: All writes go to local storage
+activate LocalDB
+LocalDB --> Provider: Saved (offline mode)
+deactivate LocalDB
+
+Provider --> User: App works normally
+
+Provider -> Provider: Queue sync operations:\n- meal_1: pending\n- weight_1: pending\n- profile_update: pending
+
+User -> User: Device back online
+
+Provider -> Provider: Detect connectivity restored
+
+Provider -> Supabase: Process sync queue
+activate Supabase
+
+loop For each pending operation
+    Provider -> Supabase: Sync operation
+
+    Supabase -> CloudDB: Execute deferred write
+    activate CloudDB
+
+    alt Success
+        CloudDB --> Supabase: Success
+        deactivate CloudDB
+        Supabase --> Provider: Synced ✓
+        Provider -> LocalDB: Mark as synced
+        activate LocalDB
+        LocalDB --> Provider: Updated
+        deactivate LocalDB
+
+    else Conflict (data changed remotely)
+        CloudDB --> Supabase: Conflict detected
+        deactivate CloudDB
+        Provider -> Provider: Resolve conflict:\n- Last-write-wins\n- Or user prompt
+    end
+end
+
+Supabase --> Provider: All operations synced
+deactivate Supabase
+
+Provider --> User: Show notification:\n"✅ All data synced to cloud"
+
+deactivate Provider
+
+== Row Level Security (RLS) ==
+
+note right of RLS
+  **Security Policies:**
+
+  user_profiles:
+  - SELECT: WHERE id = auth.uid()
+  - INSERT: WHERE id = auth.uid()
+  - UPDATE: WHERE id = auth.uid()
+  - DELETE: WHERE id = auth.uid()
+
+  meal_logs:
+  - SELECT: WHERE user_id = auth.uid()
+  - INSERT: WHERE user_id = auth.uid()
+  - UPDATE: WHERE user_id = auth.uid()
+  - DELETE: WHERE user_id = auth.uid()
+
+  weight_logs:
+  - SELECT: WHERE user_id = auth.uid()
+  - INSERT: WHERE user_id = auth.uid()
+  - DELETE: WHERE user_id = auth.uid()
+
+  foods:
+  - SELECT: PUBLIC (all users)
+  - INSERT/UPDATE/DELETE: Admin only
+
+  **Result:**
+  Users can ONLY access their own data.
+  No way to read other users' information.
+end note
+
+== Data Flow Summary ==
+
+note left of Provider
+  **Write Flow:**
+  1. User action
+  2. Save to local (instant)
+  3. Update UI (instant)
+  4. Sync to cloud (background)
+  5. Handle errors gracefully
+
+  **Read Flow:**
+  1. Load from local (instant)
+  2. Show data immediately
+  3. Fetch from cloud (background)
+  4. Merge updates
+  5. Refresh UI if needed
+
+  **Benefits:**
+  - Fast user experience
+  - Works offline
+  - Automatic sync
+  - Conflict resolution
+  - Secure (RLS)
+end note
+
+== Sync Status Indicator ==
+
+User -> Provider: Check sync status
+activate Provider
+
+Provider -> Provider: Calculate:\n- Last sync time\n- Pending operations count\n- Network status
+
+Provider --> User: Show indicator:\n- ✅ Synced (1 min ago)\n- ⏳ Syncing... (2 items)\n- ⚠️ Offline (5 pending)\n- ❌ Sync failed (retry)
+
+User -> Provider: Pull to refresh (manual sync)
+
+Provider -> Supabase: Force sync all data
+activate Supabase
+Supabase --> Provider: Sync complete
+deactivate Supabase
+
+Provider --> User: "✅ Up to date"
+
+deactivate Provider
+
+@enduml
+

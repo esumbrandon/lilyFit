@@ -1,0 +1,157 @@
+@startuml Authentication Flow
+!theme vibrant
+title LilyFit - Authentication Flow (Login & Signup)
+
+actor User
+participant "AuthScreen" as Auth
+participant "Validators" as Valid
+participant "SupabaseService" as Supabase
+participant "AppProvider" as Provider
+participant "OnboardingScreen" as Onboard
+participant "HomeScreen" as Home
+
+== Login Flow ==
+
+User -> Auth: Open Auth Screen
+activate Auth
+Auth --> User: Show Login tab
+
+User -> Auth: Enter email & password
+User -> Auth: Click "Login"
+
+Auth -> Valid: validateEmail(email)
+activate Valid
+Valid --> Auth: emailError or null
+deactivate Valid
+
+Auth -> Valid: validatePassword(password)
+activate Valid
+Valid --> Auth: passwordError or null
+deactivate Valid
+
+alt Validation Failed
+    Auth --> User: Show error messages
+
+else Validation Passed
+    Auth --> User: Show loading spinner
+
+    Auth -> Supabase: signIn(email, password)
+    activate Supabase
+
+    alt Login Failed
+        Supabase --> Auth: AuthException
+        deactivate Supabase
+        Auth --> User: Show error dialog
+
+    else Login Successful
+        Supabase --> Auth: AuthResponse\n(user, session)
+        deactivate Supabase
+
+        Auth -> Supabase: getUserProfile()
+        activate Supabase
+
+        alt No Profile (New User)
+            Supabase --> Auth: null
+            deactivate Supabase
+
+            Auth -> Onboard: Navigate\n(replace)
+            activate Onboard
+            Onboard --> User: Show onboarding
+            deactivate Onboard
+
+        else Has Profile (Returning User)
+            Supabase --> Auth: UserProfile
+            deactivate Supabase
+
+            Auth -> Provider: completeOnboarding(profile)
+            activate Provider
+            Provider -> Provider: Load user data
+            Provider --> Auth: Profile loaded
+            deactivate Provider
+
+            Auth -> Home: Navigate\n(pushAndRemoveUntil)
+            activate Home
+            Home --> User: Show Home Screen
+            deactivate Home
+        end
+    end
+end
+
+== Signup Flow ==
+
+User -> Auth: Switch to Signup tab
+Auth --> User: Show Signup form
+
+User -> Auth: Enter name, email,\npassword, confirm password
+User -> Auth: Click "Sign Up"
+
+Auth -> Valid: validateName(name)
+activate Valid
+Valid --> Auth: nameError or null
+deactivate Valid
+
+Auth -> Valid: validateEmail(email)
+activate Valid
+Valid --> Auth: emailError or null
+deactivate Valid
+
+Auth -> Valid: validatePassword(password)
+activate Valid
+Valid --> Auth: passwordError or null
+deactivate Valid
+
+Auth -> Auth: Check passwords match
+
+alt Validation Failed
+    Auth --> User: Show error messages
+
+else Validation Passed
+    Auth --> User: Show loading spinner
+
+    Auth -> Supabase: signUp(email, password, name)
+    activate Supabase
+
+    alt Signup Failed
+        Supabase --> Auth: Exception
+        deactivate Supabase
+        Auth --> User: Show error dialog\n(email exists, etc.)
+
+    else Signup Successful
+        Supabase --> Auth: AuthResponse\n(new user created)
+        deactivate Supabase
+
+        Auth --> User: Hide loading
+        Auth -> Onboard: Navigate to Onboarding\n(replace)
+        activate Onboard
+        Onboard --> User: Setup your profile
+        deactivate Onboard
+    end
+end
+
+== Password Reset Flow ==
+
+User -> Auth: Click "Forgot Password?"
+Auth --> User: Show reset dialog
+
+User -> Auth: Enter email
+User -> Auth: Click "Send Reset Link"
+
+Auth -> Valid: validateEmail(email)
+activate Valid
+Valid --> Auth: emailError or null
+deactivate Valid
+
+alt Valid Email
+    Auth -> Supabase: resetPassword(email)
+    activate Supabase
+    Supabase --> Auth: Password reset email sent
+    deactivate Supabase
+    Auth --> User: Show success message
+else Invalid Email
+    Auth --> User: Show error
+end
+
+deactivate Auth
+
+@enduml
+
