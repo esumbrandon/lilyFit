@@ -17,7 +17,6 @@ class AfterLoginButton extends StatelessWidget {
   }
 }
 
-
 class BeforeLoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -40,7 +39,6 @@ class BeforeLoginForm extends StatelessWidget {
     );
   }
 }
-
 
 class AfterLoginForm extends StatelessWidget {
   @override
@@ -66,7 +64,6 @@ class AfterLoginForm extends StatelessWidget {
   }
 }
 
-
 class BeforeBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -80,7 +77,6 @@ class BeforeBottomNav extends StatelessWidget {
     );
   }
 }
-
 
 class AfterBottomNav extends StatelessWidget {
   @override
@@ -105,7 +101,6 @@ class AfterBottomNav extends StatelessWidget {
     );
   }
 }
-
 
 void showBeforeLogoutDialog(BuildContext context) {
   showDialog(
@@ -154,7 +149,6 @@ void showAfterLogoutDialog(BuildContext context) {
   );
 }
 
-
 class BeforeMealList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -168,7 +162,6 @@ class BeforeMealList extends StatelessWidget {
     );
   }
 }
-
 
 class AfterMealList extends StatelessWidget {
   @override
@@ -184,4 +177,3 @@ class AfterMealList extends StatelessWidget {
     );
   }
 }
-

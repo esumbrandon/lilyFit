@@ -175,11 +175,7 @@ class _AppInitializerState extends State<AppInitializer> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                AppColors.background,
-                AppColors.surface,
-                AppColors.card,
-              ],
+              colors: [AppColors.background, AppColors.surface, AppColors.card],
             ),
           ),
           child: const Center(
@@ -303,11 +299,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                AppColors.background,
-                AppColors.surface,
-                AppColors.card,
-              ],
+              colors: [AppColors.background, AppColors.surface, AppColors.card],
             ),
           ),
           child: const Center(

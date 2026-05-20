@@ -174,13 +174,7 @@ void main() {
         final codes = LanguageService.getAvailableLanguages()
             .map((l) => l['code']!)
             .toList();
-        for (final expected in [
-          'en',
-          'fr',
-          'de',
-          'es',
-          'pt',
-        ]) {
+        for (final expected in ['en', 'fr', 'de', 'es', 'pt']) {
           expect(codes, contains(expected));
         }
       });

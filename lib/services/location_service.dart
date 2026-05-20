@@ -31,7 +31,7 @@ class LocationService {
 
       // Check permission
       LocationPermission permission = await checkPermission();
-      
+
       if (permission == LocationPermission.denied) {
         permission = await requestPermission();
         if (permission == LocationPermission.denied) {
@@ -113,7 +113,9 @@ class LocationService {
       if (placemarks.isNotEmpty) {
         final placemark = placemarks.first;
         final countryCode = placemark.isoCountryCode ?? 'US';
-        final languageCode = LanguageService.getLanguageFromCountryCode(countryCode);
+        final languageCode = LanguageService.getLanguageFromCountryCode(
+          countryCode,
+        );
 
         return {
           'languageCode': languageCode,

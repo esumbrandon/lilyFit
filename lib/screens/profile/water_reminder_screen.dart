@@ -77,7 +77,9 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
       if (newMin >= endMin) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(AppLocalizations.of(context)!.startTimeError)),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.startTimeError),
+            ),
           );
         }
         return;
@@ -103,8 +105,12 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
     setState(() => _saving = true);
 
     // Get localized strings before async operations
-    final notificationTitle = AppLocalizations.of(context)!.waterReminderNotificationTitle;
-    final notificationBody = AppLocalizations.of(context)!.waterReminderNotificationBody;
+    final notificationTitle = AppLocalizations.of(
+      context,
+    )!.waterReminderNotificationTitle;
+    final notificationBody = AppLocalizations.of(
+      context,
+    )!.waterReminderNotificationBody;
 
     // Request permission when the user turns reminders on.
     if (_enabled) {
@@ -154,7 +160,9 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
         SnackBar(
           content: Text(
             _enabled
-                ? AppLocalizations.of(context)!.waterRemindersEnabled(_totalDailyReminders())
+                ? AppLocalizations.of(
+                    context,
+                  )!.waterRemindersEnabled(_totalDailyReminders())
                 : AppLocalizations.of(context)!.waterRemindersDisabled,
           ),
           backgroundColor: AppColors.secondary,
@@ -173,7 +181,10 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
         backgroundColor: AppColors.surface,
         title: Text(
           AppLocalizations.of(context)!.waterRemindersTitle,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,

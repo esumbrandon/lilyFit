@@ -94,7 +94,12 @@ class LanguageService {
       {'code': 'fr', 'name': 'French', 'flag': '🇫🇷', 'native': 'Français'},
       {'code': 'de', 'name': 'German', 'flag': '🇩🇪', 'native': 'Deutsch'},
       {'code': 'es', 'name': 'Spanish', 'flag': '🇪🇸', 'native': 'Español'},
-      {'code': 'pt', 'name': 'Portuguese', 'flag': '🇵🇹', 'native': 'Português'},
+      {
+        'code': 'pt',
+        'name': 'Portuguese',
+        'flag': '🇵🇹',
+        'native': 'Português',
+      },
     ];
   }
 }

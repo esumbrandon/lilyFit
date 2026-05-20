@@ -90,7 +90,11 @@ class WaterTrackerCard extends StatelessWidget {
                             : null,
                       ),
                       child: isFilled
-                          ? const Icon(Icons.water_drop, size: 14, color: Colors.white)
+                          ? const Icon(
+                              Icons.water_drop,
+                              size: 14,
+                              color: Colors.white,
+                            )
                           : null,
                     );
                   }),

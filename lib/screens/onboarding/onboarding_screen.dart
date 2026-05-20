@@ -388,11 +388,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             const SizedBox(height: 12),
             Row(
               children: [
-                _genderCard('male', AppLocalizations.of(context)!.male, Icons.male_rounded),
+                _genderCard(
+                  'male',
+                  AppLocalizations.of(context)!.male,
+                  Icons.male_rounded,
+                ),
                 const SizedBox(width: 12),
-                _genderCard('female', AppLocalizations.of(context)!.female, Icons.female_rounded),
+                _genderCard(
+                  'female',
+                  AppLocalizations.of(context)!.female,
+                  Icons.female_rounded,
+                ),
                 const SizedBox(width: 12),
-                _genderCard('other', AppLocalizations.of(context)!.other, Icons.person_rounded),
+                _genderCard(
+                  'other',
+                  AppLocalizations.of(context)!.other,
+                  Icons.person_rounded,
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -794,24 +806,49 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         children: [
           const SizedBox(height: 40),
           Text(
-              AppLocalizations.of(context)!.activityLevel,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
+            AppLocalizations.of(context)!.activityLevel,
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
             ),
-            const SizedBox(height: 8),
-            Text(
-              AppLocalizations.of(context)!.activityMessage,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            AppLocalizations.of(context)!.activityMessage,
             style: TextStyle(fontSize: 15, color: Colors.white.withAlpha(150)),
           ),
           const SizedBox(height: 28),
-          _activityOption('sedentary', AppLocalizations.of(context)!.sedentary, AppLocalizations.of(context)!.sedentaryDesc, '🪑'),
-          _activityOption('light', AppLocalizations.of(context)!.light, AppLocalizations.of(context)!.lightDesc, '🚶'),
-          _activityOption('moderate', AppLocalizations.of(context)!.moderate, AppLocalizations.of(context)!.moderateDesc, '🏃'),
-          _activityOption('active', AppLocalizations.of(context)!.active, AppLocalizations.of(context)!.activeDesc, '💪'),
-          _activityOption('veryActive', AppLocalizations.of(context)!.veryActive, AppLocalizations.of(context)!.veryActiveDesc, '🏋️'),
+          _activityOption(
+            'sedentary',
+            AppLocalizations.of(context)!.sedentary,
+            AppLocalizations.of(context)!.sedentaryDesc,
+            '🪑',
+          ),
+          _activityOption(
+            'light',
+            AppLocalizations.of(context)!.light,
+            AppLocalizations.of(context)!.lightDesc,
+            '🚶',
+          ),
+          _activityOption(
+            'moderate',
+            AppLocalizations.of(context)!.moderate,
+            AppLocalizations.of(context)!.moderateDesc,
+            '🏃',
+          ),
+          _activityOption(
+            'active',
+            AppLocalizations.of(context)!.active,
+            AppLocalizations.of(context)!.activeDesc,
+            '💪',
+          ),
+          _activityOption(
+            'veryActive',
+            AppLocalizations.of(context)!.veryActive,
+            AppLocalizations.of(context)!.veryActiveDesc,
+            '🏋️',
+          ),
         ],
       ),
     );
@@ -889,22 +926,40 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         children: [
           const SizedBox(height: 40),
           Text(
-              AppLocalizations.of(context)!.goal,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
+            AppLocalizations.of(context)!.goal,
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
             ),
-            const SizedBox(height: 8),
-            Text(
-              AppLocalizations.of(context)!.goalMessage,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            AppLocalizations.of(context)!.goalMessage,
             style: TextStyle(fontSize: 15, color: Colors.white.withAlpha(150)),
           ),
           const SizedBox(height: 32),
-          _goalCard('fatLoss', AppLocalizations.of(context)!.loseWeight, AppLocalizations.of(context)!.loseWeightDesc, Icons.trending_down_rounded, const Color(0xFFFF6B6B)),
-          _goalCard('maintenance', AppLocalizations.of(context)!.maintainWeight, AppLocalizations.of(context)!.maintainWeightDesc, Icons.balance_rounded, const Color(0xFF06D6A0)),
-          _goalCard('muscleGain', AppLocalizations.of(context)!.gainWeight, AppLocalizations.of(context)!.gainWeightDesc, Icons.trending_up_rounded, const Color(0xFF4F8EF7)),
+          _goalCard(
+            'fatLoss',
+            AppLocalizations.of(context)!.loseWeight,
+            AppLocalizations.of(context)!.loseWeightDesc,
+            Icons.trending_down_rounded,
+            const Color(0xFFFF6B6B),
+          ),
+          _goalCard(
+            'maintenance',
+            AppLocalizations.of(context)!.maintainWeight,
+            AppLocalizations.of(context)!.maintainWeightDesc,
+            Icons.balance_rounded,
+            const Color(0xFF06D6A0),
+          ),
+          _goalCard(
+            'muscleGain',
+            AppLocalizations.of(context)!.gainWeight,
+            AppLocalizations.of(context)!.gainWeightDesc,
+            Icons.trending_up_rounded,
+            const Color(0xFF4F8EF7),
+          ),
         ],
       ),
     );
@@ -1069,11 +1124,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           // Macro targets
           Row(
             children: [
-              _macroResultCard(AppLocalizations.of(context)!.protein, profile.targetProtein, 'g', AppColors.protein),
+              _macroResultCard(
+                AppLocalizations.of(context)!.protein,
+                profile.targetProtein,
+                'g',
+                AppColors.protein,
+              ),
               const SizedBox(width: 10),
-              _macroResultCard(AppLocalizations.of(context)!.carbs, profile.targetCarbs, 'g', AppColors.carbs),
+              _macroResultCard(
+                AppLocalizations.of(context)!.carbs,
+                profile.targetCarbs,
+                'g',
+                AppColors.carbs,
+              ),
               const SizedBox(width: 10),
-              _macroResultCard(AppLocalizations.of(context)!.fat, profile.targetFat, 'g', AppColors.fat),
+              _macroResultCard(
+                AppLocalizations.of(context)!.fat,
+                profile.targetFat,
+                'g',
+                AppColors.fat,
+              ),
             ],
           ),
           const SizedBox(height: 24),
@@ -1089,11 +1159,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _statItem(AppLocalizations.of(context)!.bmi, profile.bmi.toStringAsFixed(1)),
+                _statItem(
+                  AppLocalizations.of(context)!.bmi,
+                  profile.bmi.toStringAsFixed(1),
+                ),
                 Container(width: 1, height: 30, color: AppColors.cardLight),
-                _statItem(AppLocalizations.of(context)!.status, profile.bmiCategory),
+                _statItem(
+                  AppLocalizations.of(context)!.status,
+                  profile.bmiCategory,
+                ),
                 Container(width: 1, height: 30, color: AppColors.cardLight),
-                _statItem(AppLocalizations.of(context)!.goal, _goalLabel(context)),
+                _statItem(
+                  AppLocalizations.of(context)!.goal,
+                  _goalLabel(context),
+                ),
               ],
             ),
           ),

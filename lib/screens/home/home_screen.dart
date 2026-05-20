@@ -67,11 +67,36 @@ class _HomeScreenState extends State<HomeScreen>
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _navItem(0, Icons.dashboard_rounded, Icons.dashboard_outlined, l10n.home),
-                    _navItem(1, Icons.search_rounded, Icons.search_rounded, l10n.food),
-                    _navItem(2, Icons.insights_rounded, Icons.insights_outlined, l10n.progress),
-                    _navItem(3, Icons.person_rounded, Icons.person_outline_rounded, l10n.profile),
-                    _navItem(4, Icons.settings_rounded, Icons.settings_outlined, l10n.settings),
+                    _navItem(
+                      0,
+                      Icons.dashboard_rounded,
+                      Icons.dashboard_outlined,
+                      l10n.home,
+                    ),
+                    _navItem(
+                      1,
+                      Icons.search_rounded,
+                      Icons.search_rounded,
+                      l10n.food,
+                    ),
+                    _navItem(
+                      2,
+                      Icons.insights_rounded,
+                      Icons.insights_outlined,
+                      l10n.progress,
+                    ),
+                    _navItem(
+                      3,
+                      Icons.person_rounded,
+                      Icons.person_outline_rounded,
+                      l10n.profile,
+                    ),
+                    _navItem(
+                      4,
+                      Icons.settings_rounded,
+                      Icons.settings_outlined,
+                      l10n.settings,
+                    ),
                   ],
                 );
               },

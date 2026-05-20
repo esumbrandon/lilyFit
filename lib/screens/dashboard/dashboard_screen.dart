@@ -117,7 +117,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  AppLocalizations.of(context)!.dayStreak(provider.currentStreak),
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.dayStreak(provider.currentStreak),
                                   style: const TextStyle(
                                     color: AppColors.carbs,
                                     fontSize: 12,
@@ -147,7 +149,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                             AppColors.primaryGradient.createShader(bounds),
                         blendMode: BlendMode.srcIn,
                         child: Text(
-                          profile.name.isNotEmpty ? profile.name : AppLocalizations.of(context)!.user,
+                          profile.name.isNotEmpty
+                              ? profile.name
+                              : AppLocalizations.of(context)!.user,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 32,
@@ -190,7 +194,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                     children: [
                       Expanded(
                         child: MacroProgressBar(
-                          label: AppLocalizations.of(context)!.protein.toUpperCase(),
+                          label: AppLocalizations.of(
+                            context,
+                          )!.protein.toUpperCase(),
                           current: provider.consumedProtein,
                           target: profile.targetProtein,
                           color: AppColors.protein,
@@ -199,7 +205,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                       const SizedBox(width: 10),
                       Expanded(
                         child: MacroProgressBar(
-                          label: AppLocalizations.of(context)!.carbs.toUpperCase(),
+                          label: AppLocalizations.of(
+                            context,
+                          )!.carbs.toUpperCase(),
                           current: provider.consumedCarbs,
                           target: profile.targetCarbs,
                           color: AppColors.carbs,
@@ -208,7 +216,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                       const SizedBox(width: 10),
                       Expanded(
                         child: MacroProgressBar(
-                          label: AppLocalizations.of(context)!.fat.toUpperCase(),
+                          label: AppLocalizations.of(
+                            context,
+                          )!.fat.toUpperCase(),
                           current: provider.consumedFat,
                           target: profile.targetFat,
                           color: AppColors.fat,

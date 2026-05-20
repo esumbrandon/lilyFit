@@ -47,7 +47,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.failedToLoadFoods(e.toString())),
+            content: Text(
+              AppLocalizations.of(context)!.failedToLoadFoods(e.toString()),
+            ),
             backgroundColor: AppColors.error,
           ),
         );
@@ -77,7 +79,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.failedToUpdate(e.toString())),
+            content: Text(
+              AppLocalizations.of(context)!.failedToUpdate(e.toString()),
+            ),
             backgroundColor: AppColors.error,
           ),
         );
@@ -794,7 +798,10 @@ class _FoodDetailSheetState extends State<_FoodDetailSheet> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            AppLocalizations.of(context)!.foodAddedToMeal(food.name, _selectedMealType!.label),
+                            AppLocalizations.of(context)!.foodAddedToMeal(
+                              food.name,
+                              _selectedMealType!.label,
+                            ),
                           ),
                           backgroundColor: AppColors.primary,
                           behavior: SnackBarBehavior.floating,

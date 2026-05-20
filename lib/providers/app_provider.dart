@@ -334,10 +334,10 @@ class AppProvider extends ChangeNotifier {
   }) async {
     _currentLocale = locale;
     await _prefs.setString('selected_language', locale.languageCode);
-    
+
     // Reschedule water reminders with new language if they're enabled
-    if (_waterRemindersEnabled && 
-        notificationTitle != null && 
+    if (_waterRemindersEnabled &&
+        notificationTitle != null &&
         notificationBody != null) {
       await NotificationService.scheduleWaterReminders(
         intervalMinutes: _waterReminderIntervalMinutes,
@@ -349,7 +349,7 @@ class AppProvider extends ChangeNotifier {
         notificationBody: notificationBody,
       );
     }
-    
+
     notifyListeners();
   }
 }

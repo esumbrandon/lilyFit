@@ -99,7 +99,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
     if (mounted) {
       final provider = context.read<AppProvider>();
       final localizations = AppLocalizations.of(context)!;
-      
+
       await provider.setLocale(
         Locale(_selectedLanguage!),
         notificationTitle: localizations.waterReminderNotificationTitle,
@@ -354,7 +354,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            AppLocalizations.of(context)!.locationLabel(_countryName!),
+                            AppLocalizations.of(
+                              context,
+                            )!.locationLabel(_countryName!),
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
@@ -374,7 +376,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              AppLocalizations.of(context)!.languageSuggested(languageInfo['name']!),
+                              AppLocalizations.of(
+                                context,
+                              )!.languageSuggested(languageInfo['name']!),
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.9),
                                 fontSize: 13,

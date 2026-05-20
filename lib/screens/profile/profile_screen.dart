@@ -67,7 +67,9 @@ class ProfileScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     // Name
                     Text(
-                      profile.name.isNotEmpty ? profile.name : AppLocalizations.of(context)!.user,
+                      profile.name.isNotEmpty
+                          ? profile.name
+                          : AppLocalizations.of(context)!.user,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -204,7 +206,9 @@ class ProfileScreen extends StatelessWidget {
                         AppLocalizations.of(context)!.gender,
                         profile.gender == 'male'
                             ? AppLocalizations.of(context)!.male
-                            : (profile.gender == 'female' ? AppLocalizations.of(context)!.female : AppLocalizations.of(context)!.other),
+                            : (profile.gender == 'female'
+                                  ? AppLocalizations.of(context)!.female
+                                  : AppLocalizations.of(context)!.other),
                       ),
                     ],
                   ),
@@ -378,16 +382,10 @@ class ProfileScreen extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withAlpha(40),
-            Colors.white.withAlpha(20),
-          ],
+          colors: [Colors.white.withAlpha(40), Colors.white.withAlpha(20)],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white.withAlpha(80),
-          width: 1.5,
-        ),
+        border: Border.all(color: Colors.white.withAlpha(80), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(15),
@@ -428,16 +426,10 @@ class ProfileScreen extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            AppColors.card,
-            AppColors.card.withAlpha(200),
-          ],
+          colors: [AppColors.card, AppColors.card.withAlpha(200)],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppColors.cardLight.withAlpha(50),
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.cardLight.withAlpha(50), width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(25),
@@ -485,10 +477,7 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: TextStyle(
-              color: AppColors.textTertiary,
-              fontSize: 11,
-            ),
+            style: TextStyle(color: AppColors.textTertiary, fontSize: 11),
           ),
         ],
       ),
@@ -930,7 +919,10 @@ class ProfileScreen extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           AppLocalizations.of(context)!.logout,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         content: Text(
           AppLocalizations.of(context)!.logoutConfirm,
@@ -975,7 +967,9 @@ class ProfileScreen extends StatelessWidget {
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(AppLocalizations.of(context)!.logoutFailed(e.toString())),
+                    content: Text(
+                      AppLocalizations.of(context)!.logoutFailed(e.toString()),
+                    ),
                     backgroundColor: AppColors.error,
                   ),
                 );

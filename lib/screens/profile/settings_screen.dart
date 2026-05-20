@@ -463,14 +463,18 @@ class SettingsScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () async {
                         HapticFeedback.mediumImpact();
-                        
+
                         // Get localized strings for the NEW language before changing
-                        final newLocalizations = lookupAppLocalizations(Locale(selected));
-                        
+                        final newLocalizations = lookupAppLocalizations(
+                          Locale(selected),
+                        );
+
                         await provider.setLocale(
                           Locale(selected),
-                          notificationTitle: newLocalizations.waterReminderNotificationTitle,
-                          notificationBody: newLocalizations.waterReminderNotificationBody,
+                          notificationTitle:
+                              newLocalizations.waterReminderNotificationTitle,
+                          notificationBody:
+                              newLocalizations.waterReminderNotificationBody,
                         );
                         if (ctx.mounted) Navigator.pop(ctx);
                       },
@@ -560,7 +564,9 @@ class SettingsScreen extends StatelessWidget {
                       autofillHints: const [AutofillHints.email],
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.newEmailAddress,
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.newEmailAddress,
                         prefixIcon: const Icon(
                           Icons.email_outlined,
                           color: AppColors.textSecondary,
@@ -585,8 +591,9 @@ class SettingsScreen extends StatelessWidget {
                                 if (newEmail.isEmpty ||
                                     !newEmail.contains('@')) {
                                   setSheetState(
-                                    () =>
-                                        errorMsg = AppLocalizations.of(context)!.pleaseEnterValidEmail,
+                                    () => errorMsg = AppLocalizations.of(
+                                      context,
+                                    )!.pleaseEnterValidEmail,
                                   );
                                   return;
                                 }
@@ -641,7 +648,9 @@ class SettingsScreen extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                               )
-                            : Text(AppLocalizations.of(context)!.sendConfirmation),
+                            : Text(
+                                AppLocalizations.of(context)!.sendConfirmation,
+                              ),
                       ),
                     ),
                   ],
@@ -666,7 +675,10 @@ class SettingsScreen extends StatelessWidget {
             SizedBox(width: 10),
             Text(
               'LilyFit',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ],
         ),
@@ -703,7 +715,10 @@ class SettingsScreen extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           AppLocalizations.of(context)!.resetAllDataQuestion,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         content: Text(
           AppLocalizations.of(context)!.resetAllDataBody,
@@ -811,8 +826,12 @@ class _NotificationSettingsScreen extends StatelessWidget {
                               startMinute: provider.waterReminderStartMinute,
                               endHour: provider.waterReminderEndHour,
                               endMinute: provider.waterReminderEndMinute,
-                              notificationTitle: AppLocalizations.of(context)!.waterReminderNotificationTitle,
-                              notificationBody: AppLocalizations.of(context)!.waterReminderNotificationBody,
+                              notificationTitle: AppLocalizations.of(
+                                context,
+                              )!.waterReminderNotificationTitle,
+                              notificationBody: AppLocalizations.of(
+                                context,
+                              )!.waterReminderNotificationBody,
                             );
                           } else {
                             await NotificationService.cancelWaterReminders();
@@ -1310,7 +1329,9 @@ class _PrivacySecurityScreen extends StatelessWidget {
                         icon: Icons.delete_sweep_rounded,
                         iconColor: AppColors.warning,
                         title: AppLocalizations.of(context)!.clearLocalCache,
-                        subtitle: AppLocalizations.of(context)!.clearCacheSubtitle,
+                        subtitle: AppLocalizations.of(
+                          context,
+                        )!.clearCacheSubtitle,
                         onTap: () {
                           HapticFeedback.lightImpact();
                           _showClearCacheDialog(context);
@@ -1353,7 +1374,9 @@ class _PrivacySecurityScreen extends StatelessWidget {
                         icon: Icons.policy_rounded,
                         iconColor: AppColors.primary,
                         title: AppLocalizations.of(context)!.privacyPolicy,
-                        subtitle: AppLocalizations.of(context)!.privacyPolicySubtitle,
+                        subtitle: AppLocalizations.of(
+                          context,
+                        )!.privacyPolicySubtitle,
                         onTap: () {
                           HapticFeedback.lightImpact();
                           _showPrivacyPolicy(context);
@@ -1368,7 +1391,9 @@ class _PrivacySecurityScreen extends StatelessWidget {
                         icon: Icons.description_rounded,
                         iconColor: const Color(0xFF818CF8),
                         title: AppLocalizations.of(context)!.termsOfService,
-                        subtitle: AppLocalizations.of(context)!.termsOfServiceSubtitle,
+                        subtitle: AppLocalizations.of(
+                          context,
+                        )!.termsOfServiceSubtitle,
                         onTap: () {
                           HapticFeedback.lightImpact();
                           _showTermsOfService(context);
@@ -1409,7 +1434,9 @@ class _PrivacySecurityScreen extends StatelessWidget {
                     icon: Icons.no_accounts_rounded,
                     iconColor: AppColors.error,
                     title: AppLocalizations.of(context)!.deleteAccount,
-                    subtitle: AppLocalizations.of(context)!.deleteAccountSubtitle,
+                    subtitle: AppLocalizations.of(
+                      context,
+                    )!.deleteAccountSubtitle,
                     onTap: () {
                       HapticFeedback.lightImpact();
                       _showDeleteAccountDialog(context, provider);
@@ -1514,7 +1541,10 @@ class _PrivacySecurityScreen extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           AppLocalizations.of(context)!.clearCacheQuestion,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         content: Text(
           AppLocalizations.of(context)!.clearCacheBody,
@@ -1663,7 +1693,10 @@ class _PrivacySecurityScreen extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 AppLocalizations.of(context)!.lastUpdated('May 2026'),
-                style: const TextStyle(color: AppColors.textTertiary, fontSize: 12),
+                style: const TextStyle(
+                  color: AppColors.textTertiary,
+                  fontSize: 12,
+                ),
               ),
               const SizedBox(height: 16),
               Expanded(
@@ -1683,8 +1716,12 @@ class _PrivacySecurityScreen extends StatelessWidget {
                       body: AppLocalizations.of(context)!.healthDisclaimerBody,
                     ),
                     _PolicySection(
-                      title: AppLocalizations.of(context)!.accountResponsibility,
-                      body: AppLocalizations.of(context)!.accountResponsibilityBody,
+                      title: AppLocalizations.of(
+                        context,
+                      )!.accountResponsibility,
+                      body: AppLocalizations.of(
+                        context,
+                      )!.accountResponsibilityBody,
                     ),
                     _PolicySection(
                       title: AppLocalizations.of(context)!.contactLabel,
@@ -1708,7 +1745,10 @@ class _PrivacySecurityScreen extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           AppLocalizations.of(context)!.deleteAccountQuestion,
-          style: const TextStyle(color: AppColors.error, fontWeight: FontWeight.w700),
+          style: const TextStyle(
+            color: AppColors.error,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         content: Text(
           AppLocalizations.of(context)!.deleteAccountBody,

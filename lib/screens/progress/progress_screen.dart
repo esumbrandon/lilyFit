@@ -123,7 +123,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         child: weightEntries.length < 2
                             ? Center(
                                 child: Text(
-                                  AppLocalizations.of(context)!.logAtLeast2Weights,
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.logAtLeast2Weights,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: AppColors.textTertiary.withAlpha(
@@ -605,7 +607,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           AppLocalizations.of(context)!.logWeight,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
