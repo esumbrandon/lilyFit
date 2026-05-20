@@ -1,0 +1,150 @@
+@startuml LilyFit Architecture
+!theme vibrant
+title LilyFit - Application Architecture
+
+package "Presentation Layer" {
+  [Screens] as screens
+  [Widgets] as widgets
+  [Theme] as theme
+
+  screens -down-> widgets : uses
+}
+
+package "State Management" {
+  [AppProvider] as provider
+  [ChangeNotifier] as notifier
+
+  provider -up-|> notifier : extends
+}
+
+package "Business Logic" {
+  [SupabaseService] as supabase
+  [NotificationService] as notifications
+  [LanguageService] as language
+  [LocationService] as location
+  [FoodCacheService] as cache
+}
+
+package "Data Models" {
+  [UserProfile] as profile
+  [MealLog] as meal
+  [FoodItem] as food
+  [WeightEntry] as weight
+}
+
+package "Utilities" {
+  [Validators] as validators
+  [UnitConverter] as converter
+}
+
+package "Localization" {
+  [AppLocalizations] as i18n
+  [ARB Files] as arb
+
+  i18n -down-> arb : loads
+}
+
+package "Local Storage" {
+  database "SharedPreferences" as prefs {
+  }
+}
+
+cloud "Supabase Backend" {
+  database "PostgreSQL" as postgres {
+    [user_profiles]
+    [meal_logs]
+    [weight_logs]
+    [water_logs]
+    [foods]
+    [workout_logs]
+    [payment_transactions]
+  }
+
+  [Auth System] as auth
+  [Real-Time] as realtime
+  [Storage] as storage
+  [RLS Policies] as rls
+
+  postgres -down-> rls : enforces
+}
+
+' Presentation → State Management
+screens -down-> provider : observes
+widgets -down-> provider : observes
+provider -down-> notifier : notifies
+
+' State Management → Business Logic
+provider -down-> supabase : calls
+provider -down-> notifications : calls
+provider -down-> cache : calls
+
+' Business Logic → Data Models
+supabase -down-> profile : manages
+supabase -down-> meal : manages
+supabase -down-> weight : manages
+supabase -down-> food : manages
+
+provider -down-> profile : holds
+provider -down-> meal : holds
+provider -down-> weight : holds
+
+' Business Logic → Local Storage
+provider -down-> prefs : persists
+cache -down-> prefs : caches
+
+' Business Logic → Backend
+supabase -down-> postgres : queries
+supabase -down-> auth : authenticates
+supabase -down-> realtime : subscribes
+supabase -down-> storage : uploads
+
+' Utilities
+screens -down-> validators : validates
+screens -down-> converter : converts
+screens -down-> i18n : translates
+
+' Data Flow
+note right of provider
+  **State Management Pattern:**
+  - Provider pattern (pub/sub)
+  - Centralized app state
+  - Reactive UI updates
+  - Local-first approach
+end note
+
+note right of supabase
+  **Backend Integration:**
+  - RESTful API calls
+  - Real-time subscriptions
+  - Row-level security
+  - Automatic auth token refresh
+end note
+
+note right of prefs
+  **Local Storage:**
+  - User profile cache
+  - Meal logs history
+  - Settings & preferences
+  - Offline capability
+  - Fast app startup
+end note
+
+note left of postgres
+  **Database Tables:**
+  - user_profiles
+  - meal_logs
+  - weight_logs
+  - water_logs
+  - foods (public)
+  - workout_logs
+  - payment_transactions
+
+  **Features:**
+  - RLS for security
+  - Triggers for auto-sync
+  - Indexes for performance
+  - Real-time changes
+end note
+
+@enduml
+
