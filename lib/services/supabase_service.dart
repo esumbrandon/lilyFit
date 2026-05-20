@@ -3,10 +3,9 @@ import '../models/user_profile.dart';
 
 /// Service to interact with Supabase backend
 class SupabaseService {
-  // Get Supabase client instance
+
   final _supabase = Supabase.instance.client;
 
-  // ============ AUTHENTICATION ============
 
   /// Sign up a new user with email and password
   Future<AuthResponse> signUp({
@@ -21,7 +20,6 @@ class SupabaseService {
         data: {'name': name}, // Store name in user metadata
       );
 
-      // Check if signup was successful
       if (response.user == null) {
         throw Exception('Signup failed: ${response.session}');
       }

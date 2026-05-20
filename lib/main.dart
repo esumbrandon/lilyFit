@@ -151,6 +151,9 @@ class _AppInitializerState extends State<AppInitializer> {
           await provider.completeOnboarding(profile);
         }
 
+        // Sync data from Supabase
+        await provider.syncFromSupabase();
+
         setState(() {
           _initialScreen = const HomeScreen();
           _isChecking = false;
@@ -271,6 +274,9 @@ class _AuthWrapperState extends State<AuthWrapper> {
         if (!provider.isOnboarded) {
           await provider.completeOnboarding(profile);
         }
+
+        // Sync data from Supabase
+        await provider.syncFromSupabase();
 
         // Navigate to home (replace entire stack)
         if (!mounted) return;

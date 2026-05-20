@@ -5,9 +5,11 @@ import '../models/user_profile.dart';
 import '../models/food_item.dart';
 import '../models/meal_log.dart';
 import '../services/notification_service.dart';
+import '../services/supabase_service.dart';
 
 class AppProvider extends ChangeNotifier {
   late SharedPreferences _prefs;
+  final SupabaseService _supabaseService = SupabaseService();
 
   UserProfile _userProfile = UserProfile();
   bool _isOnboarded = false;
@@ -154,6 +156,116 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Load data from Supabase when user logs in
+  Future<void> syncFromSupabase() async {
+    if (!_supabaseService.isLoggedIn()) {
+      debugPrint('Not logged in, skipping Supabase sync');
+      return;
+    }
+
+    try {
+      // Load meals from last 30 days
+      final startDate = DateTime.now().subtract(const Duration(days: 30));
+      final endDate = DateTime.now();
+
+      final mealData = await _supabaseService.getMealLogsInRange(
+        startDate: startDate,
+        endDate: endDate,
+      );
+
+      // Convert Supabase meals to MealLog objects
+      final supabaseMeals = <MealLog>[];
+      for (var meal in mealData) {
+        try {
+          final mealType = MealType.values.firstWhere(
+            (t) => t.name == meal['meal_type'],
+            orElse: () => MealType.breakfast,
+          );
+
+          final foodItem = FoodItem(
+            id: meal['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
+            name: meal['food_name'] ?? '',
+            calories: (meal['calories'] as num?)?.toDouble() ?? 0,
+            protein: (meal['protein'] as num?)?.toDouble() ?? 0,
+            carbs: (meal['carbs'] as num?)?.toDouble() ?? 0,
+            fat: (meal['fat'] as num?)?.toDouble() ?? 0,
+            servingSize: '1 serving',
+            emoji: '🍽️',
+            region: 'general',
+          );
+
+          final servings = (meal['servings'] as num?)?.toDouble() ?? 1.0;
+          final dateStr = meal['date'] as String?;
+          final createdAtStr = meal['created_at'] as String?;
+
+          DateTime logDate;
+          if (dateStr != null) {
+            logDate = DateTime.parse(dateStr);
+          } else if (createdAtStr != null) {
+            logDate = DateTime.parse(createdAtStr);
+          } else {
+            logDate = DateTime.now();
+          }
+
+          supabaseMeals.add(MealLog(
+            id: meal['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
+            food: foodItem,
+            mealType: mealType,
+            servings: servings,
+            dateTime: logDate,
+          ));
+        } catch (e) {
+          debugPrint('Error parsing meal: $e');
+        }
+      }
+
+      // Merge with local meals (keep both, deduplicate later if needed)
+      _mealLogs = [...supabaseMeals, ..._mealLogs];
+      await _saveMealLogs();
+
+      // Load weight history
+      final weightData = await _supabaseService.getWeightHistory(limit: 90);
+      final supabaseWeights = <WeightEntry>[];
+      for (var entry in weightData) {
+        try {
+          final dateStr = entry['date'] as String?;
+          if (dateStr != null) {
+            supabaseWeights.add(WeightEntry(
+              date: DateTime.parse(dateStr),
+              weight: (entry['weight'] as num?)?.toDouble() ?? 0,
+            ));
+          }
+        } catch (e) {
+          debugPrint('Error parsing weight entry: $e');
+        }
+      }
+
+      // Merge weight entries
+      final allWeights = <String, WeightEntry>{};
+      for (var entry in [..._weightEntries, ...supabaseWeights]) {
+        final key = _formatDate(entry.date);
+        allWeights[key] = entry;
+      }
+      _weightEntries = allWeights.values.toList();
+      _weightEntries.sort((a, b) => a.date.compareTo(b.date));
+      await _saveWeightEntries();
+
+      // Load today's water intake
+      final waterAmount = await _supabaseService.getWaterIntake(DateTime.now());
+      if (waterAmount > 0) {
+        _waterIntake = waterAmount;
+        final today = _formatDate(DateTime.now());
+        await _prefs.setDouble('water_$today', _waterIntake);
+      }
+
+      notifyListeners();
+      debugPrint('Successfully synced data from Supabase');
+    } catch (e) {
+      debugPrint('Error syncing from Supabase: $e');
+      // Don't throw - keep local data if sync fails
+    }
+  }
+
   // ─── Onboarding ────────────────────────────────────────────────
   Future<void> completeOnboarding(UserProfile profile) async {
     profile.calculateTargets();
@@ -170,6 +282,21 @@ class AppProvider extends ChangeNotifier {
       await _saveWeightEntries();
     }
 
+    if (_supabaseService.isLoggedIn()) {
+      try {
+        await _supabaseService.saveUserProfile(profile);
+
+        if (profile.weight > 0) {
+          await _supabaseService.logWeight(
+            weight: profile.weight,
+            date: DateTime.now(),
+          );
+        }
+      } catch (e) {
+        debugPrint('Failed to sync onboarding data to Supabase: $e');
+      }
+    }
+
     notifyListeners();
   }
 
@@ -177,6 +304,16 @@ class AppProvider extends ChangeNotifier {
     profile.calculateTargets();
     _userProfile = profile;
     await _prefs.setString('userProfile', profile.encode());
+
+    // Sync to Supabase if user is logged in
+    if (_supabaseService.isLoggedIn()) {
+      try {
+        await _supabaseService.saveUserProfile(profile);
+      } catch (e) {
+        debugPrint('Failed to sync profile to Supabase: $e');
+      }
+    }
+
     notifyListeners();
   }
 
@@ -201,6 +338,25 @@ class AppProvider extends ChangeNotifier {
     );
     _mealLogs.add(log);
     await _saveMealLogs();
+
+    if (_supabaseService.isLoggedIn()) {
+      try {
+        await _supabaseService.logMeal(
+          mealType: mealType.name,
+          foodName: food.name,
+          calories: food.calories * servings,
+          protein: food.protein * servings,
+          carbs: food.carbs * servings,
+          fat: food.fat * servings,
+          date: log.dateTime,
+          servings: servings,
+        );
+      } catch (e) {
+        // Log error but don't block the UI - data is still saved locally
+        debugPrint('Failed to sync meal to Supabase: $e');
+      }
+    }
+
     notifyListeners();
   }
 
@@ -220,6 +376,18 @@ class AppProvider extends ChangeNotifier {
     _waterIntake += ml;
     final today = _formatDate(DateTime.now());
     await _prefs.setDouble('water_$today', _waterIntake);
+
+    if (_supabaseService.isLoggedIn()) {
+      try {
+        await _supabaseService.logWaterIntake(
+          amount: ml,
+          date: DateTime.now(),
+        );
+      } catch (e) {
+        debugPrint('Failed to sync water intake to Supabase: $e');
+      }
+    }
+
     notifyListeners();
   }
 
@@ -227,6 +395,10 @@ class AppProvider extends ChangeNotifier {
     _waterIntake = (_waterIntake - ml).clamp(0, double.infinity);
     final today = _formatDate(DateTime.now());
     await _prefs.setDouble('water_$today', _waterIntake);
+
+    // Note: We don't sync removals to Supabase as it tracks individual entries
+    // To properly handle this, we'd need to delete the last entry from Supabase
+
     notifyListeners();
   }
 
@@ -274,6 +446,18 @@ class AppProvider extends ChangeNotifier {
     _userProfile.weight = weight;
     await _prefs.setString('userProfile', _userProfile.encode());
     await _saveWeightEntries();
+
+    if (_supabaseService.isLoggedIn()) {
+      try {
+        await _supabaseService.logWeight(
+          weight: weight,
+          date: today,
+        );
+      } catch (e) {
+        debugPrint('Failed to sync weight to Supabase: $e');
+      }
+    }
+
     notifyListeners();
   }
 
