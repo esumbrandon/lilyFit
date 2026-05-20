@@ -1,0 +1,248 @@
+@startuml Progress Viewing Flow
+!theme vibrant
+title LilyFit - Progress Viewing & Analytics Flow
+
+actor User
+participant "DashboardScreen" as Dashboard
+participant "ProgressScreen" as Progress
+participant "AppProvider" as Provider
+participant "FL_Chart" as Charts
+participant "DatePicker" as DatePick
+
+== View Dashboard (Today) ==
+
+User -> Dashboard: Open Dashboard tab
+activate Dashboard
+
+Dashboard -> Provider: Get today's data
+activate Provider
+
+Provider --> Dashboard: - consumedCalories\n- targetCalories\n- macros (P/C/F)\n- waterIntake\n- todaysMeals\n- currentStreak
+deactivate Provider
+
+Dashboard -> Charts: Render visualizations
+activate Charts
+
+Charts -> Charts: **Calorie Ring Chart**\n- Progress: 1650 / 2000 kcal (82%)\n- Color gradient based on progress\n- Remaining calories in center
+
+Charts -> Charts: **Macro Progress Bars**\n- Protein: 120g / 150g (80%)\n- Carbs: 180g / 200g (90%)\n- Fat: 50g / 67g (75%)\n- Color coded (green/yellow/red)
+
+Charts -> Charts: **Water Tracker**\n- 6 / 10 glasses\n- Visual water glass icons\n- Percentage: 60%
+
+Charts --> Dashboard: Charts rendered
+deactivate Charts
+
+Dashboard --> User: Display today's summary:\n- 🔥 Calorie ring (large)\n- 📊 Macro bars\n- 💧 Water tracker\n- 🔥 Streak: 15 days\n- 📅 Date: May 20, 2026
+
+== Change Date ==
+
+User -> Dashboard: Click date selector
+activate Dashboard
+
+Dashboard -> DatePick: Show date picker
+activate DatePick
+
+DatePick --> User: Show calendar with:\n- Dates with logged meals (dots)\n- Today highlighted\n- Past 90 days selectable
+
+User -> DatePick: Select "May 15, 2026"
+
+DatePick -> Provider: selectDate(May 15)
+activate Provider
+
+Provider -> Provider: Update _selectedDate
+Provider -> Provider: Filter meals for selected date
+Provider -> Provider: notifyListeners()
+Provider --> DatePick: Date changed
+deactivate Provider
+
+DatePick -> Dashboard: Close picker
+deactivate DatePick
+
+Dashboard -> Provider: Get May 15 data
+activate Provider
+Provider --> Dashboard: Historical data for May 15
+deactivate Provider
+
+Dashboard --> User: Update dashboard:\n- 📅 May 15, 2026\n- Calories: 1850 / 2000\n- Meals from that day\n- Water: 8 / 10 glasses
+
+deactivate Dashboard
+
+== View Progress Tab ==
+
+User -> Progress: Navigate to Progress tab
+activate Progress
+
+Progress -> Provider: Get analytics data
+activate Provider
+
+Provider --> Progress: - weightEntries (all)\n- weeklyCalories (7 days)\n- mealLogs (30 days)\n- currentStreak\n- monthlyStats
+deactivate Provider
+
+Progress -> Charts: Create weight chart
+activate Charts
+
+Charts -> Charts: **Weight Line Chart**\n- X-axis: Date range\n- Y-axis: Weight\n- Data points with dates\n- Trend line (linear regression)\n- Change indicator
+
+Charts --> Progress: Weight chart
+deactivate Charts
+
+Progress -> Charts: Create weekly calories chart
+activate Charts
+
+Charts -> Charts: **Weekly Calorie Bar Chart**\n- 7 bars for last 7 days\n- Target line overlay\n- Color: green (under), red (over)\n- Labels: Day abbreviations
+
+Charts --> Progress: Calories chart
+deactivate Charts
+
+Progress --> User: Display progress dashboard:\n\n📊 **Weight Progress**\n- Current: 74.5 kg\n- Start: 80 kg\n- Change: -5.5 kg\n- Goal: 72 kg\n- Progress: 73% to goal\n\n📈 **Weekly Overview**\n- Avg calories: 1875\n- Days on target: 5/7\n- Consistency: 71%\n\n🔥 **Streaks**\n- Current: 15 days\n- Longest: 28 days
+
+== View Detailed Statistics ==
+
+User -> Progress: Scroll to "Monthly Stats"
+activate Progress
+
+Progress -> Provider: Calculate monthly averages
+activate Provider
+
+Provider -> Provider: Aggregate last 30 days:\n- Average daily calories\n- Average macros\n- Total meals logged\n- Average water intake\n- Weight trend
+
+Provider --> Progress: Monthly statistics
+deactivate Provider
+
+Progress --> User: Show monthly breakdown:\n\n🗓️ **May 2026 (20 days)**\n\n**Nutrition:**\n- Avg calories: 1920 kcal\n- Avg protein: 145g\n- Avg carbs: 195g\n- Avg fat: 62g\n\n**Tracking:**\n- Meals logged: 58\n- Days tracked: 18/20 (90%)\n- Water goal met: 12/20 (60%)\n\n**Weight:**\n- Start: 75.2 kg\n- End: 74.5 kg\n- Change: -0.7 kg\n- Weekly rate: -0.23 kg/week
+
+== Compare Periods ==
+
+User -> Progress: Click "Compare" button
+
+Progress --> User: Show period selector:\n- Last 7 days\n- Last 30 days\n- Last 90 days\n- Custom range
+
+User -> Progress: Select "Last 30 days"
+
+Progress -> Provider: Get 30-day data
+activate Provider
+Provider --> Progress: Historical data
+deactivate Provider
+
+Progress -> Charts: Generate comparison chart
+activate Charts
+
+Charts -> Charts: **Calorie Trend Chart**\n- Line chart showing daily intake\n- Moving average (7-day)\n- Target zone (green band)\n- Notable events marked
+
+Charts --> Progress: Trend chart
+deactivate Charts
+
+Progress --> User: Display comparison:\n- Visual trends\n- Best/worst days highlighted\n- Patterns identified\n- Recommendations
+
+deactivate Progress
+
+== View Macro Distribution ==
+
+User -> Progress: Click "Macro Breakdown"
+activate Progress
+
+Progress -> Provider: Calculate macro ratios
+activate Provider
+
+Provider -> Provider: Sum last 7 days:\n- Total protein: 875g\n- Total carbs: 1330g  \n- Total fat: 385g
+
+Provider -> Provider: Calculate percentages:\n- Protein: 29%\n- Carbs: 44%\n- Fat: 27%
+
+Provider --> Progress: Macro distribution
+deactivate Provider
+
+Progress -> Charts: Create pie chart
+activate Charts
+
+Charts -> Charts: **Macro Pie Chart**\n- Protein: 29% (blue)\n- Carbs: 44% (green)\n- Fat: 27% (yellow)\n- Interactive segments
+
+Charts --> Progress: Pie chart
+deactivate Charts
+
+Progress --> User: Display macro analysis:\n- Visual pie chart\n- Target vs actual comparison\n- "You're slightly high on carbs\n  and meeting protein goals!"
+
+deactivate Progress
+
+== View Weekly Patterns ==
+
+User -> Progress: Scroll to "Weekly Patterns"
+activate Progress
+
+Progress -> Provider: Analyze weekly patterns
+activate Provider
+
+Provider -> Provider: Group by day of week:\n- Monday: avg 2100 kcal\n- Tuesday: avg 1850 kcal\n- Wednesday: avg 1900 kcal\n- Thursday: avg 1800 kcal\n- Friday: avg 2200 kcal\n- Saturday: avg 2400 kcal\n- Sunday: avg 2150 kcal
+
+Provider --> Progress: Weekly patterns
+deactivate Provider
+
+Progress -> Charts: Create day-of-week chart
+activate Charts
+
+Charts -> Charts: **Bar Chart - Day of Week**\n- Shows average per weekday\n- Highlights patterns\n- Target line overlay
+
+Charts --> Progress: Pattern visualization
+deactivate Charts
+
+Progress --> User: Display insights:\n"📊 Pattern spotted!\nYou consume more calories\non weekends (+350 kcal avg).\nConsider planning meals\nahead for Fri-Sun."
+
+deactivate Progress
+
+== Export Progress Report ==
+
+User -> Progress: Click "Export Report"
+activate Progress
+
+Progress -> Provider: Generate full report
+activate Provider
+
+Provider -> Provider: Compile comprehensive data:\n- Weight history\n- Calorie logs\n- Macro averages\n- Water tracking\n- Streak history\n- Photos (if any)
+
+Provider --> Progress: Report data (JSON/PDF)
+deactivate Provider
+
+Progress -> Progress: Format as PDF document:\n- Title: "LilyFit Progress Report"\n- Date range\n- Executive summary\n- Charts and graphs\n- Detailed tables\n- Notes and insights
+
+Progress --> User: Download report:\n"lilyfit_progress_may_2026.pdf"
+
+deactivate Progress
+
+== View Goal Progress ==
+
+User -> Progress: Click "Goal Progress"
+activate Progress
+
+Progress -> Provider: Calculate goal metrics
+activate Provider
+
+Provider -> Provider: Compare current vs goal:\n- Weight: 74.5 kg (goal: 72 kg)\n- Distance: 2.5 kg remaining\n- Time: Started Feb 1\n- Duration: 109 days\n- Rate: -0.05 kg/day\n- ETA: ~50 more days (July 9)
+
+Provider --> Progress: Goal analysis
+deactivate Provider
+
+Progress --> User: Display goal tracker:\n\n🎯 **Fat Loss Goal**\n\n**Progress:**\n[████████░░] 73%\n\n**Timeline:**\n- Start: Feb 1 (80 kg)\n- Current: May 20 (74.5 kg)\n- Goal: 72 kg\n- ETA: Jul 9, 2026\n\n**On Track:** ✅ Yes\n- Target rate: 0.5 kg/week\n- Actual rate: 0.43 kg/week\n- Slightly slower but sustainable
+
+deactivate Progress
+
+note right of Progress
+  **Analytics Insights:**
+
+  The app provides intelligent
+  insights by analyzing:
+
+  1. Consistency patterns
+  2. Weekly averages
+  3. Trends over time
+  4. Goal progress rate
+  5. Day-of-week patterns
+  6. Macro balance
+
+  **Recommendations:**
+  - Based on user data
+  - Personalized tips
+  - Goal adjustments
+  - Habit formation advice
+end note
+
+@enduml
+

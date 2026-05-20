@@ -1,0 +1,125 @@
+@startuml Onboarding Flow
+!theme vibrant
+title LilyFit - User Onboarding Flow
+
+actor User
+participant "OnboardingScreen" as Onboard
+participant "PageController" as PageCtrl
+participant "UserProfile" as Profile
+participant "SupabaseService" as Supabase
+participant "AppProvider" as Provider
+participant "HomeScreen" as Home
+
+User -> Onboard: Start Onboarding
+activate Onboard
+
+Onboard -> PageCtrl: Initialize with 6 pages
+activate PageCtrl
+
+== Step 1: Name ==
+Onboard --> User: "What's your name?"
+User -> Onboard: Enter name
+User -> Onboard: Click "Next"
+Onboard -> Profile: Set name
+PageCtrl -> PageCtrl: animateToPage(1)
+
+== Step 2: Gender ==
+Onboard --> User: "Select your gender"
+User -> Onboard: Choose (Male/Female/Other)
+User -> Onboard: Click "Next"
+Onboard -> Profile: Set gender
+PageCtrl -> PageCtrl: animateToPage(2)
+
+== Step 3: Age ==
+Onboard --> User: "How old are you?"
+User -> Onboard: Adjust age slider (10-100)
+User -> Onboard: Click "Next"
+Onboard -> Profile: Set age
+PageCtrl -> PageCtrl: animateToPage(3)
+
+== Step 4: Physical Stats ==
+Onboard --> User: "Your measurements"
+User -> Onboard: Toggle unit system\n(kg/cm or lbs/ft)
+User -> Onboard: Adjust weight slider
+User -> Onboard: Adjust height slider
+User -> Onboard: Click "Next"
+Onboard -> Profile: Set weight, height, units
+PageCtrl -> PageCtrl: animateToPage(4)
+
+== Step 5: Activity Level ==
+Onboard --> User: "How active are you?"
+User -> Onboard: Select activity level:\n- Sedentary (1.2x)\n- Light (1.375x)\n- Moderate (1.55x)\n- Active (1.725x)\n- Very Active (1.9x)
+User -> Onboard: Click "Next"
+Onboard -> Profile: Set activityLevel
+PageCtrl -> PageCtrl: animateToPage(5)
+
+== Step 6: Goal Selection ==
+Onboard --> User: "What's your goal?"
+User -> Onboard: Select goal:\n- Fat Loss (-500 cal)\n- Maintenance (0 cal)\n- Muscle Gain (+300 cal)
+User -> Onboard: Click "Complete"
+
+Onboard -> Profile: Set goal
+Onboard -> Profile: calculateTargets()
+activate Profile
+
+Profile -> Profile: Calculate BMR using\nMifflin-St Jeor Equation
+Profile -> Profile: Apply activity multiplier
+Profile -> Profile: Apply goal adjustment
+Profile -> Profile: Calculate macro splits:\n- Protein (4 cal/g)\n- Carbs (4 cal/g)\n- Fat (9 cal/g)
+Profile --> Onboard: Targets calculated
+deactivate Profile
+
+Onboard --> User: Show loading
+
+Onboard -> Supabase: saveUserProfile(profile)
+activate Supabase
+
+alt Save Failed
+    Supabase --> Onboard: Error
+    deactivate Supabase
+    Onboard --> User: Show error dialog
+
+else Save Successful
+    Supabase --> Onboard: Profile saved
+    deactivate Supabase
+
+    Onboard -> Provider: completeOnboarding(profile)
+    activate Provider
+
+    Provider -> Provider: Save to SharedPreferences
+    Provider -> Provider: Mark as onboarded
+    Provider -> Provider: Add initial weight entry
+    Provider --> Onboard: Onboarding complete
+    deactivate Provider
+
+    Onboard -> Home: Navigate (pushReplacement)
+    activate Home
+    Home --> User: Welcome! Show dashboard
+    deactivate Home
+end
+
+deactivate PageCtrl
+deactivate Onboard
+
+note right of Profile
+  **Calculations Example:**
+  - Gender: Male, Age: 25
+  - Weight: 75kg, Height: 175cm
+  - Activity: Moderate (1.55x)
+  - Goal: Muscle Gain
+
+  BMR = 10*75 + 6.25*175 - 5*25 + 5
+      = 750 + 1093.75 - 125 + 5
+      = 1723.75 kcal
+
+  TDEE = 1723.75 * 1.55 = 2671.8 kcal
+  Target = 2671.8 + 300 = 2972 kcal
+
+  Macros:
+  - Protein: 30% = 223g
+  - Carbs: 45% = 334g
+  - Fat: 25% = 83g
+end note
+
+@enduml
+

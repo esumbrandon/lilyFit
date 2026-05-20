@@ -1,0 +1,111 @@
+@startuml App Initialization Flow
+!theme vibrant
+title LilyFit - App Initialization Flow
+
+actor User
+participant "main.dart" as Main
+participant "AppInitializer" as Init
+participant "LanguageService" as LangService
+participant "SupabaseService" as Supabase
+participant "AppProvider" as Provider
+participant "LanguageScreen" as LangScreen
+participant "AuthScreen" as Auth
+participant "OnboardingScreen" as Onboard
+participant "HomeScreen" as Home
+
+User -> Main: Launch App
+activate Main
+
+' Flutter & Services Initialization
+Main -> Main: WidgetsFlutterBinding.ensureInitialized()
+Main -> Supabase: Initialize Supabase\n(url, anonKey)
+activate Supabase
+Supabase --> Main: Connected
+deactivate Supabase
+
+Main -> Main: Initialize NotificationService
+Main -> Provider: initialize()
+activate Provider
+Provider -> Provider: Load SharedPreferences
+Provider -> Provider: Load cached data:\n- User profile\n- Meal logs\n- Water intake\n- Weight entries\n- Language preference
+Provider --> Main: Initialized
+deactivate Provider
+
+Main -> Main: Schedule water reminders\n(if enabled)
+
+' App Initialization
+Main -> Init: Build AppInitializer
+activate Init
+
+Init -> LangService: isFirstLaunch()
+activate LangService
+
+alt First Launch (New User)
+    LangService --> Init: true (first launch)
+    deactivate LangService
+
+    Init -> LangScreen: Navigate to Language Selection
+    activate LangScreen
+    LangScreen --> User: Show language options
+    User -> LangScreen: Select language
+    LangScreen -> Provider: setLocale(language)
+    LangScreen -> LangService: markFirstLaunchComplete()
+    LangScreen -> Auth: Navigate to Auth Screen
+    deactivate LangScreen
+
+else Not First Launch
+    LangService --> Init: false (returning user)
+    deactivate LangService
+
+    Init -> Supabase: getCurrentUser()
+    activate Supabase
+
+    alt User Not Authenticated
+        Supabase --> Init: null (not logged in)
+        deactivate Supabase
+
+        Init -> Auth: Navigate to Auth Screen
+        activate Auth
+        Auth --> User: Show Login/Signup
+        deactivate Auth
+
+    else User Authenticated
+        Supabase --> Init: User object
+        deactivate Supabase
+
+        Init -> Supabase: getUserProfile()
+        activate Supabase
+
+        alt No Profile (New Signup)
+            Supabase --> Init: null
+            deactivate Supabase
+
+            Init -> Onboard: Navigate to Onboarding
+            activate Onboard
+            Onboard --> User: Complete profile setup
+            deactivate Onboard
+
+        else Has Profile (Returning User)
+            Supabase --> Init: UserProfile
+            deactivate Supabase
+
+            Init -> Provider: completeOnboarding(profile)
+            activate Provider
+            Provider -> Provider: Save profile data
+            Provider -> Provider: Calculate targets
+            Provider --> Init: Profile loaded
+            deactivate Provider
+
+            Init -> Home: Navigate to Home Screen
+            activate Home
+            Home --> User: Show Dashboard
+            deactivate Home
+        end
+    end
+end
+
+deactivate Init
+deactivate Main
+
+@enduml
+

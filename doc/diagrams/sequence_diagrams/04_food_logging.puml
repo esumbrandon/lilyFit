@@ -1,0 +1,141 @@
+@startuml Food Logging Flow
+!theme vibrant
+title LilyFit - Food Logging Flow
+
+actor User
+participant "HomeScreen\n(Dashboard)" as Home
+participant "FoodSearchScreen" as Search
+participant "FoodCacheService" as Cache
+participant "SupabaseService" as Supabase
+participant "FoodDatabase\n(Local)" as LocalDB
+participant "MealSelectionDialog" as Dialog
+participant "AppProvider" as Provider
+
+== Open Food Search ==
+
+User -> Home: Click "+ Add Food" button\nfor meal type (Breakfast/Lunch/Dinner/Snack)
+activate Home
+
+Home -> Search: Navigate with mealType parameter
+activate Search
+
+Search -> Search: Initialize search
+Search -> Cache: checkCacheValidity()
+activate Cache
+
+alt Cache Invalid or Empty
+    Cache -> Supabase: getAllFoods()
+    activate Supabase
+    Supabase --> Cache: List<Food>
+    deactivate Supabase
+    Cache -> Cache: Save to local cache\nwith timestamp
+    Cache --> Search: Foods loaded
+else Cache Valid
+    Cache --> Search: Return cached foods
+end
+deactivate Cache
+
+Search -> LocalDB: Load local food database
+activate LocalDB
+LocalDB --> Search: Additional local foods
+deactivate LocalDB
+
+Search --> User: Show food search interface\n(Search bar + Food grid)
+
+== Search for Food ==
+
+User -> Search: Type food name in search bar
+Search -> Search: Filter foods by query\n(case-insensitive)
+Search --> User: Show matching foods\n(with emoji, name, calories)
+
+User -> Search: Select a food from results
+Search --> User: Show food details card:\n- Name & Emoji\n- Serving size\n- Calories\n- Protein, Carbs, Fat
+
+== Select Meal Type & Servings ==
+
+Search -> Dialog: Show MealSelectionDialog
+activate Dialog
+
+Dialog --> User: Show:\n- Meal type selector\n- Servings adjuster (0.5-10)\n- Nutritional preview
+User -> Dialog: Adjust servings (e.g., 1.5)
+Dialog -> Dialog: Update nutrition preview:\n  calories * servings\n  protein * servings\n  carbs * servings\n  fat * servings
+
+User -> Dialog: Confirm meal type
+User -> Dialog: Click "Add to Log"
+
+Dialog -> Provider: addMeal(food, mealType, servings)
+activate Provider
+
+Provider -> Provider: Create MealLog:\n- Generate unique ID\n- Store food data\n- Store meal type\n- Store servings\n- Timestamp with selected date
+
+Provider -> Provider: Save to SharedPreferences\n(persist locally)
+Provider -> Provider: Update consumed totals
+Provider -> Provider: notifyListeners()
+Provider --> Dialog: Meal logged
+deactivate Provider
+
+alt Sync to Supabase Enabled
+    Dialog -> Supabase: logMeal({\n  mealType, foodName,\n  calories, protein,\n  carbs, fat, servings, date\n})
+    activate Supabase
+    Supabase --> Dialog: Synced to cloud
+    deactivate Supabase
+end
+
+Dialog --> User: Show success message
+Dialog -> Search: Close dialog
+deactivate Dialog
+
+Search -> Home: Navigate back
+deactivate Search
+
+== Update Dashboard ==
+
+Home -> Provider: Listen to state changes
+activate Provider
+Provider --> Home: Updated data:\n- consumedCalories\n- consumedProtein\n- consumedCarbs\n- consumedFat
+deactivate Provider
+
+Home --> User: Refresh dashboard:\n- Update calorie ring\n- Update macro bars\n- Update meal cards\n- Show new meal entry
+
+deactivate Home
+
+== Remove Meal ==
+
+User -> Home: Swipe to delete meal\nor click remove icon
+activate Home
+
+Home -> Provider: removeMeal(mealId)
+activate Provider
+
+Provider -> Provider: Remove from meal logs
+Provider -> Provider: Save to SharedPreferences
+Provider -> Provider: Recalculate totals
+Provider -> Provider: notifyListeners()
+Provider --> Home: Meal removed
+deactivate Provider
+
+alt Sync Enabled
+    Home -> Supabase: deleteMealLog(mealId)
+    activate Supabase
+    Supabase --> Home: Deleted from cloud
+    deactivate Supabase
+end
+
+Home --> User: Update UI\n(meal removed)
+deactivate Home
+
+note right of Provider
+  **Calorie Tracking:**
+  - Target: 2000 kcal
+  - Consumed: 1650 kcal
+  - Remaining: 350 kcal
+  - Progress: 82.5%
+
+  **Macros:**
+  Protein: 120g / 150g (80%)
+  Carbs: 180g / 200g (90%)
+  Fat: 50g / 67g (75%)
+end note
+
+@enduml
+

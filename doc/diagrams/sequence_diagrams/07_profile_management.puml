@@ -1,0 +1,208 @@
+@startuml Profile Management Flow
+!theme vibrant
+title LilyFit - Profile Management Flow
+
+actor User
+participant "ProfileScreen" as ProfileUI
+participant "EditProfileDialog" as EditDialog
+participant "AppProvider" as Provider
+participant "UserProfile" as Profile
+participant "SupabaseService" as Supabase
+participant "ImagePicker" as ImagePick
+
+== View Profile ==
+
+User -> ProfileUI: Navigate to Profile tab
+activate ProfileUI
+
+ProfileUI -> Provider: Get user profile
+activate Provider
+Provider --> ProfileUI: UserProfile data
+deactivate Provider
+
+ProfileUI --> User: Display profile:\n- Name, Email\n- Age, Gender\n- Weight, Height (with units)\n- Activity Level\n- Goal\n- Target Macros\n- BMI & Category\n- Current streak
+
+== Edit Profile ==
+
+User -> ProfileUI: Click "Edit Profile" button
+
+ProfileUI -> EditDialog: Show edit dialog
+activate EditDialog
+
+EditDialog -> Provider: Get current profile
+activate Provider
+Provider --> EditDialog: UserProfile
+deactivate Provider
+
+EditDialog --> User: Show edit form:\n- Name\n- Gender (Male/Female/Other)\n- Age slider\n- Weight slider (with unit toggle)\n- Height slider (with unit toggle)\n- Activity level dropdown\n- Goal selection
+
+== Update Basic Info ==
+
+User -> EditDialog: Update name
+User -> EditDialog: Change gender
+User -> EditDialog: Adjust age (e.g., 30)
+User -> EditDialog: Preview changes
+
+EditDialog -> Profile: Create updated profile object
+Profile -> Profile: Validate changes
+
+EditDialog --> User: Show live preview of:\n- New BMI\n- Updated calorie target\n- New macro targets
+
+== Update Physical Stats ==
+
+User -> EditDialog: Toggle unit (kg → lbs)
+
+EditDialog -> EditDialog: Convert displayed value:\n75 kg → 165.3 lbs
+
+User -> EditDialog: Adjust weight to 170 lbs
+User -> EditDialog: Adjust height to 6'0"
+
+EditDialog -> Profile: Convert to metric:\nweight: 77.1 kg\nheight: 183 cm
+
+== Update Activity & Goals ==
+
+User -> EditDialog: Change activity level:\n"Moderate" → "Active"
+
+EditDialog -> Profile: Set activityLevel = "active"
+EditDialog -> Profile: Preview new TDEE:\n1.55x → 1.725x multiplier
+
+User -> EditDialog: Change goal:\n"Maintenance" → "Fat Loss"
+
+EditDialog -> Profile: Set goal = "fatLoss"
+EditDialog -> Profile: Preview calorie adjustment:\nTDEE - 500 calories
+
+== Calculate New Targets ==
+
+User -> EditDialog: Click "Save Changes"
+
+EditDialog -> Profile: calculateTargets()
+activate Profile
+
+Profile -> Profile: **Step 1: Calculate BMR**\n(Mifflin-St Jeor Equation)
+note right
+  For Male, Age 30, 77.1kg, 183cm:
+  BMR = 10*77.1 + 6.25*183 - 5*30 + 5
+      = 771 + 1143.75 - 150 + 5
+      = 1769.75 kcal
+end note
+
+Profile -> Profile: **Step 2: Apply Activity**\nTDEE = BMR * 1.725
+
+note right
+  TDEE = 1769.75 * 1.725
+       = 3052.8 kcal
+end note
+
+Profile -> Profile: **Step 3: Apply Goal**\nTarget = TDEE - 500
+
+note right
+  For Fat Loss:
+  Target = 3052.8 - 500
+         = 2552.8 kcal
+end note
+
+Profile -> Profile: **Step 4: Calculate Macros**
+
+note right
+  Fat Loss macro split (40% P, 30% C, 30% F):
+
+  Protein = 2552.8 * 0.40 / 4 = 255g
+  Carbs = 2552.8 * 0.30 / 4 = 192g
+  Fat = 2552.8 * 0.30 / 9 = 85g
+end note
+
+Profile --> EditDialog: Targets calculated
+deactivate Profile
+
+EditDialog --> User: Show final confirmation:\n- New calories: 2553 kcal\n- Protein: 255g\n- Carbs: 192g\n- Fat: 85g
+
+User -> EditDialog: Confirm "Save"
+
+== Save Profile ==
+
+EditDialog -> Provider: updateProfile(profile)
+activate Provider
+
+Provider -> Profile: Validate all fields
+Provider -> Provider: Save to SharedPreferences
+Provider -> Provider: notifyListeners()
+Provider --> EditDialog: Profile updated locally
+deactivate Provider
+
+EditDialog -> Supabase: saveUserProfile(profile)
+activate Supabase
+
+alt Save Successful
+    Supabase --> EditDialog: Profile synced to cloud
+    deactivate Supabase
+
+    EditDialog --> User: Show success message:\n"✅ Profile updated!"
+
+    EditDialog -> ProfileUI: Close dialog
+    deactivate EditDialog
+
+    ProfileUI -> Provider: Refresh profile data
+    activate Provider
+    Provider --> ProfileUI: Updated profile
+    deactivate Provider
+
+    ProfileUI --> User: Display updated profile:\n- New targets visible\n- Adjusted daily goals\n- Recalculated BMI
+
+else Save Failed
+    Supabase --> EditDialog: Error
+    deactivate Supabase
+
+    EditDialog --> User: Show error:\n"Failed to sync profile.\nChanges saved locally."
+
+    note right of EditDialog
+      Local changes are preserved
+      even if cloud sync fails.
+      Will retry on next app launch.
+    end note
+end
+
+== Change Profile Photo ==
+
+User -> ProfileUI: Click on profile avatar
+activate ProfileUI
+
+ProfileUI -> ImagePick: Pick image
+activate ImagePick
+
+ImagePick --> User: Show image picker:\n- Camera\n- Gallery
+
+User -> ImagePick: Select photo from gallery
+
+ImagePick -> ImagePick: Compress & resize image
+ImagePick --> ProfileUI: Return image file
+deactivate ImagePick
+
+ProfileUI -> Supabase: Upload profile image
+activate Supabase
+
+Supabase -> Supabase: Store in storage bucket
+Supabase --> ProfileUI: Image URL
+deactivate Supabase
+
+ProfileUI -> Provider: Update profile photo URL
+activate Provider
+Provider -> Provider: Save URL to profile
+Provider -> Provider: Cache image locally
+Provider --> ProfileUI: Photo updated
+deactivate Provider
+
+ProfileUI --> User: Display new profile photo
+deactivate ProfileUI
+
+== View Macro Calculator ==
+
+User -> ProfileUI: Click "Macro Calculator" info icon
+activate ProfileUI
+
+ProfileUI --> User: Show explanation modal:\n\n**How we calculate your targets:**\n\n1. BMR (Basal Metabolic Rate)\n   Mifflin-St Jeor Equation\n\n2. TDEE (Total Daily Energy)\n   BMR × Activity Multiplier\n\n3. Goal Adjustment\n   - Fat Loss: TDEE - 500\n   - Maintenance: TDEE\n   - Muscle Gain: TDEE + 300\n\n4. Macro Distribution\n   Based on your goal
+
+User -> ProfileUI: Close modal
+deactivate ProfileUI
+
+@enduml
+

@@ -1,0 +1,163 @@
+@startuml Water Tracking Flow
+!theme vibrant
+title LilyFit - Water Tracking Flow
+
+actor User
+participant "HomeScreen\n(Dashboard)" as Home
+participant "WaterTrackerCard" as WaterCard
+participant "AppProvider" as Provider
+participant "WaterReminderScreen" as ReminderScreen
+participant "NotificationService" as Notify
+participant "SupabaseService" as Supabase
+
+== View Water Tracker ==
+
+User -> Home: View Dashboard
+activate Home
+
+Home -> Provider: Get water data
+activate Provider
+Provider --> Home: waterIntake, waterGoal,\nwaterGlasses, waterProgress
+deactivate Provider
+
+Home -> WaterCard: Render water tracker
+activate WaterCard
+
+WaterCard --> User: Display:\n- Water glasses (visual)\n- Current: 5 / 10 glasses\n- 1250ml / 2500ml\n- Progress: 50%
+
+== Add Water ==
+
+User -> WaterCard: Click "+" button\n(or glass icon)
+
+WaterCard -> Provider: addWater(ml: 250)
+activate Provider
+
+Provider -> Provider: Increment waterIntake\n(+250ml or +1 glass)
+Provider -> Provider: Save to SharedPreferences\nwith today's key: "water_YYYY-MM-DD"
+Provider -> Provider: notifyListeners()
+Provider --> WaterCard: Water added
+deactivate Provider
+
+alt Sync to Cloud
+    WaterCard -> Supabase: logWaterIntake(250, today)
+    activate Supabase
+    Supabase --> WaterCard: Synced
+    deactivate Supabase
+end
+
+WaterCard --> User: Update UI:\n- 6 / 10 glasses\n- 1500ml / 2500ml\n- 60% progress\n- Animate glass fill
+
+alt Goal Reached
+    WaterCard --> User: Show celebration animation\n"🎉 Water goal reached!"
+end
+
+== Remove Water ==
+
+User -> WaterCard: Click "-" button
+
+WaterCard -> Provider: removeWater(ml: 250)
+activate Provider
+
+Provider -> Provider: Decrement waterIntake\n(-250ml, min: 0)
+Provider -> Provider: Save to SharedPreferences
+Provider -> Provider: notifyListeners()
+Provider --> WaterCard: Water removed
+deactivate Provider
+
+WaterCard --> User: Update UI:\n- 5 / 10 glasses\n- 1250ml / 2500ml
+
+== Adjust Water Goal ==
+
+User -> WaterCard: Long press on tracker\nor click settings icon
+WaterCard --> User: Show goal adjustment dialog
+
+User -> WaterCard: Adjust goal slider\n(1000ml - 5000ml)
+User -> WaterCard: Confirm new goal (e.g., 3000ml)
+
+WaterCard -> Provider: setWaterGoal(3000)
+activate Provider
+Provider -> Provider: Update waterGoal
+Provider -> Provider: Save to SharedPreferences
+Provider -> Provider: notifyListeners()
+Provider --> WaterCard: Goal updated
+deactivate Provider
+
+WaterCard --> User: Update UI:\n- 5 / 12 glasses\n- 1250ml / 3000ml\n- 42% progress
+
+== Configure Water Reminders ==
+
+User -> Home: Navigate to Settings
+Home -> ReminderScreen: Open Water Reminder Settings
+activate ReminderScreen
+
+ReminderScreen -> Provider: Get reminder settings
+activate Provider
+Provider --> ReminderScreen: waterRemindersEnabled,\ninterval, start/end times
+deactivate Provider
+
+ReminderScreen --> User: Show settings:\n- Enable/Disable toggle\n- Interval: 60 min\n- Start: 8:00 AM\n- End: 10:00 PM
+
+User -> ReminderScreen: Toggle reminders ON
+User -> ReminderScreen: Set interval: 90 minutes
+User -> ReminderScreen: Set schedule: 7 AM - 9 PM
+User -> ReminderScreen: Click "Save"
+
+ReminderScreen -> Provider: updateWaterReminders(\n  enabled: true,\n  intervalMinutes: 90,\n  startHour: 7, startMinute: 0,\n  endHour: 21, endMinute: 0\n)
+activate Provider
+
+Provider -> Provider: Save reminder settings\nto SharedPreferences
+Provider -> Provider: notifyListeners()
+Provider --> ReminderScreen: Settings saved
+deactivate Provider
+
+ReminderScreen -> Notify: scheduleWaterReminders(\n  intervalMinutes: 90,\n  startHour: 7, startMinute: 0,\n  endHour: 21, endMinute: 0,\n  title: "💧 Time to hydrate!",\n  body: "Drink a glass of water"\n)
+activate Notify
+
+Notify -> Notify: Cancel existing reminders
+Notify -> Notify: Calculate reminder times\nwithin schedule window
+Notify -> Notify: Schedule periodic notifications\n(every 90 min from 7 AM to 9 PM)
+Notify --> ReminderScreen: Reminders scheduled
+deactivate Notify
+
+ReminderScreen --> User: Show confirmation:\n"Reminders set! 💧"
+
+deactivate ReminderScreen
+
+== Receive Water Reminder ==
+
+Notify -> User: Push notification\n"💧 Time to hydrate!\nDrink a glass of water"
+
+User -> Notify: Tap notification
+Notify -> Home: Open app (to water tracker)
+activate Home
+
+Home -> WaterCard: Scroll to water section
+WaterCard --> User: Highlight water tracker
+deactivate Home
+
+User -> WaterCard: Click "+" to log water
+WaterCard -> Provider: addWater(250)
+
+deactivate WaterCard
+deactivate Home
+
+note right of Provider
+  **Daily Reset:**
+  Water intake resets at midnight.
+  Each day has its own key:
+  - "water_2026-05-20"
+  - "water_2026-05-21"
+
+  **Reminder Schedule Example:**
+  Start: 7:00 AM
+  End: 9:00 PM
+  Interval: 90 min
+
+  Notifications at:
+  7:00, 8:30, 10:00, 11:30,
+  13:00, 14:30, 16:00, 17:30,
+  19:00, 20:30
+end note
+
+@enduml
+

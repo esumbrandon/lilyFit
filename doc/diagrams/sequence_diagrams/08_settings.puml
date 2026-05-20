@@ -1,0 +1,270 @@
+@startuml Settings Flow
+!theme vibrant
+title LilyFit - Settings & Language Selection Flow
+
+actor User
+participant "SettingsScreen" as Settings
+participant "LanguageDialog" as LangDialog
+participant "AppProvider" as Provider
+participant "NotificationService" as Notify
+participant "SupabaseService" as Supabase
+participant "AppLocalizations" as i18n
+
+== Open Settings ==
+
+User -> Settings: Navigate to Settings\n(Profile tab → Settings icon)
+activate Settings
+
+Settings -> Provider: Get current settings
+activate Provider
+Provider --> Settings: - Language\n- Theme\n- Notifications enabled\n- Water reminders\n- Units (metric/imperial)\n- Account info
+deactivate Provider
+
+Settings --> User: Display settings menu:\n- 🌍 Language: English\n- 💧 Water Reminders\n- ⚖️ Units: Metric\n- 👤 Account Settings\n- 📊 Data & Privacy\n- ℹ️ About\n- 🚪 Logout
+
+== Change Language ==
+
+User -> Settings: Click "Language" option
+
+Settings -> LangDialog: Show language selection dialog
+activate LangDialog
+
+LangDialog --> User: Display language options:\n- 🇺🇸 English (en)\n- 🇪🇸 Español (es)\n- 🇫🇷 Français (fr)\n- 🇩🇪 Deutsch (de)\n- 🇧🇷 Português (pt)
+
+User -> LangDialog: Select "Español"
+
+LangDialog -> i18n: lookupAppLocalizations(Locale('es'))
+activate i18n
+i18n --> LangDialog: Spanish localizations loaded
+deactivate i18n
+
+LangDialog -> Provider: setLocale(\n  Locale('es'),\n  notificationTitle: "💧 Hora de hidratarte!",\n  notificationBody: "Bebe un vaso de agua"\n)
+activate Provider
+
+Provider -> Provider: Update _currentLocale = es
+Provider -> Provider: Save to SharedPreferences:\n  "selected_language" = "es"
+
+alt Water Reminders Enabled
+    Provider -> Notify: Reschedule water reminders\nwith Spanish text
+    activate Notify
+    Notify -> Notify: Cancel old notifications
+    Notify -> Notify: Schedule new notifications\nwith localized strings
+    Notify --> Provider: Reminders updated
+    deactivate Notify
+end
+
+Provider -> Provider: notifyListeners()
+Provider --> LangDialog: Language changed
+deactivate Provider
+
+LangDialog --> User: Show confirmation:\n"✅ Idioma cambiado!"
+
+LangDialog -> Settings: Close dialog
+deactivate LangDialog
+
+Settings --> User: Refresh UI in Spanish:\n- Menú\n- Recordatorios de agua\n- Unidades\n- Configuración de cuenta
+
+deactivate Settings
+
+== Toggle Water Reminders ==
+
+User -> Settings: Click "Water Reminders"
+activate Settings
+
+Settings -> Settings: Navigate to Water Reminder Screen
+(see diagram 05_water_tracking.puml for details)
+
+deactivate Settings
+
+== Change Units ==
+
+User -> Settings: Click "Units" option
+activate Settings
+
+Settings --> User: Show unit preference dialog:\n- ⚖️ Weight: kg / lbs\n- 📏 Height: cm / ft\n- 💧 Water: mL / fl oz
+
+User -> Settings: Select Imperial units
+
+Settings -> Provider: Update profile units
+activate Provider
+
+Provider -> Provider: userProfile.weightUnit = "lbs"
+Provider -> Provider: userProfile.heightUnit = "ft"
+Provider -> Provider: Convert stored values\n(keep in metric, display in imperial)
+Provider -> Provider: Save to SharedPreferences
+Provider -> Provider: notifyListeners()
+Provider --> Settings: Units updated
+deactivate Provider
+
+Settings -> Supabase: saveUserProfile(profile)
+activate Supabase
+Supabase --> Settings: Synced
+deactivate Supabase
+
+Settings --> User: Apply changes to entire app:\n- Dashboard displays lbs\n- Profile shows ft'in"\n- Charts use imperial
+
+deactivate Settings
+
+== Manage Notifications ==
+
+User -> Settings: Click "Notifications"
+activate Settings
+
+Settings --> User: Show notification settings:\n- 🔔 Push Notifications: ON/OFF\n- 💧 Water Reminders: Configured\n- 📅 Daily Summary: ON/OFF\n- 🎉 Goal Celebrations: ON/OFF
+
+User -> Settings: Toggle "Daily Summary" ON
+
+Settings -> Notify: Enable daily summary notifications
+activate Notify
+
+Notify -> Notify: Schedule daily notification\nat 8 PM with summary:\n- Calories consumed\n- Water intake\n- Streak status
+Notify --> Settings: Notification scheduled
+deactivate Notify
+
+Settings -> Provider: Save notification preferences
+activate Provider
+Provider --> Settings: Saved
+deactivate Provider
+
+Settings --> User: Show confirmation
+
+deactivate Settings
+
+== Account Settings ==
+
+User -> Settings: Click "Account Settings"
+activate Settings
+
+Settings --> User: Show account options:\n- 📧 Email: user@example.com\n- 🔐 Change Password\n- 🗑️ Delete Account\n- 💾 Export Data\n- 🔄 Sync Status: ✅ Synced
+
+User -> Settings: Click "Change Password"
+
+Settings -> Supabase: sendPasswordResetEmail(email)
+activate Supabase
+Supabase --> Settings: Reset email sent
+deactivate Supabase
+
+Settings --> User: Show message:\n"Password reset link sent to\nuser@example.com"
+
+deactivate Settings
+
+== Export Data ==
+
+User -> Settings: Click "Export Data"
+activate Settings
+
+Settings -> Provider: Gather all user data
+activate Provider
+
+Provider -> Provider: Collect:\n- Profile\n- Meal logs (all time)\n- Weight entries\n- Water logs\n- Settings
+
+Provider --> Settings: Data bundle (JSON)
+deactivate Provider
+
+Settings -> Settings: Format as JSON/CSV
+
+Settings --> User: Download data file:\n"lilyfit_data_2026-05-20.json"
+
+deactivate Settings
+
+== Clear Cache ==
+
+User -> Settings: Click "Clear Cache"
+activate Settings
+
+Settings --> User: Show confirmation dialog:\n"Clear food database cache?\nThis will re-download foods\non next search."
+
+User -> Settings: Confirm
+
+Settings -> Settings: Clear food cache\n(FoodCacheService)
+
+Settings --> User: Show success:\n"✅ Cache cleared"
+
+deactivate Settings
+
+== Reset All Data ==
+
+User -> Settings: Long press on "Reset" option
+activate Settings
+
+Settings --> User: Show warning dialog:\n"⚠️ Delete all local data?\nThis cannot be undone.\n(Cloud data will remain)"
+
+User -> Settings: Enter confirmation code
+
+Settings -> Provider: resetAllData()
+activate Provider
+
+Provider -> Provider: Clear SharedPreferences
+Provider -> Provider: Reset to defaults
+Provider -> Provider: notifyListeners()
+Provider --> Settings: Data reset
+deactivate Provider
+
+Settings --> User: Show message:\n"Data reset complete"
+
+Settings -> Settings: Navigate to onboarding
+deactivate Settings
+
+== Logout ==
+
+User -> Settings: Click "Logout" button
+activate Settings
+
+Settings --> User: Show confirmation:\n"Are you sure you want\nto logout?"
+
+User -> Settings: Confirm logout
+
+Settings -> Provider: Prepare for logout
+activate Provider
+Provider -> Provider: Save any pending changes
+Provider --> Settings: Ready
+deactivate Provider
+
+Settings -> Supabase: signOut()
+activate Supabase
+Supabase -> Supabase: Clear session
+Supabase -> Supabase: Clear tokens
+Supabase --> Settings: Logged out
+deactivate Supabase
+
+Settings -> Settings: Clear navigation stack
+
+Settings -> Settings: Navigate to Auth Screen
+deactivate Settings
+
+note right of Settings
+  **Settings Persistence:**
+
+  Local (SharedPreferences):
+  - Language preference
+  - Theme choice
+  - Notification settings
+  - Last sync timestamp
+
+  Cloud (Supabase):
+  - Profile data
+  - Units preference
+  - Goal settings
+
+  **Privacy:**
+  - No tracking
+  - Local-first approach
+  - Optional cloud sync
+  - User controls data
+end note
+
+== About & Version Info ==
+
+User -> Settings: Click "About"
+activate Settings
+
+Settings --> User: Show app information:\n- App Name: LilyFit\n- Version: 1.0.0+1\n- Build: 2026.05.20\n- Flutter: 3.41.9\n- Dart: 3.11.5\n- 📄 Privacy Policy\n- 📜 Terms of Service\n- 💬 Send Feedback\n- ⭐ Rate App
+
+User -> Settings: Click "Privacy Policy"
+
+Settings --> User: Show privacy policy document
+
+deactivate Settings
+
+@enduml
+

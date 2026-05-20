@@ -1,0 +1,182 @@
+@startuml Weight Tracking Flow
+!theme vibrant
+title LilyFit - Weight Tracking Flow
+
+actor User
+participant "ProgressScreen" as Progress
+participant "WeightChartCard" as Chart
+participant "WeightEntryDialog" as Dialog
+participant "AppProvider" as Provider
+participant "SupabaseService" as Supabase
+participant "UserProfile" as Profile
+
+== View Weight Progress ==
+
+User -> Progress: Navigate to Progress tab
+activate Progress
+
+Progress -> Provider: Get weight data
+activate Provider
+Provider --> Progress: weightEntries list,\ncurrent weight,\nBMI, BMI category
+deactivate Provider
+
+Progress -> Chart: Render weight chart
+activate Chart
+
+Chart -> Chart: Calculate statistics:\n- Current weight\n- Starting weight\n- Total change\n- Trend (gaining/losing)\n- Average weekly change
+
+Chart --> User: Display line chart:\n- X-axis: Dates\n- Y-axis: Weight (kg/lbs)\n- Show data points\n- Trend line\n- Current BMI: 23.5 (Normal)
+
+deactivate Chart
+
+== Add Weight Entry ==
+
+User -> Progress: Click "Add Weight" / "+" button
+
+Progress -> Dialog: Show weight entry dialog
+activate Dialog
+
+Dialog -> Provider: Get current weight & unit
+activate Provider
+Provider --> Dialog: weight: 75 kg, unit: "kg"
+deactivate Provider
+
+Dialog --> User: Show dialog:\n- Current: 75.0 kg\n- Slider/Input to adjust\n- Unit toggle (kg/lbs)\n- Date picker (default: today)
+
+User -> Dialog: Adjust weight to 74.5 kg
+User -> Dialog: Select date (if not today)
+User -> Dialog: Click "Save"
+
+Dialog -> Provider: addWeight(74.5)
+activate Provider
+
+Provider -> Provider: Get today's date
+Provider -> Provider: Remove today's entry\n(if exists - replace)
+Provider -> Provider: Add new WeightEntry:\n  - date: today\n  - weight: 74.5 kg
+Provider -> Provider: Sort entries by date
+Provider -> Profile: Update userProfile.weight = 74.5
+Provider -> Provider: Save to SharedPreferences:\n- weightEntries array\n- userProfile
+Provider -> Provider: notifyListeners()
+Provider --> Dialog: Weight logged
+deactivate Provider
+
+alt Sync to Cloud
+    Dialog -> Supabase: logWeight(74.5, today)
+    activate Supabase
+    Supabase --> Dialog: Synced to cloud
+    deactivate Supabase
+end
+
+Dialog --> User: Show success message
+Dialog -> Progress: Close dialog
+deactivate Dialog
+
+== Update Chart ==
+
+Progress -> Provider: Listen to changes
+activate Provider
+Provider --> Progress: Updated weightEntries
+deactivate Provider
+
+Progress -> Chart: Re-render chart
+activate Chart
+
+Chart -> Chart: Recalculate statistics:\n- Weight change: -0.5 kg this week\n- Total change: -5 kg (from start)\n- Trend: Losing\n- BMI: 23.3 (Normal)
+
+Chart --> User: Animate chart update:\n- New data point added\n- Trend line updated\n- Stats refreshed
+
+alt Weight Goal Reached
+    Chart --> User: Show celebration:\n"🎉 Goal weight reached!"
+end
+
+deactivate Chart
+
+== View Weight History ==
+
+User -> Progress: Scroll weight chart
+activate Progress
+
+Progress --> User: Display all weight entries:\n- May 20: 74.5 kg\n- May 13: 75.0 kg\n- May 6: 76.0 kg\n- Apr 29: 77.5 kg\n- Apr 22: 78.0 kg
+
+User -> Progress: Long press on entry
+Progress --> User: Show entry details:\n- Date\n- Weight\n- Change from previous\n- Days since entry
+
+deactivate Progress
+
+== Toggle Weight Unit ==
+
+User -> Progress: Click unit toggle (kg ↔ lbs)
+activate Progress
+
+Progress -> Provider: Update weight unit
+activate Provider
+
+Provider -> Provider: userProfile.weightUnit = "lbs"
+Provider -> Provider: Convert all weights:\n  75 kg → 165.3 lbs
+Provider -> Provider: Save to SharedPreferences
+Provider -> Provider: notifyListeners()
+Provider --> Progress: Unit updated
+deactivate Provider
+
+Progress -> Chart: Re-render with new unit
+activate Chart
+Chart --> User: Display chart in lbs:\n- Current: 165.3 lbs\n- Change: -1.1 lbs\n- BMI: 23.3 (unchanged)
+deactivate Chart
+
+deactivate Progress
+
+== Weight Insights ==
+
+Progress -> Chart: Calculate insights
+activate Chart
+
+Chart -> Chart: Analyze data:\n- Check if on track for goal\n- Calculate rate of change\n- Compare to healthy range\n- Generate recommendations
+
+Chart --> User: Show insights:\n"📊 You're losing 0.5 kg/week\n✅ Healthy rate (goal: lose 0.5 kg/week)\n💪 Keep up the good work!\n🎯 10 weeks to goal weight"
+
+deactivate Chart
+
+== BMI Calculation ==
+
+note right of Provider
+  **BMI Formula:**
+  BMI = weight (kg) / (height (m))²
+
+  **Example:**
+  Weight: 74.5 kg
+  Height: 175 cm = 1.75 m
+
+  BMI = 74.5 / (1.75 × 1.75)
+      = 74.5 / 3.0625
+      = 24.3
+
+  **Categories:**
+  < 18.5: Underweight
+  18.5-24.9: Normal
+  25-29.9: Overweight
+  ≥ 30: Obese
+
+  **Weekly Change Calculation:**
+  (Current - Previous) / Days * 7
+  = (74.5 - 75.0) / 7 * 7
+  = -0.5 kg/week
+end note
+
+== Sync Weight History ==
+
+Supabase -> Provider: Real-time subscription\n(profile changes)
+activate Supabase
+activate Provider
+
+Supabase --> Provider: Weight updated remotely
+Provider -> Provider: Fetch latest weight history
+Provider -> Provider: Merge with local data
+Provider -> Provider: notifyListeners()
+Provider --> Progress: Data synchronized
+deactivate Provider
+deactivate Supabase
+
+Progress --> User: Update displayed chart\n(seamless background sync)
+
+@enduml
+
