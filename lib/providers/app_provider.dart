@@ -174,6 +174,7 @@ class AppProvider extends ChangeNotifier {
       );
 
       // Convert Supabase meals to MealLog objects
+      // Note: Supabase stores BASE nutrition values (not multiplied by servings)
       final supabaseMeals = <MealLog>[];
       for (var meal in mealData) {
         try {
@@ -182,6 +183,7 @@ class AppProvider extends ChangeNotifier {
             orElse: () => MealType.breakfast,
           );
 
+          // These are base values from Supabase (not multiplied)
           final foodItem = FoodItem(
             id: meal['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
             name: meal['food_name'] ?? '',
@@ -200,9 +202,15 @@ class AppProvider extends ChangeNotifier {
 
           DateTime logDate;
           if (dateStr != null) {
+            // Parse date and ensure it's in local time
             logDate = DateTime.parse(dateStr);
+            // If it's just a date (no time), set to noon local time for consistency
+            if (!dateStr.contains('T')) {
+              logDate = DateTime(logDate.year, logDate.month, logDate.day, 12, 0);
+            }
           } else if (createdAtStr != null) {
-            logDate = DateTime.parse(createdAtStr);
+            // Parse created_at timestamp
+            logDate = DateTime.parse(createdAtStr).toLocal();
           } else {
             logDate = DateTime.now();
           }
@@ -230,8 +238,11 @@ class AppProvider extends ChangeNotifier {
         try {
           final dateStr = entry['date'] as String?;
           if (dateStr != null) {
+            // Parse date and normalize to local date (no time component)
+            final parsedDate = DateTime.parse(dateStr);
+            final normalizedDate = DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
             supabaseWeights.add(WeightEntry(
-              date: DateTime.parse(dateStr),
+              date: normalizedDate,
               weight: (entry['weight'] as num?)?.toDouble() ?? 0,
             ));
           }
@@ -341,13 +352,15 @@ class AppProvider extends ChangeNotifier {
 
     if (_supabaseService.isLoggedIn()) {
       try {
+        // Store BASE values (not multiplied) to Supabase
+        // The servings field handles the multiplication
         await _supabaseService.logMeal(
           mealType: mealType.name,
           foodName: food.name,
-          calories: food.calories * servings,
-          protein: food.protein * servings,
-          carbs: food.carbs * servings,
-          fat: food.fat * servings,
+          calories: food.calories,
+          protein: food.protein,
+          carbs: food.carbs,
+          fat: food.fat,
           date: log.dateTime,
           servings: servings,
         );
@@ -436,7 +449,8 @@ class AppProvider extends ChangeNotifier {
 
   // ─── Weight Tracking ────────────────────────────────────────────
   Future<void> addWeight(double weight) async {
-    final today = DateTime.now();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day); // Normalize to date only
     // Replace today's entry if exists
     _weightEntries.removeWhere((e) => _isSameDay(e.date, today));
     _weightEntries.add(WeightEntry(date: today, weight: weight));

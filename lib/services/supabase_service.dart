@@ -6,6 +6,13 @@ class SupabaseService {
 
   final _supabase = Supabase.instance.client;
 
+  /// Helper method to format DateTime to YYYY-MM-DD string
+  /// This ensures consistent date formatting across iOS and Android
+  String _formatDateString(DateTime date) {
+    final normalized = DateTime(date.year, date.month, date.day);
+    return '${normalized.year}-${normalized.month.toString().padLeft(2, '0')}-${normalized.day.toString().padLeft(2, '0')}';
+  }
+
 
   /// Sign up a new user with email and password
   Future<AuthResponse> signUp({
@@ -322,11 +329,11 @@ class SupabaseService {
         .eq('user_id', userId);
 
     if (startDate != null) {
-      query = query.gte('date', startDate.toIso8601String().split('T')[0]);
+      query = query.gte('date', _formatDateString(startDate));
     }
 
     if (endDate != null) {
-      query = query.lte('date', endDate.toIso8601String().split('T')[0]);
+      query = query.lte('date', _formatDateString(endDate));
     }
 
     query = query.order('date', ascending: false);
