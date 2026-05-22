@@ -338,5 +338,8 @@
   "resetDataDescription": "Start fresh",
   "member": "Member",
   "perDay": "per day",
-  "version": "Version"
+  "version": "Version",
+  "dataRefreshed": "Data refreshed successfully",
+  "pullToRefresh": "Pull to refresh",
+  "refreshFailed": "Failed to refresh"
 }

@@ -227,8 +227,22 @@ class AppProvider extends ChangeNotifier {
         }
       }
 
-      // Merge with local meals (keep both, deduplicate later if needed)
-      _mealLogs = [...supabaseMeals, ..._mealLogs];
+      // Properly deduplicate meals - Supabase is the source of truth
+      // Use a Map with ID as key to prevent duplicates
+      final mealMap = <String, MealLog>{};
+      
+      // First add local meals (these will be overwritten by Supabase data if IDs match)
+      for (var meal in _mealLogs) {
+        mealMap[meal.id] = meal;
+      }
+      
+      // Then add/overwrite with Supabase meals (source of truth)
+      for (var meal in supabaseMeals) {
+        mealMap[meal.id] = meal;
+      }
+      
+      // Convert back to list and save
+      _mealLogs = mealMap.values.toList();
       await _saveMealLogs();
 
       // Load weight history
@@ -261,13 +275,11 @@ class AppProvider extends ChangeNotifier {
       _weightEntries.sort((a, b) => a.date.compareTo(b.date));
       await _saveWeightEntries();
 
-      // Load today's water intake
+      // Load today's water intake (Supabase is source of truth)
       final waterAmount = await _supabaseService.getWaterIntake(DateTime.now());
-      if (waterAmount > 0) {
-        _waterIntake = waterAmount;
-        final today = _formatDate(DateTime.now());
-        await _prefs.setDouble('water_$today', _waterIntake);
-      }
+      _waterIntake = waterAmount;
+      final today = _formatDate(DateTime.now());
+      await _prefs.setDouble('water_$today', _waterIntake);
 
       notifyListeners();
       debugPrint('Successfully synced data from Supabase');
@@ -334,8 +346,9 @@ class AppProvider extends ChangeNotifier {
     MealType mealType, {
     double servings = 1.0,
   }) async {
+    final tempId = DateTime.now().millisecondsSinceEpoch.toString();
     final log = MealLog(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: tempId,
       food: food,
       mealType: mealType,
       servings: servings,
@@ -347,14 +360,17 @@ class AppProvider extends ChangeNotifier {
         DateTime.now().minute,
       ),
     );
+    
+    // Add to local storage first (with temp ID)
     _mealLogs.add(log);
     await _saveMealLogs();
 
+    // Sync to Supabase and update with real ID
     if (_supabaseService.isLoggedIn()) {
       try {
         // Store BASE values (not multiplied) to Supabase
         // The servings field handles the multiplication
-        await _supabaseService.logMeal(
+        final supabaseId = await _supabaseService.logMeal(
           mealType: mealType.name,
           foodName: food.name,
           calories: food.calories,
@@ -364,6 +380,21 @@ class AppProvider extends ChangeNotifier {
           date: log.dateTime,
           servings: servings,
         );
+        
+        // Update local meal with Supabase ID to prevent duplicates
+        if (supabaseId != null) {
+          final index = _mealLogs.indexWhere((m) => m.id == tempId);
+          if (index != -1) {
+            _mealLogs[index] = MealLog(
+              id: supabaseId,
+              food: food,
+              mealType: mealType,
+              servings: servings,
+              dateTime: log.dateTime,
+            );
+            await _saveMealLogs();
+          }
+        }
       } catch (e) {
         // Log error but don't block the UI - data is still saved locally
         debugPrint('Failed to sync meal to Supabase: $e');
@@ -376,6 +407,16 @@ class AppProvider extends ChangeNotifier {
   Future<void> removeMeal(String id) async {
     _mealLogs.removeWhere((m) => m.id == id);
     await _saveMealLogs();
+    
+    // Also remove from Supabase
+    if (_supabaseService.isLoggedIn()) {
+      try {
+        await _supabaseService.deleteMealLog(id);
+      } catch (e) {
+        debugPrint('Failed to delete meal from Supabase: $e');
+      }
+    }
+    
     notifyListeners();
   }
 

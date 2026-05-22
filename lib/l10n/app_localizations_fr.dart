@@ -903,4 +903,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get version => 'Version';
+
+  @override
+  String get dataRefreshed => 'Données actualisées avec succès';
+
+  @override
+  String get pullToRefresh => 'Tirer pour actualiser';
+
+  @override
+  String get refreshFailed => 'Échec de l\'actualisation';
 }

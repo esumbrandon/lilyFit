@@ -226,7 +226,8 @@ class SupabaseService {
   // ============ MEAL TRACKING ============
 
   /// Log a meal
-  Future<void> logMeal({
+  /// Returns the ID of the created meal log
+  Future<String?> logMeal({
     required String mealType,
     required String foodName,
     required double calories,
@@ -239,7 +240,7 @@ class SupabaseService {
     final userId = getCurrentUserId();
     if (userId == null) throw Exception('No user logged in');
 
-    await _supabase.from('meal_logs').insert({
+    final response = await _supabase.from('meal_logs').insert({
       'user_id': userId,
       'meal_type': mealType,
       'food_name': foodName,
@@ -248,8 +249,10 @@ class SupabaseService {
       'carbs': carbs,
       'fat': fat,
       'servings': servings ?? 1.0,
-      'date': date.toIso8601String().split('T')[0],
-    });
+      'date': _formatDateString(date),
+    }).select().single();
+
+    return response['id']?.toString();
   }
 
   /// Get meal logs for a specific date

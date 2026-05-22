@@ -900,4 +900,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get version => 'Versión';
+
+  @override
+  String get dataRefreshed => 'Datos actualizados con éxito';
+
+  @override
+  String get pullToRefresh => 'Deslizar para actualizar';
+
+  @override
+  String get refreshFailed => 'Error al actualizar';
 }

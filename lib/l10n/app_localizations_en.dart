@@ -887,4 +887,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get version => 'Version';
+
+  @override
+  String get dataRefreshed => 'Data refreshed successfully';
+
+  @override
+  String get pullToRefresh => 'Pull to refresh';
+
+  @override
+  String get refreshFailed => 'Failed to refresh';
 }

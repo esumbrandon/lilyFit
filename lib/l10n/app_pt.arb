@@ -285,5 +285,9 @@
   "resetDataDescription": "Começar do zero",
   "member": "Membro",
   "perDay": "por dia",
-  "version": "Versão"
+  "version": "Versão",
+  "dataRefreshed": "Dados atualizados com sucesso",
+  "pullToRefresh": "Puxe para atualizar",
+  "refreshFailed": "Falha ao atualizar"
 }
+

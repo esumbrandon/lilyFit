@@ -898,4 +898,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get version => 'Versão';
+
+  @override
+  String get dataRefreshed => 'Dados atualizados com sucesso';
+
+  @override
+  String get pullToRefresh => 'Puxe para atualizar';
+
+  @override
+  String get refreshFailed => 'Falha ao atualizar';
 }
