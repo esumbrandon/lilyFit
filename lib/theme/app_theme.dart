@@ -63,12 +63,12 @@ class AppColors {
   // Card shadow for depth
   static List<BoxShadow> get cardShadow => [
     BoxShadow(
-      color: Colors.black.withOpacity(0.25),
+      color: Colors.black.withValues(alpha: 0.25),
       blurRadius: 20,
       offset: const Offset(0, 10),
     ),
     BoxShadow(
-      color: primary.withOpacity(0.08),
+      color: primary.withValues(alpha: 0.08),
       blurRadius: 30,
       offset: const Offset(0, 5),
     ),
@@ -76,12 +76,12 @@ class AppColors {
 
   // Glassmorphism effect
   static BoxDecoration get glassMorphism => BoxDecoration(
-    color: Colors.white.withOpacity(0.05),
+    color: Colors.white.withValues(alpha: 0.05),
     borderRadius: BorderRadius.circular(20),
-    border: Border.all(color: Colors.white.withOpacity(0.08), width: 1.5),
+    border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1.5),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withOpacity(0.15),
+        color: Colors.black.withValues(alpha: 0.15),
         blurRadius: 30,
         offset: const Offset(0, 15),
       ),
@@ -207,7 +207,7 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
-        shadowColor: Colors.black.withOpacity(0.3),
+        shadowColor: Colors.black.withValues(alpha: 0.3),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,

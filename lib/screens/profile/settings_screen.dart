@@ -7,9 +7,7 @@ import '../../theme/app_theme.dart';
 import '../../providers/app_provider.dart';
 import '../../services/language_service.dart';
 import '../../services/notification_service.dart';
-import '../../services/supabase_service.dart';
 import 'water_reminder_screen.dart';
-import '../auth/auth_screen.dart';
 import '../onboarding/onboarding_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -948,7 +946,7 @@ class _NotificationSettingsScreen extends StatelessWidget {
       trailing: Switch.adaptive(
         value: value,
         onChanged: onChanged,
-        activeColor: AppColors.primary,
+        activeThumbColor: AppColors.primary,
       ),
     );
   }
