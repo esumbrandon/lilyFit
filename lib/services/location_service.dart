@@ -25,8 +25,7 @@ class LocationService {
   static Future<Position?> getCurrentPosition() async {
     try {
       // Check if location services are enabled
-      final bool serviceEnabled =
-      await isLocationServiceEnabled();
+      final bool serviceEnabled = await isLocationServiceEnabled();
 
       if (!serviceEnabled) {
         Applogger.w('Location services are disabled');
@@ -34,8 +33,7 @@ class LocationService {
       }
 
       // Check permission
-      LocationPermission permission =
-      await checkPermission();
+      LocationPermission permission = await checkPermission();
 
       if (permission == LocationPermission.denied) {
         permission = await requestPermission();
@@ -46,17 +44,13 @@ class LocationService {
         }
       }
 
-      if (permission ==
-          LocationPermission.deniedForever) {
-        Applogger.w(
-          'Location permission permanently denied',
-        );
+      if (permission == LocationPermission.deniedForever) {
+        Applogger.w('Location permission permanently denied');
 
         return null;
       }
 
-      const LocationSettings locationSettings =
-      LocationSettings(
+      const LocationSettings locationSettings = LocationSettings(
         accuracy: LocationAccuracy.low,
         timeLimit: Duration(seconds: 10),
       );
@@ -65,23 +59,16 @@ class LocationService {
         locationSettings: locationSettings,
       );
     } catch (e, stackTrace) {
-      Applogger.e(
-        'Error getting location',
-        e,
-        stackTrace,
-      );
+      Applogger.e('Error getting location', e, stackTrace);
 
       return null;
     }
   }
 
   /// Get country code from position
-  static Future<String?> getCountryCodeFromPosition(
-      Position position,
-      ) async {
+  static Future<String?> getCountryCodeFromPosition(Position position) async {
     try {
-      final List<Placemark> placemarks =
-      await placemarkFromCoordinates(
+      final List<Placemark> placemarks = await placemarkFromCoordinates(
         position.latitude,
         position.longitude,
       );
@@ -92,11 +79,7 @@ class LocationService {
 
       return null;
     } catch (e, stackTrace) {
-      Applogger.e(
-        'Error getting country from position',
-        e,
-        stackTrace,
-      );
+      Applogger.e('Error getting country from position', e, stackTrace);
 
       return null;
     }
@@ -105,39 +88,30 @@ class LocationService {
   /// Detect language based on user's location
   static Future<String> detectLanguageFromLocation() async {
     try {
-      final Position? position =
-      await getCurrentPosition();
+      final Position? position = await getCurrentPosition();
 
       if (position == null) {
         return 'en';
       }
 
-      final String? countryCode =
-      await getCountryCodeFromPosition(position);
+      final String? countryCode = await getCountryCodeFromPosition(position);
 
       if (countryCode == null) {
         return 'en';
       }
 
-      return LanguageService
-          .getLanguageFromCountryCode(countryCode);
+      return LanguageService.getLanguageFromCountryCode(countryCode);
     } catch (e, stackTrace) {
-      Applogger.e(
-        'Error detecting language',
-        e,
-        stackTrace,
-      );
+      Applogger.e('Error detecting language', e, stackTrace);
 
       return 'en';
     }
   }
 
   /// Get suggested language with location info
-  static Future<Map<String, dynamic>>
-  getSuggestedLanguage() async {
+  static Future<Map<String, dynamic>> getSuggestedLanguage() async {
     try {
-      final Position? position =
-      await getCurrentPosition();
+      final Position? position = await getCurrentPosition();
 
       if (position == null) {
         return {
@@ -148,22 +122,17 @@ class LocationService {
         };
       }
 
-      final List<Placemark> placemarks =
-      await placemarkFromCoordinates(
+      final List<Placemark> placemarks = await placemarkFromCoordinates(
         position.latitude,
         position.longitude,
       );
 
       if (placemarks.isNotEmpty) {
-        final Placemark placemark =
-            placemarks.first;
+        final Placemark placemark = placemarks.first;
 
-        final String countryCode =
-            placemark.isoCountryCode ?? 'US';
+        final String countryCode = placemark.isoCountryCode ?? 'US';
 
-        final String languageCode =
-        LanguageService
-            .getLanguageFromCountryCode(
+        final String languageCode = LanguageService.getLanguageFromCountryCode(
           countryCode,
         );
 
@@ -182,11 +151,7 @@ class LocationService {
         'locationAvailable': false,
       };
     } catch (e, stackTrace) {
-      Applogger.e(
-        'Error getting suggested language',
-        e,
-        stackTrace,
-      );
+      Applogger.e('Error getting suggested language', e, stackTrace);
 
       return {
         'languageCode': 'en',

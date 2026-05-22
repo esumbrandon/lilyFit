@@ -1,10 +1,7 @@
 import 'package:logger/logger.dart';
 
 class Applogger {
-  static final Logger _logger   = Logger(
-    printer:PrettyPrinter(),
-  );
-
+  static final Logger _logger = Logger(printer: PrettyPrinter());
 
   static void d(dynamic message) => _logger.d(message);
 
