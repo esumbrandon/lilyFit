@@ -81,20 +81,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     try {
       // Sync data from Supabase
       await provider.syncFromSupabase();
-
-      // Show a brief success message
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.dataRefreshed),
-            duration: const Duration(seconds: 1),
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: AppColors.primary,
-          ),
-        );
-      }
+      // Success - no message shown to avoid clutter
     } catch (e) {
-      // Show error message if refresh fails
+      // Show error message only if refresh fails
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -122,6 +111,58 @@ class _DashboardScreenState extends State<DashboardScreen>
           backgroundColor: AppColors.surface,
           child: CustomScrollView(
             slivers: [
+              // Offline/Pending Sync Banner
+              if (!provider.isOnline || provider.pendingOperationsCount > 0)
+                SliverToBoxAdapter(
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: provider.isOnline
+                          ? AppColors.primary.withAlpha(20)
+                          : Colors.orange.withAlpha(30),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: provider.isOnline
+                            ? AppColors.primary.withAlpha(40)
+                            : Colors.orange.withAlpha(60),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          provider.isOnline
+                              ? Icons.sync_rounded
+                              : Icons.cloud_off_rounded,
+                          size: 18,
+                          color: provider.isOnline
+                              ? AppColors.primary
+                              : Colors.orange,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            provider.isOnline
+                                ? 'Syncing ${provider.pendingOperationsCount} ${provider.pendingOperationsCount == 1 ? "item" : "items"}...'
+                                : 'Offline - Changes will sync when back online',
+                            style: TextStyle(
+                              color: provider.isOnline
+                                  ? AppColors.primary
+                                  : Colors.orange,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
               // Header
               SliverToBoxAdapter(
                 child: _buildAnimatedSection(

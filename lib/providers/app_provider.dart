@@ -6,10 +6,16 @@ import '../models/food_item.dart';
 import '../models/meal_log.dart';
 import '../services/notification_service.dart';
 import '../services/supabase_service.dart';
+import '../services/connectivity_service.dart';
+import '../services/offline_queue_service.dart';
+import 'dart:async';
 
 class AppProvider extends ChangeNotifier {
   late SharedPreferences _prefs;
   final SupabaseService _supabaseService = SupabaseService();
+  final ConnectivityService _connectivityService = ConnectivityService();
+  final OfflineQueueService _offlineQueue = OfflineQueueService();
+  StreamSubscription<bool>? _connectivitySubscription;
 
   UserProfile _userProfile = UserProfile();
   bool _isOnboarded = false;
@@ -19,6 +25,7 @@ class AppProvider extends ChangeNotifier {
   List<WeightEntry> _weightEntries = [];
   DateTime _selectedDate = DateTime.now();
   Locale _currentLocale = const Locale('en'); // Default locale
+  bool _isOnline = true;
 
   // ─── Water Reminder Settings ────────────────────────────────────
   bool _waterRemindersEnabled = false;
@@ -37,6 +44,8 @@ class AppProvider extends ChangeNotifier {
   DateTime get selectedDate => _selectedDate;
   List<MealLog> get allMealLogs => List.unmodifiable(_mealLogs);
   Locale get currentLocale => _currentLocale;
+  bool get isOnline => _isOnline;
+  int get pendingOperationsCount => _offlineQueue.pendingCount;
 
   // Water reminder getters
   bool get waterRemindersEnabled => _waterRemindersEnabled;
@@ -105,6 +114,95 @@ class AppProvider extends ChangeNotifier {
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
     _loadData();
+
+    // Initialize connectivity service
+    await _connectivityService.initialize();
+    _isOnline = _connectivityService.isOnline;
+
+    // Initialize offline queue
+    await _offlineQueue.loadQueue();
+
+    // Listen for connectivity changes
+    _connectivitySubscription = _connectivityService.connectivityStream.listen(
+      (isOnline) {
+        _isOnline = isOnline;
+        notifyListeners();
+
+        if (isOnline) {
+          debugPrint('Device is back online - syncing pending operations...');
+          _syncWhenOnline();
+        } else {
+          debugPrint('Device is offline - operations will be queued');
+        }
+      },
+    );
+
+    // If online, try to sync any pending operations
+    if (_isOnline) {
+      _syncWhenOnline();
+    }
+  }
+
+  /// Sync pending operations when device comes back online
+  Future<void> _syncWhenOnline() async {
+    if (!_isOnline || !_supabaseService.isLoggedIn()) {
+      return;
+    }
+
+    try {
+      // Sync pending operations from offline queue
+      await _offlineQueue.syncPendingOperations((operation) async {
+        switch (operation.type) {
+          case OfflineOperationType.addMeal:
+            await _supabaseService.logMeal(
+              mealType: operation.data['mealType'],
+              foodName: operation.data['foodName'],
+              calories: operation.data['calories'],
+              protein: operation.data['protein'],
+              carbs: operation.data['carbs'],
+              fat: operation.data['fat'],
+              date: DateTime.parse(operation.data['date']),
+              servings: operation.data['servings'],
+            );
+            break;
+
+          case OfflineOperationType.removeMeal:
+            await _supabaseService.deleteMealLog(operation.data['id']);
+            break;
+
+          case OfflineOperationType.addWater:
+            await _supabaseService.logWaterIntake(
+              amount: operation.data['amount'],
+              date: DateTime.parse(operation.data['date']),
+            );
+            break;
+
+          case OfflineOperationType.addWeight:
+            await _supabaseService.logWeight(
+              weight: operation.data['weight'],
+              date: DateTime.parse(operation.data['date']),
+            );
+            break;
+
+          case OfflineOperationType.updateProfile:
+            await _supabaseService.saveUserProfile(_userProfile);
+            break;
+        }
+      });
+
+      // After syncing pending operations, sync data from Supabase
+      await syncFromSupabase();
+      debugPrint('Successfully synced all pending operations');
+    } catch (e) {
+      debugPrint('Error syncing pending operations: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription?.cancel();
+    _connectivityService.dispose();
+    super.dispose();
   }
 
   void _loadData() {
@@ -330,10 +428,24 @@ class AppProvider extends ChangeNotifier {
 
     // Sync to Supabase if user is logged in
     if (_supabaseService.isLoggedIn()) {
-      try {
-        await _supabaseService.saveUserProfile(profile);
-      } catch (e) {
-        debugPrint('Failed to sync profile to Supabase: $e');
+      if (_isOnline) {
+        try {
+          await _supabaseService.saveUserProfile(profile);
+        } catch (e) {
+          debugPrint('Failed to sync profile to Supabase: $e');
+          // Queue operation for later sync
+          await _offlineQueue.addOperation(
+            OfflineOperationType.updateProfile,
+            {},
+          );
+        }
+      } else {
+        // Device is offline - queue operation
+        await _offlineQueue.addOperation(
+          OfflineOperationType.updateProfile,
+          {},
+        );
+        debugPrint('Device offline - profile update queued for sync');
       }
     }
 
@@ -365,39 +477,71 @@ class AppProvider extends ChangeNotifier {
     _mealLogs.add(log);
     await _saveMealLogs();
 
-    // Sync to Supabase and update with real ID
+    // Sync to Supabase if online, otherwise queue operation
     if (_supabaseService.isLoggedIn()) {
-      try {
-        // Store BASE values (not multiplied) to Supabase
-        // The servings field handles the multiplication
-        final supabaseId = await _supabaseService.logMeal(
-          mealType: mealType.name,
-          foodName: food.name,
-          calories: food.calories,
-          protein: food.protein,
-          carbs: food.carbs,
-          fat: food.fat,
-          date: log.dateTime,
-          servings: servings,
-        );
-        
-        // Update local meal with Supabase ID to prevent duplicates
-        if (supabaseId != null) {
-          final index = _mealLogs.indexWhere((m) => m.id == tempId);
-          if (index != -1) {
-            _mealLogs[index] = MealLog(
-              id: supabaseId,
-              food: food,
-              mealType: mealType,
-              servings: servings,
-              dateTime: log.dateTime,
-            );
-            await _saveMealLogs();
+      if (_isOnline) {
+        try {
+          // Store BASE values (not multiplied) to Supabase
+          // The servings field handles the multiplication
+          final supabaseId = await _supabaseService.logMeal(
+            mealType: mealType.name,
+            foodName: food.name,
+            calories: food.calories,
+            protein: food.protein,
+            carbs: food.carbs,
+            fat: food.fat,
+            date: log.dateTime,
+            servings: servings,
+          );
+
+          // Update local meal with Supabase ID to prevent duplicates
+          if (supabaseId != null) {
+            final index = _mealLogs.indexWhere((m) => m.id == tempId);
+            if (index != -1) {
+              _mealLogs[index] = MealLog(
+                id: supabaseId,
+                food: food,
+                mealType: mealType,
+                servings: servings,
+                dateTime: log.dateTime,
+              );
+              await _saveMealLogs();
+            }
           }
+        } catch (e) {
+          // Log error but don't block the UI - data is still saved locally
+          debugPrint('Failed to sync meal to Supabase: $e');
+          // Queue operation for later sync
+          await _offlineQueue.addOperation(
+            OfflineOperationType.addMeal,
+            {
+              'mealType': mealType.name,
+              'foodName': food.name,
+              'calories': food.calories,
+              'protein': food.protein,
+              'carbs': food.carbs,
+              'fat': food.fat,
+              'date': log.dateTime.toIso8601String(),
+              'servings': servings,
+            },
+          );
         }
-      } catch (e) {
-        // Log error but don't block the UI - data is still saved locally
-        debugPrint('Failed to sync meal to Supabase: $e');
+      } else {
+        // Device is offline - queue operation
+        await _offlineQueue.addOperation(
+          OfflineOperationType.addMeal,
+          {
+            'mealType': mealType.name,
+            'foodName': food.name,
+            'calories': food.calories,
+            'protein': food.protein,
+            'carbs': food.carbs,
+            'fat': food.fat,
+            'date': log.dateTime.toIso8601String(),
+            'servings': servings,
+          },
+        );
+        debugPrint('Device offline - meal queued for sync');
       }
     }
 
@@ -408,12 +552,26 @@ class AppProvider extends ChangeNotifier {
     _mealLogs.removeWhere((m) => m.id == id);
     await _saveMealLogs();
     
-    // Also remove from Supabase
+    // Also remove from Supabase if online, otherwise queue operation
     if (_supabaseService.isLoggedIn()) {
-      try {
-        await _supabaseService.deleteMealLog(id);
-      } catch (e) {
-        debugPrint('Failed to delete meal from Supabase: $e');
+      if (_isOnline) {
+        try {
+          await _supabaseService.deleteMealLog(id);
+        } catch (e) {
+          debugPrint('Failed to delete meal from Supabase: $e');
+          // Queue operation for later sync
+          await _offlineQueue.addOperation(
+            OfflineOperationType.removeMeal,
+            {'id': id},
+          );
+        }
+      } else {
+        // Device is offline - queue operation
+        await _offlineQueue.addOperation(
+          OfflineOperationType.removeMeal,
+          {'id': id},
+        );
+        debugPrint('Device offline - meal deletion queued for sync');
       }
     }
     
@@ -432,13 +590,33 @@ class AppProvider extends ChangeNotifier {
     await _prefs.setDouble('water_$today', _waterIntake);
 
     if (_supabaseService.isLoggedIn()) {
-      try {
-        await _supabaseService.logWaterIntake(
-          amount: ml,
-          date: DateTime.now(),
+      if (_isOnline) {
+        try {
+          await _supabaseService.logWaterIntake(
+            amount: ml,
+            date: DateTime.now(),
+          );
+        } catch (e) {
+          debugPrint('Failed to sync water intake to Supabase: $e');
+          // Queue operation for later sync
+          await _offlineQueue.addOperation(
+            OfflineOperationType.addWater,
+            {
+              'amount': ml,
+              'date': DateTime.now().toIso8601String(),
+            },
+          );
+        }
+      } else {
+        // Device is offline - queue operation
+        await _offlineQueue.addOperation(
+          OfflineOperationType.addWater,
+          {
+            'amount': ml,
+            'date': DateTime.now().toIso8601String(),
+          },
         );
-      } catch (e) {
-        debugPrint('Failed to sync water intake to Supabase: $e');
+        debugPrint('Device offline - water intake queued for sync');
       }
     }
 
@@ -503,13 +681,33 @@ class AppProvider extends ChangeNotifier {
     await _saveWeightEntries();
 
     if (_supabaseService.isLoggedIn()) {
-      try {
-        await _supabaseService.logWeight(
-          weight: weight,
-          date: today,
+      if (_isOnline) {
+        try {
+          await _supabaseService.logWeight(
+            weight: weight,
+            date: today,
+          );
+        } catch (e) {
+          debugPrint('Failed to sync weight to Supabase: $e');
+          // Queue operation for later sync
+          await _offlineQueue.addOperation(
+            OfflineOperationType.addWeight,
+            {
+              'weight': weight,
+              'date': today.toIso8601String(),
+            },
+          );
+        }
+      } else {
+        // Device is offline - queue operation
+        await _offlineQueue.addOperation(
+          OfflineOperationType.addWeight,
+          {
+            'weight': weight,
+            'date': today.toIso8601String(),
+          },
         );
-      } catch (e) {
-        debugPrint('Failed to sync weight to Supabase: $e');
+        debugPrint('Device offline - weight entry queued for sync');
       }
     }
 
