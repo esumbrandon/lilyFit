@@ -414,7 +414,7 @@ class SettingsScreen extends StatelessWidget {
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: languages.length,
-                      separatorBuilder: (_, __) =>
+                      separatorBuilder: (_, _) =>
                           const Divider(color: AppColors.cardLight, height: 1),
                       itemBuilder: (_, i) {
                         final lang = languages[i];

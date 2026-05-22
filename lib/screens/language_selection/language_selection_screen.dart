@@ -107,6 +107,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
       );
 
       // Navigate to auth screen
+      if (!mounted) return;
       Navigator.of(context).pushReplacementNamed('/auth');
     }
   }

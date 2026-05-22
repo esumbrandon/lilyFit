@@ -150,6 +150,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       // Save locally and complete onboarding
       if (!mounted) return;
       await context.read<AppProvider>().completeOnboarding(profile);
+      if (!mounted) return;
       await context.read<AppProvider>().setWaterGoal(_waterGoalMl);
 
       // Close loading dialog

@@ -155,8 +155,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     if (nameError != null ||
         emailError != null ||
         passwordError != null ||
-        confirmPasswordError != null)
+        confirmPasswordError != null) {
       return;
+    }
 
     // Show loading
     showDialog(
@@ -260,6 +261,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         ],
       ),
     );
+
+    if (!mounted) return;
 
     if (result == null || result.isEmpty) return;
 

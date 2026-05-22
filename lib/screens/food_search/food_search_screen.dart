@@ -193,7 +193,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       vertical: 8,
                     ),
                     itemCount: FoodDatabase.regions.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 10),
+                    separatorBuilder: (_, _) => const SizedBox(width: 10),
                     itemBuilder: (context, index) {
                       final region = FoodDatabase.regions[index];
                       final selected = _selectedRegion == region;

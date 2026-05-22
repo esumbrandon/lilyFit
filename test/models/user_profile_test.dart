@@ -5,7 +5,7 @@ void main() {
   // Shared test profile: male, 70kg, 170cm, 25yo, moderate, maintenance
   // BMR (male) = 10*70 + 6.25*170 - 5*25 + 5 = 1642.5
   // TDEE (moderate, ×1.55) = 1642.5 * 1.55 = 2545.875 → 2546 kcal
-  UserProfile _maleModerateMaintenance() => UserProfile(
+  UserProfile maleModerateMaintenance() => UserProfile(
     gender: 'male',
     age: 25,
     weight: 70,
@@ -32,12 +32,12 @@ void main() {
   group('calculateTargets', () {
     group('male – maintenance – moderate', () {
       test('sets correct targetCalories', () {
-        final p = _maleModerateMaintenance()..calculateTargets();
+        final p = maleModerateMaintenance()..calculateTargets();
         expect(p.targetCalories, 2546.0);
       });
 
       test('sets correct macro targets', () {
-        final p = _maleModerateMaintenance()..calculateTargets();
+        final p = maleModerateMaintenance()..calculateTargets();
         expect(p.targetProtein, 191.0); // 2546*0.30/4
         expect(p.targetCarbs, 255.0); // 2546*0.40/4
         expect(p.targetFat, 85.0); // 2546*0.30/9

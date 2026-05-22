@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lilyfit/l10n/app_localizations.dart';
 
 class BeforeLoginButton extends StatelessWidget {
+  const BeforeLoginButton({super.key});
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(onPressed: () {}, child: const Text('Login'));
@@ -10,6 +11,7 @@ class BeforeLoginButton extends StatelessWidget {
 
 // ✅ AFTER (Localized):
 class AfterLoginButton extends StatelessWidget {
+  const AfterLoginButton({super.key});
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -18,6 +20,7 @@ class AfterLoginButton extends StatelessWidget {
 }
 
 class BeforeLoginForm extends StatelessWidget {
+  const BeforeLoginForm({super.key});
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -41,6 +44,7 @@ class BeforeLoginForm extends StatelessWidget {
 }
 
 class AfterLoginForm extends StatelessWidget {
+  const AfterLoginForm({super.key});
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -65,6 +69,7 @@ class AfterLoginForm extends StatelessWidget {
 }
 
 class BeforeBottomNav extends StatelessWidget {
+  const BeforeBottomNav({super.key});
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
@@ -79,6 +84,7 @@ class BeforeBottomNav extends StatelessWidget {
 }
 
 class AfterBottomNav extends StatelessWidget {
+  const AfterBottomNav({super.key});
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -150,6 +156,7 @@ void showAfterLogoutDialog(BuildContext context) {
 }
 
 class BeforeMealList extends StatelessWidget {
+  const BeforeMealList({super.key});
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -164,6 +171,7 @@ class BeforeMealList extends StatelessWidget {
 }
 
 class AfterMealList extends StatelessWidget {
+  const AfterMealList({super.key});
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
