@@ -53,4 +53,3 @@ Implementation.md
 superbase_schema.sql
 superbase_foods_schema.sql
 pubspec.lock
-macos/Podfile.lock
