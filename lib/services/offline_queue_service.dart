@@ -82,7 +82,10 @@ class OfflineQueueService {
   }
 
   /// Add operation to queue
-  Future<void> addOperation(OfflineOperationType type, Map<String, dynamic> data) async {
+  Future<void> addOperation(
+    OfflineOperationType type,
+    Map<String, dynamic> data,
+  ) async {
     final operation = PendingOperation(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       type: type,
@@ -149,5 +152,3 @@ class OfflineQueueService {
     }
   }
 }
-
-

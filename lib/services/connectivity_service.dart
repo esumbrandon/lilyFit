@@ -24,24 +24,26 @@ class ConnectivityService {
     _isOnline = _hasConnection(result);
 
     // Listen for connectivity changes
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
-      (List<ConnectivityResult> result) {
-        final wasOnline = _isOnline;
-        _isOnline = _hasConnection(result);
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((
+      List<ConnectivityResult> result,
+    ) {
+      final wasOnline = _isOnline;
+      _isOnline = _hasConnection(result);
 
-        // Notify listeners of connectivity change
-        _connectivityController.add(_isOnline);
+      // Notify listeners of connectivity change
+      _connectivityController.add(_isOnline);
 
-        debugPrint('Connectivity changed: ${wasOnline ? "online" : "offline"} -> ${_isOnline ? "online" : "offline"}');
-      },
-    );
+      debugPrint(
+        'Connectivity changed: ${wasOnline ? "online" : "offline"} -> ${_isOnline ? "online" : "offline"}',
+      );
+    });
   }
 
   /// Check if device has network connection
   bool _hasConnection(List<ConnectivityResult> result) {
     return result.contains(ConnectivityResult.mobile) ||
-           result.contains(ConnectivityResult.wifi) ||
-           result.contains(ConnectivityResult.ethernet);
+        result.contains(ConnectivityResult.wifi) ||
+        result.contains(ConnectivityResult.ethernet);
   }
 
   /// Dispose resources
@@ -50,4 +52,3 @@ class ConnectivityService {
     _connectivityController.close();
   }
 }
-

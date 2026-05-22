@@ -19,7 +19,8 @@ class DataConsistencyValidator {
     try {
       // Get all meal logs in range
       final meals = await _supabaseService.getMealLogsInRange(
-        startDate: startDate ?? DateTime.now().subtract(const Duration(days: 90)),
+        startDate:
+            startDate ?? DateTime.now().subtract(const Duration(days: 90)),
         endDate: endDate ?? DateTime.now(),
       );
 
@@ -29,14 +30,18 @@ class DataConsistencyValidator {
         final protein = (meal['protein'] as num?)?.toDouble() ?? 0.0;
 
         // Calculate per-serving values
-        final caloriesPerServing = servings > 0 ? calories / servings : calories;
+        final caloriesPerServing = servings > 0
+            ? calories / servings
+            : calories;
         final proteinPerServing = servings > 0 ? protein / servings : protein;
 
         // Flag suspicious entries
         // Most foods have 20-2000 calories per serving
         // Protein is usually 0-100g per serving
-        final suspiciousCalories = caloriesPerServing < 5 || caloriesPerServing > 2000;
-        final suspiciousProtein = proteinPerServing < 0 || proteinPerServing > 200;
+        final suspiciousCalories =
+            caloriesPerServing < 5 || caloriesPerServing > 2000;
+        final suspiciousProtein =
+            proteinPerServing < 0 || proteinPerServing > 200;
 
         if (suspiciousCalories || suspiciousProtein) {
           report.suspiciousEntries.add({
@@ -97,7 +102,6 @@ class DataConsistencyValidator {
       stats.averageCalories = totalCalories / meals.length;
       stats.averageProtein = totalProtein / meals.length;
       stats.multiServingEntries = multiServingCount;
-
     } catch (e) {
       stats.error = e.toString();
       debugPrint('Error getting data statistics: $e');
@@ -113,7 +117,7 @@ class DataConsistencyValidator {
       // Get recent meals with multiple servings
       final meals = await _supabaseService.getMealLogsInRange(
         startDate: DateTime(2026, 1, 1), // Start of year
-        endDate: DateTime(2026, 5, 21),  // Before fix was deployed
+        endDate: DateTime(2026, 5, 21), // Before fix was deployed
       );
 
       int suspiciousCount = 0;
@@ -140,7 +144,6 @@ class DataConsistencyValidator {
       if (multiServingCount > 0 && suspiciousCount / multiServingCount > 0.3) {
         return true;
       }
-
     } catch (e) {
       debugPrint('Error checking if user is affected: $e');
     }
@@ -193,4 +196,3 @@ Entries with multiple servings: $multiServingEntries
 ''';
   }
 }
-

@@ -123,19 +123,19 @@ class AppProvider extends ChangeNotifier {
     await _offlineQueue.loadQueue();
 
     // Listen for connectivity changes
-    _connectivitySubscription = _connectivityService.connectivityStream.listen(
-      (isOnline) {
-        _isOnline = isOnline;
-        notifyListeners();
+    _connectivitySubscription = _connectivityService.connectivityStream.listen((
+      isOnline,
+    ) {
+      _isOnline = isOnline;
+      notifyListeners();
 
-        if (isOnline) {
-          debugPrint('Device is back online - syncing pending operations...');
-          _syncWhenOnline();
-        } else {
-          debugPrint('Device is offline - operations will be queued');
-        }
-      },
-    );
+      if (isOnline) {
+        debugPrint('Device is back online - syncing pending operations...');
+        _syncWhenOnline();
+      } else {
+        debugPrint('Device is offline - operations will be queued');
+      }
+    });
 
     // If online, try to sync any pending operations
     if (_isOnline) {
@@ -283,7 +283,9 @@ class AppProvider extends ChangeNotifier {
 
           // These are base values from Supabase (not multiplied)
           final foodItem = FoodItem(
-            id: meal['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
+            id:
+                meal['id']?.toString() ??
+                DateTime.now().millisecondsSinceEpoch.toString(),
             name: meal['food_name'] ?? '',
             calories: (meal['calories'] as num?)?.toDouble() ?? 0,
             protein: (meal['protein'] as num?)?.toDouble() ?? 0,
@@ -304,7 +306,13 @@ class AppProvider extends ChangeNotifier {
             logDate = DateTime.parse(dateStr);
             // If it's just a date (no time), set to noon local time for consistency
             if (!dateStr.contains('T')) {
-              logDate = DateTime(logDate.year, logDate.month, logDate.day, 12, 0);
+              logDate = DateTime(
+                logDate.year,
+                logDate.month,
+                logDate.day,
+                12,
+                0,
+              );
             }
           } else if (createdAtStr != null) {
             // Parse created_at timestamp
@@ -313,13 +321,17 @@ class AppProvider extends ChangeNotifier {
             logDate = DateTime.now();
           }
 
-          supabaseMeals.add(MealLog(
-            id: meal['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
-            food: foodItem,
-            mealType: mealType,
-            servings: servings,
-            dateTime: logDate,
-          ));
+          supabaseMeals.add(
+            MealLog(
+              id:
+                  meal['id']?.toString() ??
+                  DateTime.now().millisecondsSinceEpoch.toString(),
+              food: foodItem,
+              mealType: mealType,
+              servings: servings,
+              dateTime: logDate,
+            ),
+          );
         } catch (e) {
           debugPrint('Error parsing meal: $e');
         }
@@ -328,17 +340,17 @@ class AppProvider extends ChangeNotifier {
       // Properly deduplicate meals - Supabase is the source of truth
       // Use a Map with ID as key to prevent duplicates
       final mealMap = <String, MealLog>{};
-      
+
       // First add local meals (these will be overwritten by Supabase data if IDs match)
       for (var meal in _mealLogs) {
         mealMap[meal.id] = meal;
       }
-      
+
       // Then add/overwrite with Supabase meals (source of truth)
       for (var meal in supabaseMeals) {
         mealMap[meal.id] = meal;
       }
-      
+
       // Convert back to list and save
       _mealLogs = mealMap.values.toList();
       await _saveMealLogs();
@@ -352,11 +364,17 @@ class AppProvider extends ChangeNotifier {
           if (dateStr != null) {
             // Parse date and normalize to local date (no time component)
             final parsedDate = DateTime.parse(dateStr);
-            final normalizedDate = DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
-            supabaseWeights.add(WeightEntry(
-              date: normalizedDate,
-              weight: (entry['weight'] as num?)?.toDouble() ?? 0,
-            ));
+            final normalizedDate = DateTime(
+              parsedDate.year,
+              parsedDate.month,
+              parsedDate.day,
+            );
+            supabaseWeights.add(
+              WeightEntry(
+                date: normalizedDate,
+                weight: (entry['weight'] as num?)?.toDouble() ?? 0,
+              ),
+            );
           }
         } catch (e) {
           debugPrint('Error parsing weight entry: $e');
@@ -472,7 +490,7 @@ class AppProvider extends ChangeNotifier {
         DateTime.now().minute,
       ),
     );
-    
+
     // Add to local storage first (with temp ID)
     _mealLogs.add(log);
     await _saveMealLogs();
@@ -512,25 +530,7 @@ class AppProvider extends ChangeNotifier {
           // Log error but don't block the UI - data is still saved locally
           debugPrint('Failed to sync meal to Supabase: $e');
           // Queue operation for later sync
-          await _offlineQueue.addOperation(
-            OfflineOperationType.addMeal,
-            {
-              'mealType': mealType.name,
-              'foodName': food.name,
-              'calories': food.calories,
-              'protein': food.protein,
-              'carbs': food.carbs,
-              'fat': food.fat,
-              'date': log.dateTime.toIso8601String(),
-              'servings': servings,
-            },
-          );
-        }
-      } else {
-        // Device is offline - queue operation
-        await _offlineQueue.addOperation(
-          OfflineOperationType.addMeal,
-          {
+          await _offlineQueue.addOperation(OfflineOperationType.addMeal, {
             'mealType': mealType.name,
             'foodName': food.name,
             'calories': food.calories,
@@ -539,8 +539,20 @@ class AppProvider extends ChangeNotifier {
             'fat': food.fat,
             'date': log.dateTime.toIso8601String(),
             'servings': servings,
-          },
-        );
+          });
+        }
+      } else {
+        // Device is offline - queue operation
+        await _offlineQueue.addOperation(OfflineOperationType.addMeal, {
+          'mealType': mealType.name,
+          'foodName': food.name,
+          'calories': food.calories,
+          'protein': food.protein,
+          'carbs': food.carbs,
+          'fat': food.fat,
+          'date': log.dateTime.toIso8601String(),
+          'servings': servings,
+        });
         debugPrint('Device offline - meal queued for sync');
       }
     }
@@ -551,7 +563,7 @@ class AppProvider extends ChangeNotifier {
   Future<void> removeMeal(String id) async {
     _mealLogs.removeWhere((m) => m.id == id);
     await _saveMealLogs();
-    
+
     // Also remove from Supabase if online, otherwise queue operation
     if (_supabaseService.isLoggedIn()) {
       if (_isOnline) {
@@ -560,21 +572,19 @@ class AppProvider extends ChangeNotifier {
         } catch (e) {
           debugPrint('Failed to delete meal from Supabase: $e');
           // Queue operation for later sync
-          await _offlineQueue.addOperation(
-            OfflineOperationType.removeMeal,
-            {'id': id},
-          );
+          await _offlineQueue.addOperation(OfflineOperationType.removeMeal, {
+            'id': id,
+          });
         }
       } else {
         // Device is offline - queue operation
-        await _offlineQueue.addOperation(
-          OfflineOperationType.removeMeal,
-          {'id': id},
-        );
+        await _offlineQueue.addOperation(OfflineOperationType.removeMeal, {
+          'id': id,
+        });
         debugPrint('Device offline - meal deletion queued for sync');
       }
     }
-    
+
     notifyListeners();
   }
 
@@ -599,23 +609,17 @@ class AppProvider extends ChangeNotifier {
         } catch (e) {
           debugPrint('Failed to sync water intake to Supabase: $e');
           // Queue operation for later sync
-          await _offlineQueue.addOperation(
-            OfflineOperationType.addWater,
-            {
-              'amount': ml,
-              'date': DateTime.now().toIso8601String(),
-            },
-          );
+          await _offlineQueue.addOperation(OfflineOperationType.addWater, {
+            'amount': ml,
+            'date': DateTime.now().toIso8601String(),
+          });
         }
       } else {
         // Device is offline - queue operation
-        await _offlineQueue.addOperation(
-          OfflineOperationType.addWater,
-          {
-            'amount': ml,
-            'date': DateTime.now().toIso8601String(),
-          },
-        );
+        await _offlineQueue.addOperation(OfflineOperationType.addWater, {
+          'amount': ml,
+          'date': DateTime.now().toIso8601String(),
+        });
         debugPrint('Device offline - water intake queued for sync');
       }
     }
@@ -669,7 +673,11 @@ class AppProvider extends ChangeNotifier {
   // ─── Weight Tracking ────────────────────────────────────────────
   Future<void> addWeight(double weight) async {
     final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day); // Normalize to date only
+    final today = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ); // Normalize to date only
     // Replace today's entry if exists
     _weightEntries.removeWhere((e) => _isSameDay(e.date, today));
     _weightEntries.add(WeightEntry(date: today, weight: weight));
@@ -683,30 +691,21 @@ class AppProvider extends ChangeNotifier {
     if (_supabaseService.isLoggedIn()) {
       if (_isOnline) {
         try {
-          await _supabaseService.logWeight(
-            weight: weight,
-            date: today,
-          );
+          await _supabaseService.logWeight(weight: weight, date: today);
         } catch (e) {
           debugPrint('Failed to sync weight to Supabase: $e');
           // Queue operation for later sync
-          await _offlineQueue.addOperation(
-            OfflineOperationType.addWeight,
-            {
-              'weight': weight,
-              'date': today.toIso8601String(),
-            },
-          );
+          await _offlineQueue.addOperation(OfflineOperationType.addWeight, {
+            'weight': weight,
+            'date': today.toIso8601String(),
+          });
         }
       } else {
         // Device is offline - queue operation
-        await _offlineQueue.addOperation(
-          OfflineOperationType.addWeight,
-          {
-            'weight': weight,
-            'date': today.toIso8601String(),
-          },
-        );
+        await _offlineQueue.addOperation(OfflineOperationType.addWeight, {
+          'weight': weight,
+          'date': today.toIso8601String(),
+        });
         debugPrint('Device offline - weight entry queued for sync');
       }
     }

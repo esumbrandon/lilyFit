@@ -3,7 +3,6 @@ import '../models/user_profile.dart';
 
 /// Service to interact with Supabase backend
 class SupabaseService {
-
   final _supabase = Supabase.instance.client;
 
   /// Helper method to format DateTime to YYYY-MM-DD string
@@ -12,7 +11,6 @@ class SupabaseService {
     final normalized = DateTime(date.year, date.month, date.day);
     return '${normalized.year}-${normalized.month.toString().padLeft(2, '0')}-${normalized.day.toString().padLeft(2, '0')}';
   }
-
 
   /// Sign up a new user with email and password
   Future<AuthResponse> signUp({
@@ -240,17 +238,21 @@ class SupabaseService {
     final userId = getCurrentUserId();
     if (userId == null) throw Exception('No user logged in');
 
-    final response = await _supabase.from('meal_logs').insert({
-      'user_id': userId,
-      'meal_type': mealType,
-      'food_name': foodName,
-      'calories': calories,
-      'protein': protein,
-      'carbs': carbs,
-      'fat': fat,
-      'servings': servings ?? 1.0,
-      'date': _formatDateString(date),
-    }).select().single();
+    final response = await _supabase
+        .from('meal_logs')
+        .insert({
+          'user_id': userId,
+          'meal_type': mealType,
+          'food_name': foodName,
+          'calories': calories,
+          'protein': protein,
+          'carbs': carbs,
+          'fat': fat,
+          'servings': servings ?? 1.0,
+          'date': _formatDateString(date),
+        })
+        .select()
+        .single();
 
     return response['id']?.toString();
   }
