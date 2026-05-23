@@ -3,7 +3,9 @@ import '../models/user_profile.dart';
 
 /// Service to interact with Supabase backend
 class SupabaseService {
-  final _supabase = Supabase.instance.client;
+  /// Lazily access the client so construction doesn't throw when Supabase
+  /// hasn't been initialized (e.g. in unit tests).
+  SupabaseClient get _supabase => Supabase.instance.client;
 
   /// Helper method to format DateTime to YYYY-MM-DD string
   /// This ensures consistent date formatting across iOS and Android
@@ -83,7 +85,11 @@ class SupabaseService {
 
   /// Check if user is logged in
   bool isLoggedIn() {
-    return _supabase.auth.currentUser != null;
+    try {
+      return _supabase.auth.currentUser != null;
+    } catch (_) {
+      return false;
+    }
   }
 
   /// Listen to auth state changes

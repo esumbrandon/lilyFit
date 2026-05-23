@@ -39,6 +39,10 @@ const _chicken = FoodItem(
 );
 
 void main() {
+  setUpAll(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+  });
+
   group('AppProvider', () {
     group('initialization', () {
       test('starts with default values on fresh install', () async {
