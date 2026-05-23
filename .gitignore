@@ -45,8 +45,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Supabase credentials (DO NOT COMMIT)
-lib/config/supabase_config.dart
 
 # Project docs
 Implementation.md
