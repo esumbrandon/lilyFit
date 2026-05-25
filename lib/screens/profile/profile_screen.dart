@@ -5,9 +5,8 @@ import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../models/user_profile.dart';
 import '../../providers/app_provider.dart';
-import '../../services/supabase_service.dart';
 import '../../utils/unit_converter.dart';
-import '../auth/auth_screen.dart';
+import 'settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -311,14 +310,17 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       _divider(),
                       _settingsTile(
-                        Icons.logout_rounded,
-                        AppLocalizations.of(context)!.logout,
-                        'Sign out of your account',
+                        Icons.settings_outlined,
+                        AppLocalizations.of(context)!.settings,
+                        'Notifications, privacy, account and more',
                         () {
                           HapticFeedback.lightImpact();
-                          _handleLogout(context, provider);
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const SettingsScreen(),
+                            ),
+                          );
                         },
-                        isDestructive: false,
                       ),
                     ],
                   ),
@@ -914,74 +916,4 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  void _handleLogout(BuildContext context, AppProvider provider) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          AppLocalizations.of(context)!.logout,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        content: Text(
-          AppLocalizations.of(context)!.logoutConfirm,
-          style: const TextStyle(color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              AppLocalizations.of(context)!.cancel,
-              style: const TextStyle(color: AppColors.textTertiary),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              HapticFeedback.mediumImpact();
-              Navigator.pop(ctx); // Close dialog
-
-              // Show loading
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => const Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                ),
-              );
-
-              try {
-                await SupabaseService().signOut();
-
-                if (!context.mounted) return;
-                Navigator.of(context).pop(); // Close loading
-
-                // Navigate to auth screen and clear all routes
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const AuthScreen()),
-                  (route) => false,
-                );
-              } catch (e) {
-                if (!context.mounted) return;
-                Navigator.of(context).pop(); // Close loading
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      AppLocalizations.of(context)!.logoutFailed(e.toString()),
-                    ),
-                    backgroundColor: AppColors.error,
-                  ),
-                );
-              }
-            },
-            child: Text(AppLocalizations.of(context)!.logout),
-          ),
-        ],
-      ),
-    );
-  }
 }

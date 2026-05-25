@@ -6,7 +6,6 @@ import '../dashboard/dashboard_screen.dart';
 import '../food_search/food_search_screen.dart';
 import '../progress/progress_screen.dart';
 import '../profile/profile_screen.dart';
-import '../profile/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,7 +25,6 @@ class _HomeScreenState extends State<HomeScreen>
     FoodSearchScreen(),
     ProgressScreen(),
     ProfileScreen(),
-    SettingsScreen(),
   ];
 
   @override
@@ -50,15 +48,30 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       body: IndexedStack(index: _currentIndex, children: _screens),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: AppColors.card,
-          border: Border(top: BorderSide(color: AppColors.border, width: 1)),
-        ),
-        child: SafeArea(
+      bottomNavigationBar: SafeArea(
+        minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.card,
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(color: AppColors.border),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
+              ),
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.08),
+                blurRadius: 18,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Builder(
               builder: (context) {
                 final l10n = AppLocalizations.of(context)!;
@@ -88,12 +101,6 @@ class _HomeScreenState extends State<HomeScreen>
                       Icons.person_rounded,
                       Icons.person_outline_rounded,
                       l10n.profile,
-                    ),
-                    _navItem(
-                      4,
-                      Icons.settings_rounded,
-                      Icons.settings_outlined,
-                      l10n.settings,
                     ),
                   ],
                 );

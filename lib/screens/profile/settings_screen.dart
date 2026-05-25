@@ -7,8 +7,10 @@ import '../../theme/app_theme.dart';
 import '../../providers/app_provider.dart';
 import '../../services/language_service.dart';
 import '../../services/notification_service.dart';
+import '../../services/supabase_service.dart';
 import 'water_reminder_screen.dart';
 import '../onboarding/onboarding_screen.dart';
+import '../auth/auth_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -143,6 +145,17 @@ class SettingsScreen extends StatelessWidget {
                 onTap: () {
                   HapticFeedback.lightImpact();
                   _showAboutDialog(context);
+                },
+              ),
+              _divider(),
+              _settingsTile(
+                icon: Icons.logout_rounded,
+                iconColor: AppColors.warning,
+                title: AppLocalizations.of(context)!.logout,
+                subtitle: 'Sign out of your account',
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  _showLogoutDialog(context);
                 },
               ),
               _divider(),
@@ -743,6 +756,74 @@ class SettingsScreen extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
             child: Text(AppLocalizations.of(context)!.reset),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text(
+          AppLocalizations.of(context)!.logout,
+          style: const TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        content: Text(
+          AppLocalizations.of(context)!.logoutConfirm,
+          style: const TextStyle(color: AppColors.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: const TextStyle(color: AppColors.textTertiary),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              HapticFeedback.mediumImpact();
+              Navigator.pop(ctx);
+
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => const Center(
+                  child: CircularProgressIndicator(color: AppColors.primary),
+                ),
+              );
+
+              try {
+                await SupabaseService().signOut();
+
+                if (!context.mounted) return;
+                Navigator.of(context).pop();
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const AuthScreen()),
+                  (route) => false,
+                );
+              } catch (e) {
+                if (!context.mounted) return;
+                Navigator.of(context).pop();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)!.logoutFailed(e.toString()),
+                    ),
+                    backgroundColor: AppColors.error,
+                  ),
+                );
+              }
+            },
+            child: Text(AppLocalizations.of(context)!.logout),
           ),
         ],
       ),
