@@ -42,7 +42,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 child: Text(
                   AppLocalizations.of(context)!.progress,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
                   ),
@@ -95,6 +95,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   decoration: BoxDecoration(
                     color: AppColors.card,
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppColors.border),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +111,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                           Text(
                             AppLocalizations.of(context)!.weightHistory,
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: AppColors.textPrimary,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -176,6 +177,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   decoration: BoxDecoration(
                     color: AppColors.card,
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppColors.border),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,7 +193,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                           Text(
                             AppLocalizations.of(context)!.weeklyCalories,
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: AppColors.textPrimary,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -222,6 +224,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   decoration: BoxDecoration(
                     color: AppColors.card,
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppColors.border),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,7 +232,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       Text(
                         AppLocalizations.of(context)!.weeklySummary,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -280,6 +283,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         decoration: BoxDecoration(
           color: AppColors.card,
           borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppColors.border),
         ),
         child: Column(
           children: [
@@ -288,7 +292,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             Text(
               value,
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
               ),
@@ -391,7 +395,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 radius: 4,
                 color: AppColors.primary,
                 strokeWidth: 2,
-                strokeColor: Colors.white,
+                strokeColor: AppColors.card,
               ),
             ),
             belowBarData: BarAreaData(
@@ -496,7 +500,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: isOverTarget
-                      ? [const Color(0xFFFF6B6B), const Color(0xFFFBBF24)]
+                      ? [AppColors.accent, AppColors.carbs]
                       : isToday
                       ? [AppColors.primary, AppColors.secondary]
                       : [
@@ -608,7 +612,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         title: Text(
           AppLocalizations.of(context)!.logWeight,
           style: const TextStyle(
-            color: Colors.white,
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -617,7 +621,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
           children: [
             Text(
               AppLocalizations.of(context)!.enterCurrentWeight,
-              style: TextStyle(color: Colors.white.withAlpha(150)),
+              style: const TextStyle(color: AppColors.textSecondary),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -626,7 +630,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 decimal: true,
               ),
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
               ),
@@ -638,10 +642,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   fontSize: 16,
                 ),
                 filled: true,
-                fillColor: AppColors.card,
+                fillColor: AppColors.surfaceMuted,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
+                  borderSide: const BorderSide(color: AppColors.border),
                 ),
               ),
             ),

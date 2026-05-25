@@ -53,10 +53,8 @@ class _HomeScreenState extends State<HomeScreen>
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          border: Border(
-            top: BorderSide(color: Colors.white.withAlpha(8), width: 1),
-          ),
+          color: AppColors.card,
+          border: Border(top: BorderSide(color: AppColors.border, width: 1)),
         ),
         child: SafeArea(
           child: Padding(

@@ -157,7 +157,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
                   child: TextField(
                     controller: _searchController,
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: AppColors.textPrimary),
                     decoration: InputDecoration(
                       hintText: AppLocalizations.of(context)!.searchHint,
                       prefixIcon: const Icon(
@@ -255,7 +255,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                                 curve: Curves.easeOutCubic,
                                 style: TextStyle(
                                   color: selected
-                                      ? Colors.white
+                                      ? AppColors.onPrimary
                                       : AppColors.textSecondary,
                                   fontWeight: selected
                                       ? FontWeight.w700
@@ -454,7 +454,10 @@ class _FoodItemCardState extends State<_FoodItemCard>
             margin: const EdgeInsets.only(bottom: 8),
             child: Material(
               color: AppColors.card,
-              borderRadius: BorderRadius.circular(16),
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(color: AppColors.border),
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: InkWell(
                 borderRadius: BorderRadius.circular(16),
                 onTap: () {
@@ -494,7 +497,7 @@ class _FoodItemCardState extends State<_FoodItemCard>
                             Text(
                               widget.food.name,
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: AppColors.textPrimary,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -598,6 +601,7 @@ class _FoodDetailSheetState extends State<_FoodDetailSheet> {
                 decoration: BoxDecoration(
                   color: AppColors.card,
                   borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: AppColors.border),
                 ),
                 alignment: Alignment.center,
                 child: Text(food.emoji, style: const TextStyle(fontSize: 28)),
@@ -610,7 +614,7 @@ class _FoodDetailSheetState extends State<_FoodDetailSheet> {
                     Text(
                       food.name,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
@@ -635,6 +639,7 @@ class _FoodDetailSheetState extends State<_FoodDetailSheet> {
             decoration: BoxDecoration(
               color: AppColors.card,
               borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: AppColors.border),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,

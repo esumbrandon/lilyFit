@@ -13,7 +13,7 @@ import 'package:lilyfit/l10n/app_localizations.dart';
 
 void main() {
   Widget wrap(Widget child) => MaterialApp(
-    theme: AppTheme.darkTheme,
+    theme: AppTheme.lightTheme,
     localizationsDelegates: const [
       AppLocalizations.delegate,
       GlobalMaterialLocalizations.delegate,
@@ -65,8 +65,8 @@ void main() {
   });
 
   group('Theme', () {
-    test('AppTheme.darkTheme is a dark ThemeData', () {
-      expect(AppTheme.darkTheme.brightness, Brightness.dark);
+    test('AppTheme.lightTheme is a light ThemeData', () {
+      expect(AppTheme.lightTheme.brightness, Brightness.light);
     });
 
     test('AppColors constants are distinct', () {

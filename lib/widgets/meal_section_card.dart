@@ -26,7 +26,7 @@ class MealSectionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withAlpha(8)),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         children: [
@@ -44,7 +44,7 @@ class MealSectionCard extends StatelessWidget {
                       Text(
                         mealType.label,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -152,7 +152,7 @@ class _FoodItemTile extends StatelessWidget {
                   Text(
                     meal.food.name,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),

@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class CalorieRingPainter extends CustomPainter {
   final double progress;
@@ -9,8 +10,8 @@ class CalorieRingPainter extends CustomPainter {
 
   CalorieRingPainter({
     required this.progress,
-    this.backgroundColor = const Color(0xFF1F2E4D),
-    this.gradientColors = const [Color(0xFF4F8EF7), Color(0xFF06D6A0)],
+    this.backgroundColor = AppColors.cardLight,
+    this.gradientColors = const [AppColors.primary, AppColors.accent],
     this.strokeWidth = 14,
   });
 
@@ -63,7 +64,7 @@ class CalorieRingPainter extends CustomPainter {
       center.dy + radius * math.sin(dotAngle),
     );
     final dotPaint = Paint()
-      ..color = Colors.white
+      ..color = AppColors.card
       ..style = PaintingStyle.fill;
     canvas.drawCircle(dotCenter, strokeWidth / 3, dotPaint);
   }
@@ -103,8 +104,8 @@ class CalorieRingWidget extends StatelessWidget {
             painter: CalorieRingPainter(
               progress: value,
               gradientColors: isOver
-                  ? [const Color(0xFFFF6B6B), const Color(0xFFFBBF24)]
-                  : [const Color(0xFF4F8EF7), const Color(0xFF06D6A0)],
+                  ? [AppColors.accent, AppColors.carbs]
+                  : [AppColors.primary, AppColors.accent],
               strokeWidth: 16,
             ),
             child: Center(
@@ -116,7 +117,7 @@ class CalorieRingWidget extends StatelessWidget {
                     style: TextStyle(
                       fontSize: size * 0.18,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                       height: 1,
                     ),
                   ),
@@ -125,7 +126,7 @@ class CalorieRingWidget extends StatelessWidget {
                     isOver ? 'over limit' : 'kcal left',
                     style: TextStyle(
                       fontSize: size * 0.07,
-                      color: Colors.white.withAlpha(150),
+                      color: AppColors.textSecondary,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -136,14 +137,15 @@ class CalorieRingWidget extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(15),
+                      color: AppColors.surfaceMuted,
                       borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.border),
                     ),
                     child: Text(
                       '${consumed.toInt()} / ${target.toInt()} kcal',
                       style: TextStyle(
                         fontSize: size * 0.055,
-                        color: Colors.white.withAlpha(200),
+                        color: AppColors.textSecondary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

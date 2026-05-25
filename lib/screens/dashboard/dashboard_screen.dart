@@ -92,7 +92,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             ),
             duration: const Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       }
@@ -125,12 +125,12 @@ class _DashboardScreenState extends State<DashboardScreen>
                     decoration: BoxDecoration(
                       color: provider.isOnline
                           ? AppColors.primary.withAlpha(20)
-                          : Colors.orange.withAlpha(30),
+                          : AppColors.accent.withAlpha(15),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: provider.isOnline
                             ? AppColors.primary.withAlpha(40)
-                            : Colors.orange.withAlpha(60),
+                            : AppColors.accent.withAlpha(45),
                         width: 1,
                       ),
                     ),
@@ -143,7 +143,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                           size: 18,
                           color: provider.isOnline
                               ? AppColors.primary
-                              : Colors.orange,
+                              : AppColors.accent,
                         ),
                         const SizedBox(width: 10),
                         Expanded(
@@ -154,7 +154,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                             style: TextStyle(
                               color: provider.isOnline
                                   ? AppColors.primary
-                                  : Colors.orange,
+                                  : AppColors.accent,
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
@@ -233,7 +233,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                                 ? profile.name
                                 : AppLocalizations.of(context)!.user,
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: AppColors.textPrimary,
                               fontSize: 32,
                               fontWeight: FontWeight.w800,
                               letterSpacing: -1.0,
@@ -319,7 +319,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                     child: Text(
                       AppLocalizations.of(context)!.todaysMeals,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),
@@ -365,7 +365,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                     child: Text(
                       AppLocalizations.of(context)!.hydration,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),

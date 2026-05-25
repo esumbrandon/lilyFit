@@ -182,11 +182,11 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
         title: Text(
           AppLocalizations.of(context)!.waterRemindersTitle,
           style: const TextStyle(
-            color: Colors.white,
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.w700,
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
         elevation: 0,
       ),
       body: SafeArea(
@@ -315,6 +315,7 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -363,7 +364,7 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
                 Text(
                   'Enable Reminders',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -410,15 +411,13 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
               color: selected ? AppColors.primary : AppColors.cardLight,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: selected
-                    ? AppColors.primary
-                    : Colors.white.withAlpha(15),
+                color: selected ? AppColors.primary : AppColors.border,
               ),
             ),
             child: Text(
               _formatInterval(minutes),
               style: TextStyle(
-                color: selected ? Colors.white : AppColors.textSecondary,
+                color: selected ? AppColors.onPrimary : AppColors.textSecondary,
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                 fontSize: 13,
               ),
@@ -456,7 +455,7 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
         decoration: BoxDecoration(
           color: AppColors.cardLight,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withAlpha(15)),
+          border: Border.all(color: AppColors.border),
         ),
         child: Column(
           children: [
@@ -472,7 +471,7 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
             Text(
               _formatTime(time),
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
               ),

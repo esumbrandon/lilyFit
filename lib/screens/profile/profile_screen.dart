@@ -172,7 +172,7 @@ class ProfileScreen extends StatelessWidget {
                           Text(
                             AppLocalizations.of(context)!.bodyInformation,
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: AppColors.textPrimary,
                               fontSize: 17,
                               fontWeight: FontWeight.w700,
                             ),
@@ -251,7 +251,7 @@ class ProfileScreen extends StatelessWidget {
                           Text(
                             AppLocalizations.of(context)!.dailyTargets,
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: AppColors.textPrimary,
                               fontSize: 17,
                               fontWeight: FontWeight.w700,
                             ),
@@ -469,7 +469,7 @@ class ProfileScreen extends StatelessWidget {
           Text(
             value,
             style: const TextStyle(
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 22,
               fontWeight: FontWeight.w700,
             ),
@@ -502,7 +502,7 @@ class ProfileScreen extends StatelessWidget {
           Text(
             value,
             style: const TextStyle(
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
@@ -564,7 +564,7 @@ class ProfileScreen extends StatelessWidget {
       title: Text(
         title,
         style: TextStyle(
-          color: isDestructive ? AppColors.error : Colors.white,
+          color: isDestructive ? AppColors.error : AppColors.textPrimary,
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
@@ -667,7 +667,7 @@ class ProfileScreen extends StatelessWidget {
                     Text(
                       AppLocalizations.of(ctx)!.editProfile,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
                       ),
@@ -866,13 +866,16 @@ class ProfileScreen extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: const Text(
           'Water Goal',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         content: TextField(
           controller: controller,
           keyboardType: TextInputType.number,
           style: const TextStyle(
-            color: Colors.white,
+            color: AppColors.textPrimary,
             fontSize: 20,
             fontWeight: FontWeight.w700,
           ),
@@ -880,10 +883,10 @@ class ProfileScreen extends StatelessWidget {
           decoration: InputDecoration(
             suffixText: 'ml',
             filled: true,
-            fillColor: AppColors.card,
+            fillColor: AppColors.surfaceMuted,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide.none,
+              borderSide: const BorderSide(color: AppColors.border),
             ),
           ),
         ),
@@ -920,13 +923,13 @@ class ProfileScreen extends StatelessWidget {
         title: Text(
           AppLocalizations.of(context)!.logout,
           style: const TextStyle(
-            color: Colors.white,
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.w700,
           ),
         ),
         content: Text(
           AppLocalizations.of(context)!.logoutConfirm,
-          style: TextStyle(color: Colors.white.withAlpha(180)),
+          style: const TextStyle(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(

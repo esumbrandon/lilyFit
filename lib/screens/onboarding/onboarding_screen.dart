@@ -175,7 +175,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           backgroundColor: AppColors.card,
           title: Text(
             AppLocalizations.of(context)!.signUpFailed,
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(color: AppColors.textPrimary),
           ),
           content: Text(
             e.toString().replaceAll('Exception: ', ''),
@@ -330,16 +330,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               AppLocalizations.of(context)!.personalizeMessage,
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.white.withAlpha(150),
-              ),
+              style: TextStyle(fontSize: 15, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 40),
 
@@ -354,7 +351,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             const SizedBox(height: 8),
             TextField(
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: AppColors.textPrimary),
               onChanged: (value) {
                 setState(() {
                   _name = value;
@@ -470,16 +467,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               AppLocalizations.of(context)!.enterMetricsMessage,
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.white.withAlpha(150),
-              ),
+              style: TextStyle(fontSize: 15, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 40),
 
@@ -811,13 +805,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             style: const TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             AppLocalizations.of(context)!.activityMessage,
-            style: TextStyle(fontSize: 15, color: Colors.white.withAlpha(150)),
+            style: const TextStyle(
+              fontSize: 15,
+              color: AppColors.textSecondary,
+            ),
           ),
           const SizedBox(height: 28),
           _activityOption(
@@ -890,7 +887,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   Text(
                     label,
                     style: TextStyle(
-                      color: selected ? AppColors.primary : Colors.white,
+                      color: selected
+                          ? AppColors.primary
+                          : AppColors.textPrimary,
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
                     ),
@@ -931,13 +930,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             style: const TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             AppLocalizations.of(context)!.goalMessage,
-            style: TextStyle(fontSize: 15, color: Colors.white.withAlpha(150)),
+            style: const TextStyle(
+              fontSize: 15,
+              color: AppColors.textSecondary,
+            ),
           ),
           const SizedBox(height: 32),
           _goalCard(
@@ -945,21 +947,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             AppLocalizations.of(context)!.loseWeight,
             AppLocalizations.of(context)!.loseWeightDesc,
             Icons.trending_down_rounded,
-            const Color(0xFFFF6B6B),
+            AppColors.accent,
           ),
           _goalCard(
             'maintenance',
             AppLocalizations.of(context)!.maintainWeight,
             AppLocalizations.of(context)!.maintainWeightDesc,
             Icons.balance_rounded,
-            const Color(0xFF06D6A0),
+            AppColors.primary,
           ),
           _goalCard(
             'muscleGain',
             AppLocalizations.of(context)!.gainWeight,
             AppLocalizations.of(context)!.gainWeightDesc,
             Icons.trending_up_rounded,
-            const Color(0xFF4F8EF7),
+            AppColors.secondary,
           ),
         ],
       ),
@@ -1009,7 +1011,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   Text(
                     label,
                     style: TextStyle(
-                      color: selected ? color : Colors.white,
+                      color: selected ? color : AppColors.textPrimary,
                       fontWeight: FontWeight.w700,
                       fontSize: 17,
                     ),
@@ -1062,7 +1064,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               style: const TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: AppColors.textPrimary,
               ),
             ),
           ),
@@ -1070,7 +1072,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Text(
             AppLocalizations.of(context)!.basedOnProfile,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Colors.white.withAlpha(150)),
+            style: const TextStyle(
+              fontSize: 14,
+              color: AppColors.textSecondary,
+            ),
           ),
           const SizedBox(height: 36),
 
@@ -1156,6 +1161,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             decoration: BoxDecoration(
               color: AppColors.card,
               borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: AppColors.border),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -1210,7 +1216,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             Text(
               '${value.toInt()}',
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
               ),
@@ -1234,7 +1240,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         Text(
           value,
           style: const TextStyle(
-            color: Colors.white,
+            color: AppColors.textPrimary,
             fontSize: 16,
             fontWeight: FontWeight.w700,
           ),
@@ -1301,7 +1307,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 17,
-              color: Colors.white.withAlpha(180),
+              color: AppColors.textSecondary,
               height: 1.5,
             ),
           ),
@@ -1332,15 +1338,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             children: [
               Text(
                 AppLocalizations.of(context)!.swipeToContinue,
-                style: TextStyle(
-                  color: Colors.white.withAlpha(100),
-                  fontSize: 13,
-                ),
+                style: TextStyle(color: AppColors.textTertiary, fontSize: 13),
               ),
               const SizedBox(width: 6),
               Icon(
                 Icons.arrow_forward_rounded,
-                color: Colors.white.withAlpha(100),
+                color: AppColors.textTertiary,
                 size: 16,
               ),
             ],
@@ -1415,13 +1418,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             style: const TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             AppLocalizations.of(context)!.eatingStyleMessage,
-            style: TextStyle(fontSize: 15, color: Colors.white.withAlpha(150)),
+            style: const TextStyle(
+              fontSize: 15,
+              color: AppColors.textSecondary,
+            ),
           ),
           const SizedBox(height: 28),
           Expanded(
@@ -1500,7 +1506,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   Text(
                     label,
                     style: TextStyle(
-                      color: selected ? AppColors.primary : Colors.white,
+                      color: selected
+                          ? AppColors.primary
+                          : AppColors.textPrimary,
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
                     ),
@@ -1544,16 +1552,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               AppLocalizations.of(context)!.stayHydratedMessage,
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.white.withAlpha(150),
-              ),
+              style: TextStyle(fontSize: 15, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 36),
             Center(
@@ -1583,7 +1588,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   Text(
                     '${litres.toStringAsFixed(1)} L',
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                       fontSize: 44,
                       fontWeight: FontWeight.w800,
                       height: 1,
@@ -1593,7 +1598,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   Text(
                     '$glasses glasses  (250 ml each)',
                     style: TextStyle(
-                      color: Colors.white.withAlpha(150),
+                      color: AppColors.textSecondary,
                       fontSize: 14,
                     ),
                   ),

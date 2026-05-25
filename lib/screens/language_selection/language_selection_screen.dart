@@ -116,7 +116,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(gradient: AppColors.primaryGradient),
+        decoration: const BoxDecoration(gradient: AppColors.surfaceGradient),
         child: SafeArea(
           child: FadeTransition(
             opacity: _fadeAnimation,
@@ -160,14 +160,14 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
               height: 70,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.white, Colors.white.withValues(alpha: 0.95)],
+                  colors: [AppColors.card, AppColors.surface],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.white.withValues(alpha: 0.3),
+                    color: AppColors.primary.withValues(alpha: 0.12),
                     blurRadius: 16,
                     offset: const Offset(0, 6),
                     spreadRadius: 1,
@@ -206,7 +206,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
             style: const TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: AppColors.textPrimary,
               letterSpacing: -0.5,
               height: 1.2,
             ),
@@ -216,18 +216,15 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
+              color: AppColors.card,
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.2),
-                width: 1,
-              ),
+              border: Border.all(color: AppColors.border, width: 1),
             ),
             child: Text(
               AppLocalizations.of(context)!.selectPreferredLanguage,
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.white.withValues(alpha: 0.95),
+                color: AppColors.textSecondary,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.2,
               ),
@@ -246,9 +243,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.15),
+            color: AppColors.card,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withValues(), width: 1),
+            border: Border.all(color: AppColors.border, width: 1),
           ),
           child: Row(
             children: [
@@ -257,16 +254,13 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                 ),
               ),
               const SizedBox(width: 12),
               Text(
                 AppLocalizations.of(context)!.detectingLocation,
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: AppColors.textPrimary, fontSize: 14),
               ),
             ],
           ),
@@ -297,20 +291,17 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.white.withValues(alpha: 0.25),
-                  Colors.white.withValues(alpha: 0.15),
+                  AppColors.primary.withValues(alpha: 0.10),
+                  AppColors.accent.withValues(alpha: 0.08),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.4),
-                width: 1.5,
-              ),
+              border: Border.all(color: AppColors.border, width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.white.withValues(alpha: 0.1),
+                  color: AppColors.primary.withValues(alpha: 0.08),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -323,21 +314,21 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.white.withValues(alpha: 0.3),
-                        Colors.white.withValues(alpha: 0.2),
+                        AppColors.primary.withValues(alpha: 0.18),
+                        AppColors.accent.withValues(alpha: 0.14),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(14),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: AppColors.primary.withValues(alpha: 0.10),
                         blurRadius: 8,
                       ),
                     ],
                   ),
                   child: const Icon(
                     Icons.location_on_rounded,
-                    color: Colors.white,
+                    color: AppColors.primary,
                     size: 22,
                   ),
                 ),
@@ -350,7 +341,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                         children: [
                           const Icon(
                             Icons.check_circle_rounded,
-                            color: Colors.white,
+                            color: AppColors.primary,
                             size: 16,
                           ),
                           const SizedBox(width: 6),
@@ -359,7 +350,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                               context,
                             )!.locationLabel(_countryName!),
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: AppColors.textPrimary,
                               fontWeight: FontWeight.w700,
                               fontSize: 15,
                               letterSpacing: 0.2,
@@ -381,7 +372,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                                 context,
                               )!.languageSuggested(languageInfo['name']!),
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.9),
+                                color: AppColors.textSecondary,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -406,32 +397,15 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.white.withValues(alpha: 0.28),
-            Colors.white.withValues(alpha: 0.18),
-            Colors.white.withValues(alpha: 0.12),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(30),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.45),
-          width: 2.5,
-        ),
+        border: Border.all(color: AppColors.border, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.18),
-            blurRadius: 35,
-            offset: const Offset(0, 12),
-            spreadRadius: -6,
-          ),
-          BoxShadow(
-            color: Colors.white.withValues(alpha: 0.25),
-            blurRadius: 25,
-            offset: const Offset(0, -3),
-            spreadRadius: -6,
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+            spreadRadius: -4,
           ),
         ],
       ),
@@ -478,10 +452,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
             gradient: isSelected
                 ? AppColors.primaryGradient
                 : LinearGradient(
-                    colors: [
-                      Colors.white.withValues(alpha: 0.95),
-                      Colors.white.withValues(alpha: 0.9),
-                    ],
+                    colors: [AppColors.card, AppColors.surface],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -491,7 +462,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                   ? Colors.transparent
                   : isSuggested
                   ? AppColors.secondary.withValues(alpha: 0.5)
-                  : Colors.white.withValues(alpha: 0.6),
+                  : AppColors.border,
               width: isSelected ? 0 : (isSuggested ? 2.5 : 2),
             ),
             boxShadow: isSelected
@@ -515,12 +486,6 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                       spreadRadius: -2,
-                    ),
-                    BoxShadow(
-                      color: Colors.white.withValues(alpha: 0.8),
-                      blurRadius: 8,
-                      offset: const Offset(0, -1),
-                      spreadRadius: -1,
                     ),
                   ],
           ),
@@ -552,7 +517,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.2,
-                        color: isSelected ? Colors.white : Colors.black,
+                        color: isSelected
+                            ? AppColors.onPrimary
+                            : AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -563,8 +530,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                         fontWeight: FontWeight.w500,
                         letterSpacing: 0.1,
                         color: isSelected
-                            ? Colors.white.withValues(alpha: 0.9)
-                            : Colors.black.withValues(alpha: 0.7),
+                            ? AppColors.onPrimary.withValues(alpha: 0.88)
+                            : AppColors.textSecondary,
                       ),
                     ),
                   ],
@@ -624,15 +591,15 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.3),
+                    color: AppColors.onPrimary.withValues(alpha: 0.22),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.4),
+                      color: AppColors.onPrimary.withValues(alpha: 0.35),
                       width: 2,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.white.withValues(alpha: 0.3),
+                        color: AppColors.onPrimary.withValues(alpha: 0.18),
                         blurRadius: 8,
                         spreadRadius: 1,
                       ),
@@ -663,31 +630,19 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
           padding: const EdgeInsets.symmetric(vertical: 20),
           decoration: BoxDecoration(
             gradient: _selectedLanguage != null
-                ? LinearGradient(
-                    colors: [
-                      Colors.white,
-                      Colors.white.withValues(alpha: 0.98),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  )
-                : LinearGradient(
-                    colors: [
-                      Colors.white.withValues(alpha: 0.2),
-                      Colors.white.withValues(alpha: 0.15),
-                    ],
-                  ),
+                ? AppColors.primaryGradient
+                : LinearGradient(colors: [AppColors.card, AppColors.surface]),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
               color: _selectedLanguage != null
-                  ? Colors.white.withValues(alpha: 0.6)
-                  : Colors.white.withValues(alpha: 0.25),
+                  ? Colors.transparent
+                  : AppColors.border,
               width: 2,
             ),
             boxShadow: _selectedLanguage != null
                 ? [
                     BoxShadow(
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: AppColors.primary.withValues(alpha: 0.28),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                       spreadRadius: -2,
@@ -717,8 +672,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.8,
                   color: _selectedLanguage != null
-                      ? AppColors.primary
-                      : Colors.white.withValues(alpha: 0.5),
+                      ? AppColors.onPrimary
+                      : AppColors.textTertiary,
                 ),
                 child: Text(AppLocalizations.of(context)!.continueButton),
               ),
@@ -730,8 +685,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                   Icons.arrow_forward_rounded,
                   size: 26,
                   color: _selectedLanguage != null
-                      ? AppColors.primary
-                      : Colors.white.withValues(alpha: 0.5),
+                      ? AppColors.onPrimary
+                      : AppColors.textTertiary,
                 ),
               ),
             ],

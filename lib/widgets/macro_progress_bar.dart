@@ -50,7 +50,7 @@ class MacroProgressBar extends StatelessWidget {
               Text(
                 '${current.toInt()}$unit',
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppColors.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),

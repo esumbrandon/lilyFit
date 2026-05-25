@@ -2,60 +2,63 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
-  // Backgrounds — charcoal-navy (visibly blue-dark, not near-black)
-  static const Color background = Color(0xFF111C35);
-  static const Color surface = Color(0xFF182540);
-  static const Color card = Color(0xFF1F2E4D);
-  static const Color cardLight = Color(0xFF28395C);
+  // Light surfaces
+  static const Color background = Color(0xFFFCFCFC);
+  static const Color surface = Color(0xFFF8FAFC);
+  static const Color card = Color(0xFFFFFFFF);
+  static const Color cardLight = Color(0xFFE2E8F0);
+  static const Color surfaceMuted = Color(0xFFF1F5F9);
+  static const Color border = Color(0xFFE2E8F0);
 
-  // Primary palette
-  static const Color primary = Color(0xFF4F8EF7); // Electric blue
-  static const Color primaryDark = Color(0xFF2B6EE8); // Deep blue
-  static const Color secondary = Color(0xFF06D6A0); // Fresh mint
-  static const Color accent = Color(0xFFFF6B6B); // Vibrant coral
+  // Brand palette
+  static const Color primary = Color(0xFF16A34A);
+  static const Color primaryDark = Color(0xFF15803D);
+  static const Color secondary = Color(0xFFF97316);
+  static const Color accent = Color(0xFFF97316);
+  static const Color onPrimary = Color(0xFFFFFFFF);
 
   // Macro colors
-  static const Color protein = Color(0xFF818CF8); // Indigo-400
-  static const Color carbs = Color(0xFFFBBF24); // Amber-400
-  static const Color fat = Color(0xFFFB923C); // Orange-400
+  static const Color protein = Color(0xFF15803D);
+  static const Color carbs = Color(0xFFF59E0B);
+  static const Color fat = Color(0xFFEA580C);
 
   // Text
-  static const Color textPrimary = Color(0xFFF2F5FC);
-  static const Color textSecondary = Color(0xFF7E8EA8);
-  static const Color textTertiary = Color(0xFF4D5E78);
+  static const Color textPrimary = Color(0xFF111827);
+  static const Color textSecondary = Color(0xFF475569);
+  static const Color textTertiary = Color(0xFF64748B);
 
   // Status
-  static const Color success = Color(0xFF06D6A0);
-  static const Color warning = Color(0xFFFBBF24);
+  static const Color success = Color(0xFF16A34A);
+  static const Color warning = Color(0xFFF59E0B);
   static const Color error = Color(0xFFEF4444);
 
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [Color(0xFF4F8EF7), Color(0xFF06D6A0)],
+    colors: [Color(0xFF16A34A), Color(0xFFF97316)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient accentGradient = LinearGradient(
-    colors: [Color(0xFFFF6B6B), Color(0xFFFBBF24)],
+    colors: [Color(0xFFF97316), Color(0xFFF59E0B)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient surfaceGradient = LinearGradient(
-    colors: [Color(0xFF1F2E4D), Color(0xFF182540)],
+    colors: [Color(0xFFFFFFFF), Color(0xFFF8FAFC)],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
 
   static const LinearGradient warmGradient = LinearGradient(
-    colors: [Color(0xFFFF6B6B), Color(0xFFFB923C)],
+    colors: [Color(0xFFF97316), Color(0xFFFB923C)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient coolGradient = LinearGradient(
-    colors: [Color(0xFF4F8EF7), Color(0xFF818CF8)],
+    colors: [Color(0xFF16A34A), Color(0xFF4ADE80)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -63,7 +66,7 @@ class AppColors {
   // Card shadow for depth
   static List<BoxShadow> get cardShadow => [
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.25),
+      color: Colors.black.withValues(alpha: 0.08),
       blurRadius: 20,
       offset: const Offset(0, 10),
     ),
@@ -76,31 +79,31 @@ class AppColors {
 
   // Glassmorphism effect
   static BoxDecoration get glassMorphism => BoxDecoration(
-    color: Colors.white.withValues(alpha: 0.05),
+    color: card,
     borderRadius: BorderRadius.circular(20),
-    border: Border.all(color: Colors.white.withValues(alpha: 0.08), width: 1.5),
+    border: Border.all(color: border, width: 1.5),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withValues(alpha: 0.15),
-        blurRadius: 30,
-        offset: const Offset(0, 15),
+        color: Colors.black.withValues(alpha: 0.06),
+        blurRadius: 24,
+        offset: const Offset(0, 12),
       ),
     ],
   );
 }
 
 class AppTheme {
-  static ThemeData get darkTheme {
-    final base = ThemeData.dark();
+  static ThemeData get lightTheme {
+    final base = ThemeData.light(useMaterial3: true);
     return base.copyWith(
       scaffoldBackgroundColor: AppColors.background,
-      colorScheme: const ColorScheme.dark(
+      colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
         surface: AppColors.surface,
         error: AppColors.error,
-        onPrimary: Color(0xFFF2F5FC),
-        onSecondary: Color(0xFF06080F),
+        onPrimary: AppColors.onPrimary,
+        onSecondary: AppColors.onPrimary,
         onSurface: AppColors.textPrimary,
       ),
       textTheme: GoogleFonts.nunitoTextTheme(base.textTheme).copyWith(
@@ -192,7 +195,7 @@ class AppTheme {
         ),
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.background,
         elevation: 0,
         centerTitle: false,
         titleTextStyle: GoogleFonts.spaceGrotesk(
@@ -207,14 +210,18 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
-        shadowColor: Colors.black.withValues(alpha: 0.3),
+        shadowColor: Colors.black.withValues(alpha: 0.06),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.card,
+        fillColor: AppColors.surfaceMuted,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: AppColors.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -229,7 +236,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.background,
+          foregroundColor: AppColors.onPrimary,
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -256,7 +263,7 @@ class AppTheme {
         ),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.surface,
+        backgroundColor: AppColors.card,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.textTertiary,
         type: BottomNavigationBarType.fixed,
@@ -271,7 +278,7 @@ class AppTheme {
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: AppColors.card,
+        backgroundColor: AppColors.surfaceMuted,
         selectedColor: AppColors.primary.withAlpha(40),
         labelStyle: GoogleFonts.nunito(
           fontSize: 13,
@@ -282,6 +289,14 @@ class AppTheme {
         side: BorderSide.none,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
+      dividerColor: AppColors.border,
+      dialogTheme: DialogThemeData(
+        backgroundColor: AppColors.card,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      ),
     );
   }
+
+  static ThemeData get darkTheme => lightTheme;
 }

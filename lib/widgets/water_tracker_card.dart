@@ -26,7 +26,7 @@ class WaterTrackerCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withAlpha(8)),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,7 +39,7 @@ class WaterTrackerCard extends StatelessWidget {
                 child: Text(
                   AppLocalizations.of(context)!.waterIntake,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -136,7 +136,7 @@ class WaterTrackerCard extends StatelessWidget {
                   label: Text(AppLocalizations.of(context)!.removeGlass),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.textSecondary,
-                    side: BorderSide(color: Colors.white.withAlpha(20)),
+                    side: const BorderSide(color: AppColors.border),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),

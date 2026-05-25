@@ -217,7 +217,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         backgroundColor: AppColors.card,
         title: Text(
           AppLocalizations.of(context)!.resetPassword,
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(color: AppColors.textPrimary),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -230,7 +230,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             const SizedBox(height: 16),
             TextField(
               controller: emailController,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: AppColors.textPrimary),
               keyboardType: TextInputType.emailAddress,
               autofocus: true,
               decoration: InputDecoration(
@@ -238,7 +238,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 hintText: AppLocalizations.of(context)!.enterEmail,
                 prefixIcon: const Icon(Icons.email_outlined),
                 filled: true,
-                fillColor: Colors.white.withValues(),
+                fillColor: AppColors.surfaceMuted,
               ),
             ),
           ],
@@ -305,7 +305,10 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.card,
-        title: Text(title, style: const TextStyle(color: Colors.white)),
+        title: Text(
+          title,
+          style: const TextStyle(color: AppColors.textPrimary),
+        ),
         content: Text(
           message.replaceAll('Exception: ', ''),
           style: const TextStyle(color: AppColors.textSecondary),
@@ -328,7 +331,10 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.card,
-        title: Text(title, style: const TextStyle(color: Colors.white)),
+        title: Text(
+          title,
+          style: const TextStyle(color: AppColors.textPrimary),
+        ),
         content: Text(
           message,
           style: const TextStyle(color: AppColors.textSecondary),
@@ -361,15 +367,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             // Animated background gradient
             Container(
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.background,
-                    AppColors.surface,
-                    AppColors.card,
-                  ],
-                ),
+                gradient: AppColors.surfaceGradient,
               ),
             ),
 
@@ -538,7 +536,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 AppLocalizations.of(context)!.tagline,
                 style: TextStyle(
                   fontSize: taglineSize,
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: AppColors.textSecondary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -554,15 +552,12 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
-          width: 1.5,
-        ),
+        border: Border.all(color: AppColors.border, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -583,8 +578,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         ),
         indicatorSize: TabBarIndicatorSize.tab,
         dividerColor: Colors.transparent,
-        labelColor: Colors.white,
-        unselectedLabelColor: Colors.white.withValues(alpha: 0.5),
+        labelColor: AppColors.onPrimary,
+        unselectedLabelColor: AppColors.textSecondary,
         labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
         padding: EdgeInsets.zero,
         tabs: [
@@ -604,15 +599,12 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       child: Container(
         padding: EdgeInsets.all(formPadding),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: AppColors.card,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.1),
-            width: 1.5,
-          ),
+          border: Border.all(color: AppColors.border, width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 30,
               offset: const Offset(0, 15),
             ),
@@ -624,7 +616,10 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             // Email
             TextField(
               controller: _loginEmailController,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 15,
+              ),
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
@@ -633,7 +628,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 prefixIcon: const Icon(Icons.email_outlined, size: 20),
                 errorText: _loginEmailError,
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.05),
+                fillColor: AppColors.surfaceMuted,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 16,
@@ -650,7 +645,10 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             // Password
             TextField(
               controller: _loginPasswordController,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 15,
+              ),
               obscureText: !_loginPasswordVisible,
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _handleLogin(),
@@ -675,7 +673,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 ),
                 errorText: _loginPasswordError,
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.05),
+                fillColor: AppColors.surfaceMuted,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 16,
@@ -769,15 +767,12 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       child: Container(
         padding: EdgeInsets.all(formPadding),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
+          color: AppColors.card,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.1),
-            width: 1.5,
-          ),
+          border: Border.all(color: AppColors.border, width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 30,
               offset: const Offset(0, 15),
             ),
@@ -789,7 +784,10 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             // Name
             TextField(
               controller: _signupNameController,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 15,
+              ),
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.fullName,
@@ -797,7 +795,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 prefixIcon: const Icon(Icons.person_outline, size: 20),
                 errorText: _signupNameError,
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.05),
+                fillColor: AppColors.surfaceMuted,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 16,
@@ -814,7 +812,10 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             // Email
             TextField(
               controller: _signupEmailController,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 15,
+              ),
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
@@ -823,7 +824,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 prefixIcon: const Icon(Icons.email_outlined, size: 20),
                 errorText: _signupEmailError,
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.05),
+                fillColor: AppColors.surfaceMuted,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 16,
@@ -840,7 +841,10 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             // Password
             TextField(
               controller: _signupPasswordController,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 15,
+              ),
               obscureText: !_signupPasswordVisible,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
@@ -864,7 +868,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 ),
                 errorText: _signupPasswordError,
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.05),
+                fillColor: AppColors.surfaceMuted,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 16,
@@ -881,7 +885,10 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             // Confirm Password
             TextField(
               controller: _signupConfirmPasswordController,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 15,
+              ),
               obscureText: !_signupConfirmPasswordVisible,
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _handleSignup(),
@@ -907,7 +914,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 ),
                 errorText: _signupConfirmPasswordError,
                 filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.05),
+                fillColor: AppColors.surfaceMuted,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 16,
@@ -973,12 +980,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       margin: const EdgeInsets.only(bottom: 8, left: 24, right: 24),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.border, width: 1),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -986,13 +990,13 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
           Icon(
             Icons.language_rounded,
             size: 20,
-            color: Colors.white.withValues(alpha: 0.7),
+            color: AppColors.textSecondary,
           ),
           const SizedBox(width: 8),
           Text(
             AppLocalizations.of(context)!.language,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.7),
+              color: AppColors.textSecondary,
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
@@ -1092,10 +1096,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         decoration: BoxDecoration(
           color: AppColors.card,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.1),
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.border, width: 1),
         ),
         padding: const EdgeInsets.symmetric(vertical: 24),
         child: Column(
@@ -1107,7 +1108,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               height: 4,
               margin: const EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.3),
+                color: AppColors.cardLight,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -1126,7 +1127,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   Text(
                     AppLocalizations.of(context)!.chooseLanguage,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -1172,12 +1173,12 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary.withValues(alpha: 0.15)
-              : Colors.white.withValues(alpha: 0.03),
+              : AppColors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
                 ? AppColors.primary.withValues(alpha: 0.5)
-                : Colors.white.withValues(alpha: 0.05),
+                : AppColors.border,
             width: 1.5,
           ),
         ),
@@ -1192,7 +1193,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   Text(
                     language['name']!,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                       fontSize: 16,
                       fontWeight: isSelected
                           ? FontWeight.w700
@@ -1203,7 +1204,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   Text(
                     language['native']!,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.6),
+                      color: AppColors.textSecondary,
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                     ),

@@ -29,7 +29,7 @@ class SettingsScreen extends StatelessWidget {
                 child: Text(
                   AppLocalizations.of(context)!.settings,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     fontSize: 32,
                     fontWeight: FontWeight.w800,
                     letterSpacing: -0.5,
@@ -115,7 +115,7 @@ class SettingsScreen extends StatelessWidget {
               _divider(),
               _settingsTile(
                 icon: Icons.security_rounded,
-                iconColor: const Color(0xFF06D6A0),
+                iconColor: AppColors.primary,
                 title: AppLocalizations.of(context)!.privacyAndSecurity,
                 subtitle: AppLocalizations.of(context)!.dataPermissionsPrivacy,
                 onTap: () {
@@ -203,6 +203,7 @@ class SettingsScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.card,
             borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.border),
           ),
           child: Column(children: children),
         ),
@@ -232,7 +233,7 @@ class SettingsScreen extends StatelessWidget {
       title: Text(
         title,
         style: TextStyle(
-          color: isDestructive ? AppColors.error : Colors.white,
+          color: isDestructive ? AppColors.error : AppColors.textPrimary,
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
@@ -261,11 +262,7 @@ class SettingsScreen extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF4F8EF7), Color(0xFF818CF8)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Material(
@@ -401,7 +398,7 @@ class SettingsScreen extends StatelessWidget {
                   Text(
                     AppLocalizations.of(ctx)!.chooseLanguage,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                     ),
@@ -431,7 +428,7 @@ class SettingsScreen extends StatelessWidget {
                             style: TextStyle(
                               color: isSelected
                                   ? AppColors.primary
-                                  : Colors.white,
+                                  : AppColors.textPrimary,
                               fontWeight: isSelected
                                   ? FontWeight.w600
                                   : FontWeight.w400,
@@ -542,7 +539,7 @@ class SettingsScreen extends StatelessWidget {
                     const Text(
                       'Update Email',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
@@ -560,7 +557,7 @@ class SettingsScreen extends StatelessWidget {
                       controller: controller,
                       keyboardType: TextInputType.emailAddress,
                       autofillHints: const [AutofillHints.email],
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: AppColors.textPrimary),
                       decoration: InputDecoration(
                         labelText: AppLocalizations.of(
                           context,
@@ -571,10 +568,10 @@ class SettingsScreen extends StatelessWidget {
                         ),
                         errorText: errorMsg,
                         filled: true,
-                        fillColor: AppColors.card,
+                        fillColor: AppColors.surfaceMuted,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide.none,
+                          borderSide: const BorderSide(color: AppColors.border),
                         ),
                       ),
                     ),
@@ -674,7 +671,7 @@ class SettingsScreen extends StatelessWidget {
             Text(
               'LilyFit',
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -686,7 +683,10 @@ class SettingsScreen extends StatelessWidget {
           children: [
             Text(
               'A smart calorie and nutrition management app that helps you reach your health goals. Features global food database with strong support for African cuisines.',
-              style: TextStyle(color: Colors.white.withAlpha(180), height: 1.5),
+              style: const TextStyle(
+                color: AppColors.textSecondary,
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: 16),
             const Text(
@@ -714,13 +714,13 @@ class SettingsScreen extends StatelessWidget {
         title: Text(
           AppLocalizations.of(context)!.resetAllDataQuestion,
           style: const TextStyle(
-            color: Colors.white,
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.w700,
           ),
         ),
         content: Text(
           AppLocalizations.of(context)!.resetAllDataBody,
-          style: TextStyle(color: Colors.white.withAlpha(180)),
+          style: const TextStyle(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(
@@ -774,7 +774,7 @@ class _NotificationSettingsScreen extends StatelessWidget {
                     IconButton(
                       icon: const Icon(
                         Icons.arrow_back_ios_new_rounded,
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         size: 20,
                       ),
                       onPressed: () => Navigator.pop(context),
@@ -782,7 +782,7 @@ class _NotificationSettingsScreen extends StatelessWidget {
                     Text(
                       AppLocalizations.of(context)!.notifications,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
                       ),
@@ -872,7 +872,7 @@ class _NotificationSettingsScreen extends StatelessWidget {
                           title: const Text(
                             'Configure Schedule',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.textPrimary,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -934,7 +934,7 @@ class _NotificationSettingsScreen extends StatelessWidget {
       title: Text(
         title,
         style: const TextStyle(
-          color: Colors.white,
+          color: AppColors.textPrimary,
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
@@ -997,7 +997,7 @@ class _HelpSupportScreen extends StatelessWidget {
                     IconButton(
                       icon: const Icon(
                         Icons.arrow_back_ios_new_rounded,
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         size: 20,
                       ),
                       onPressed: () => Navigator.pop(context),
@@ -1005,7 +1005,7 @@ class _HelpSupportScreen extends StatelessWidget {
                     const Text(
                       'Help & Support',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
                       ),
@@ -1145,7 +1145,7 @@ class _HelpSupportScreen extends StatelessWidget {
             Text(
               title,
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -1195,7 +1195,7 @@ class _FaqTileState extends State<_FaqTile> {
             title: Text(
               widget.question,
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),
@@ -1255,7 +1255,7 @@ class _PrivacySecurityScreen extends StatelessWidget {
                     IconButton(
                       icon: const Icon(
                         Icons.arrow_back_ios_new_rounded,
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         size: 20,
                       ),
                       onPressed: () => Navigator.pop(context),
@@ -1263,7 +1263,7 @@ class _PrivacySecurityScreen extends StatelessWidget {
                     const Text(
                       'Privacy & Security',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
                       ),
@@ -1472,7 +1472,7 @@ class _PrivacySecurityScreen extends StatelessWidget {
       title: Text(
         title,
         style: const TextStyle(
-          color: Colors.white,
+          color: AppColors.textPrimary,
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
@@ -1506,7 +1506,7 @@ class _PrivacySecurityScreen extends StatelessWidget {
       title: Text(
         title,
         style: TextStyle(
-          color: isDestructive ? AppColors.error : Colors.white,
+          color: isDestructive ? AppColors.error : AppColors.textPrimary,
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
@@ -1540,7 +1540,7 @@ class _PrivacySecurityScreen extends StatelessWidget {
         title: Text(
           AppLocalizations.of(context)!.clearCacheQuestion,
           style: const TextStyle(
-            color: Colors.white,
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -1606,7 +1606,7 @@ class _PrivacySecurityScreen extends StatelessWidget {
               Text(
                 AppLocalizations.of(context)!.privacyPolicy,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppColors.textPrimary,
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                 ),
@@ -1683,7 +1683,7 @@ class _PrivacySecurityScreen extends StatelessWidget {
               Text(
                 AppLocalizations.of(context)!.termsOfService,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppColors.textPrimary,
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                 ),
@@ -1795,7 +1795,7 @@ class _PolicySection extends StatelessWidget {
           Text(
             title,
             style: const TextStyle(
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),

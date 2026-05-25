@@ -30,9 +30,10 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: AppColors.surface,
-      systemNavigationBarIconBrightness: Brightness.light,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+      systemNavigationBarColor: AppColors.background,
+      systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
 
@@ -69,7 +70,7 @@ class LilyFitApp extends StatelessWidget {
     return MaterialApp(
       title: 'LilyFit',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.lightTheme,
       // Localization configuration
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
@@ -174,13 +175,7 @@ class _AppInitializerState extends State<AppInitializer> {
     if (_isChecking) {
       return Scaffold(
         body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [AppColors.background, AppColors.surface, AppColors.card],
-            ),
-          ),
+          decoration: const BoxDecoration(gradient: AppColors.surfaceGradient),
           child: const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -199,7 +194,7 @@ class _AppInitializerState extends State<AppInitializer> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ],
@@ -301,13 +296,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
     if (_isLoading) {
       return Scaffold(
         body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [AppColors.background, AppColors.surface, AppColors.card],
-            ),
-          ),
+          decoration: const BoxDecoration(gradient: AppColors.surfaceGradient),
           child: const Center(
             child: CircularProgressIndicator(color: AppColors.primary),
           ),
