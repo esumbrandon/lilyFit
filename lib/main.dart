@@ -108,6 +108,9 @@ class _AppInitializerState extends State<AppInitializer> {
   }
 
   Future<void> _determineInitialRoute() async {
+    // Capture provider reference before async operations
+    final provider = context.read<AppProvider>();
+
     // Check if this is the first launch (new user)
     final isFirstLaunch = await LanguageService.isFirstLaunch();
 
@@ -125,7 +128,47 @@ class _AppInitializerState extends State<AppInitializer> {
     final user = supabaseService.getCurrentUser();
 
     if (user == null) {
-      // Returning user but not logged in - show auth screen
+      // Returning user but not logged in
+      // Check if they have local data (previously used the app)
+      if (provider.isOnboarded) {
+        // User has local data - allow offline access
+        debugPrint('User has local data - proceeding offline');
+        setState(() {
+          _initialScreen = const HomeScreen();
+          _isChecking = false;
+        });
+      } else {
+        // No local data - must authenticate
+        setState(() {
+          _initialScreen = const AuthWrapper();
+          _isChecking = false;
+        });
+      }
+      return;
+    }
+
+    // User is logged in - check if they have local profile first
+    if (provider.isOnboarded) {
+      // User has local data - proceed immediately, sync in background
+      setState(() {
+        _initialScreen = const HomeScreen();
+        _isChecking = false;
+      });
+
+      // Background sync (non-blocking) - only if online
+      if (provider.isOnline) {
+        provider.syncFromSupabase().catchError((e) {
+          debugPrint('Background sync failed on startup: $e');
+        });
+      }
+      return;
+    }
+
+    // User is logged in but no local profile - need to fetch from network
+    // Check connectivity first
+    if (!provider.isOnline) {
+      // Offline and no local data - can't proceed, need network for first-time profile
+      debugPrint('Offline with no local data - showing auth screen');
       setState(() {
         _initialScreen = const AuthWrapper();
         _isChecking = false;
@@ -133,7 +176,7 @@ class _AppInitializerState extends State<AppInitializer> {
       return;
     }
 
-    // User is logged in - check if they have completed onboarding
+    // Online - attempt to fetch profile
     try {
       final profile = await supabaseService.getUserProfile();
 
@@ -147,13 +190,14 @@ class _AppInitializerState extends State<AppInitializer> {
         });
       } else {
         // Logged in with profile - load data and go to home
-        final provider = context.read<AppProvider>();
         if (!provider.isOnboarded) {
           await provider.completeOnboarding(profile);
         }
 
-        // Sync data from Supabase
-        await provider.syncFromSupabase();
+        // Sync data from Supabase (non-blocking)
+        provider.syncFromSupabase().catchError((e) {
+          debugPrint('Sync failed during first load: $e');
+        });
 
         setState(() {
           _initialScreen = const HomeScreen();
@@ -161,41 +205,77 @@ class _AppInitializerState extends State<AppInitializer> {
         });
       }
     } catch (e) {
-      // Error loading profile - show auth screen
+      // Network error loading profile
+      debugPrint('Error loading profile during init: $e');
+
       if (!mounted) return;
-      setState(() {
-        _initialScreen = const AuthWrapper();
-        _isChecking = false;
-      });
+
+      // If we have local data, allow offline access despite the error
+      if (provider.isOnboarded) {
+        setState(() {
+          _initialScreen = const HomeScreen();
+          _isChecking = false;
+        });
+      } else {
+        // No local data and network error - show auth screen
+        setState(() {
+          _initialScreen = const AuthWrapper();
+          _isChecking = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     if (_isChecking) {
+      final provider = context.watch<AppProvider>();
+      final isOnline = provider.isOnline;
+
       return Scaffold(
         body: Container(
           decoration: const BoxDecoration(gradient: AppColors.surfaceGradient),
-          child: const Center(
+          child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Logo or icon
-                Icon(
+                const Icon(
                   Icons.restaurant_menu_rounded,
                   size: 64,
                   color: AppColors.primary,
                 ),
-                SizedBox(height: 24),
-                CircularProgressIndicator(color: AppColors.primary),
-                SizedBox(height: 16),
-                Text(
+                const SizedBox(height: 24),
+                const CircularProgressIndicator(color: AppColors.primary),
+                const SizedBox(height: 16),
+                const Text(
                   'LilyFit',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
+                ),
+                const SizedBox(height: 32),
+                // Connectivity status indicator
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      isOnline ? Icons.cloud_done_rounded : Icons.cloud_off_rounded,
+                      size: 16,
+                      color: isOnline ? Colors.green : AppColors.textTertiary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      isOnline ? 'Online' : 'Offline Mode',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isOnline ? Colors.green : AppColors.textTertiary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -240,6 +320,9 @@ class _AuthWrapperState extends State<AuthWrapper> {
   Future<void> _checkAuthState() async {
     setState(() => _isLoading = true);
 
+    // Capture provider reference before async operations
+    final provider = context.read<AppProvider>();
+
     try {
       final user = _supabaseService.getCurrentUser();
 
@@ -253,6 +336,38 @@ class _AuthWrapperState extends State<AuthWrapper> {
       }
 
       // User just logged in/signed up - check if they have a profile
+      // First check local data
+      if (provider.isOnboarded) {
+        // Has local profile - proceed immediately, sync in background
+        if (!mounted) return;
+
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          (route) => false,
+        );
+
+        // Background sync (non-blocking) - only if online
+        if (provider.isOnline) {
+          provider.syncFromSupabase().catchError((e) {
+            debugPrint('Background sync failed after auth: $e');
+          });
+        }
+        return;
+      }
+
+      // No local profile - need to fetch from network
+      // Check connectivity first
+      if (!provider.isOnline) {
+        // Offline with no local data - show onboarding (they'll save data locally first)
+        debugPrint('Offline after auth with no local data - showing onboarding');
+        setState(() {
+          _currentScreen = const OnboardingScreen();
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Online - attempt to fetch profile
       final profile = await _supabaseService.getUserProfile();
 
       if (!mounted) return;
@@ -265,13 +380,14 @@ class _AuthWrapperState extends State<AuthWrapper> {
         });
       } else {
         // Just logged in with existing profile -> load data and go to home
-        final provider = context.read<AppProvider>();
         if (!provider.isOnboarded) {
           await provider.completeOnboarding(profile);
         }
 
-        // Sync data from Supabase
-        await provider.syncFromSupabase();
+        // Sync data from Supabase (non-blocking)
+        provider.syncFromSupabase().catchError((e) {
+          debugPrint('Sync failed after login: $e');
+        });
 
         // Navigate to home (replace entire stack)
         if (!mounted) return;
@@ -282,12 +398,24 @@ class _AuthWrapperState extends State<AuthWrapper> {
         return;
       }
     } catch (e) {
-      // Error checking state -> show auth screen
+      // Error checking state
+      debugPrint('Error in auth state check: $e');
+
       if (!mounted) return;
-      setState(() {
-        _currentScreen = const AuthScreen();
-        _isLoading = false;
-      });
+
+      // If user has local data, let them proceed despite network error
+      if (provider.isOnboarded && _supabaseService.getCurrentUser() != null) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          (route) => false,
+        );
+      } else {
+        // No local data and network error - show auth screen
+        setState(() {
+          _currentScreen = const AuthScreen();
+          _isLoading = false;
+        });
+      }
     }
   }
 
