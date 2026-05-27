@@ -24,6 +24,8 @@ class ConnectivityService {
       final result = await _connectivity.checkConnectivity();
       _isOnline = _hasConnection(result);
 
+      debugPrint('ConnectivityService initialized: ${_isOnline ? "online" : "offline"}');
+
       // Listen for connectivity changes
       _connectivitySubscription = _connectivity.onConnectivityChanged.listen((
         List<ConnectivityResult> result,
@@ -31,17 +33,19 @@ class ConnectivityService {
         final wasOnline = _isOnline;
         _isOnline = _hasConnection(result);
 
-        // Notify listeners of connectivity change
-        _connectivityController.add(_isOnline);
 
-        debugPrint(
-          'Connectivity changed: ${wasOnline ? "online" : "offline"} -> ${_isOnline ? "online" : "offline"}',
-        );
+        if (wasOnline != _isOnline) {
+          _connectivityController.add(_isOnline);
+          debugPrint(
+            'Connectivity changed: ${wasOnline ? "online" : "offline"} -> ${_isOnline ? "online" : "offline"}',
+          );
+        }
       });
-    } catch (_) {
+    } catch (e) {
       // In test environments the Flutter platform binding may not be
       // available.  Default to assuming the device is online so that
       // the rest of the app logic continues to work normally.
+      debugPrint('ConnectivityService initialization error: $e');
       _isOnline = true;
     }
   }

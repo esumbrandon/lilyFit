@@ -10,12 +10,16 @@ import '../services/connectivity_service.dart';
 import '../services/offline_queue_service.dart';
 import 'dart:async';
 
-class AppProvider extends ChangeNotifier {
+/// Represents the current background-sync state.
+enum SyncStatus { idle, syncing, done }
+
+class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
   late SharedPreferences _prefs;
   final SupabaseService _supabaseService = SupabaseService();
   final ConnectivityService _connectivityService = ConnectivityService();
   final OfflineQueueService _offlineQueue = OfflineQueueService();
   StreamSubscription<bool>? _connectivitySubscription;
+  Timer? _syncCompleteTimer; // Track timer so we can cancel it on lifecycle changes
 
   UserProfile _userProfile = UserProfile();
   bool _isOnboarded = false;
@@ -26,6 +30,8 @@ class AppProvider extends ChangeNotifier {
   DateTime _selectedDate = DateTime.now();
   Locale _currentLocale = const Locale('en'); // Default locale
   bool _isOnline = true;
+  SyncStatus _syncStatus = SyncStatus.idle;
+  bool _isSyncingFromSupabase = false; // guard for syncFromSupabase concurrency
 
   // ─── Water Reminder Settings ────────────────────────────────────
   bool _waterRemindersEnabled = false;
@@ -45,6 +51,7 @@ class AppProvider extends ChangeNotifier {
   List<MealLog> get allMealLogs => List.unmodifiable(_mealLogs);
   Locale get currentLocale => _currentLocale;
   bool get isOnline => _isOnline;
+  SyncStatus get syncStatus => _syncStatus;
   int get pendingOperationsCount => _offlineQueue.pendingCount;
 
   // Water reminder getters
@@ -115,6 +122,9 @@ class AppProvider extends ChangeNotifier {
     _prefs = await SharedPreferences.getInstance();
     _loadData();
 
+    // Register as app lifecycle observer (critical for iOS background/resume)
+    WidgetsBinding.instance.addObserver(this);
+
     // Initialize connectivity service
     await _connectivityService.initialize();
     _isOnline = _connectivityService.isOnline;
@@ -130,16 +140,64 @@ class AppProvider extends ChangeNotifier {
       notifyListeners();
 
       if (isOnline) {
+        // Coming back online — sync any queued operations.
         debugPrint('Device is back online - syncing pending operations...');
         _syncWhenOnline();
       } else {
+        // Reset any in-progress sync status so the offline banner shows cleanly.
+        if (_syncStatus == SyncStatus.syncing) {
+          _syncStatus = SyncStatus.idle;
+        }
         debugPrint('Device is offline - operations will be queued');
       }
     });
 
-    // If online, try to sync any pending operations
+    // On startup: only run the full sync+banner flow when there are queued
+    // operations. Otherwise do a silent background pull from Supabase.
     if (_isOnline) {
-      _syncWhenOnline();
+      if (_offlineQueue.pendingCount > 0) {
+        _syncWhenOnline();
+      } else {
+        // Silent initial data pull — no banner, no status change.
+        syncFromSupabase();
+      }
+    }
+  }
+
+  /// iOS-critical: Handle app resume to re-check connectivity and sync
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.resumed) {
+      debugPrint('App resumed - re-checking connectivity and sync state');
+
+      // Cancel any pending auto-dismiss timer from before backgrounding
+      _syncCompleteTimer?.cancel();
+
+      // If we were showing "sync done", reset it since the timer might not have fired
+      if (_syncStatus == SyncStatus.done) {
+        _syncStatus = SyncStatus.idle;
+        notifyListeners();
+      }
+
+      // Re-check connectivity (iOS doesn't always deliver stream events reliably)
+      _connectivityService.initialize().then((_) {
+        final currentOnlineState = _connectivityService.isOnline;
+        if (currentOnlineState != _isOnline) {
+          _isOnline = currentOnlineState;
+          notifyListeners();
+        }
+
+        // If we came back online and have pending operations, sync them
+        if (_isOnline && _offlineQueue.pendingCount > 0 && _syncStatus != SyncStatus.syncing) {
+          debugPrint('Resumed with pending operations - syncing');
+          _syncWhenOnline();
+        }
+      });
+    } else if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      // Cancel timer when going to background to prevent orphaned callbacks
+      _syncCompleteTimer?.cancel();
     }
   }
 
@@ -148,6 +206,14 @@ class AppProvider extends ChangeNotifier {
     if (!_isOnline || !_supabaseService.isLoggedIn()) {
       return;
     }
+
+    // Prevent concurrent sync runs — if one is already in-flight, bail out.
+    if (_syncStatus == SyncStatus.syncing) {
+      return;
+    }
+
+    _syncStatus = SyncStatus.syncing;
+    notifyListeners();
 
     try {
       // Sync pending operations from offline queue
@@ -193,15 +259,32 @@ class AppProvider extends ChangeNotifier {
       // After syncing pending operations, sync data from Supabase
       await syncFromSupabase();
       debugPrint('Successfully synced all pending operations');
+
+      _syncStatus = SyncStatus.done;
+      notifyListeners();
+
+      // Auto-dismiss the "Sync complete" banner after 3 seconds
+      // Use a Timer (not Future.delayed) so we can cancel it on iOS lifecycle events
+      _syncCompleteTimer?.cancel();
+      _syncCompleteTimer = Timer(const Duration(seconds: 3), () {
+        if (_syncStatus == SyncStatus.done) {
+          _syncStatus = SyncStatus.idle;
+          notifyListeners();
+        }
+      });
     } catch (e) {
       debugPrint('Error syncing pending operations: $e');
+      _syncStatus = SyncStatus.idle;
+      notifyListeners();
     }
   }
 
   @override
   void dispose() {
+    _syncCompleteTimer?.cancel();
     _connectivitySubscription?.cancel();
     _connectivityService.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -260,6 +343,13 @@ class AppProvider extends ChangeNotifier {
       debugPrint('Not logged in, skipping Supabase sync');
       return;
     }
+
+    // Prevent concurrent calls (e.g. pull-to-refresh racing with _syncWhenOnline)
+    if (_isSyncingFromSupabase) {
+      debugPrint('syncFromSupabase already in progress, skipping duplicate call');
+      return;
+    }
+    _isSyncingFromSupabase = true;
 
     try {
       // Load meals from last 30 days
@@ -402,6 +492,8 @@ class AppProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error syncing from Supabase: $e');
       // Don't throw - keep local data if sync fails
+    } finally {
+      _isSyncingFromSupabase = false;
     }
   }
 

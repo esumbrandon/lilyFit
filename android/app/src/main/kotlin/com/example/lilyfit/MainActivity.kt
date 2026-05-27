@@ -1,4 +1,4 @@
-package com.example.lilyfit
+package app.cypherwave.lilyfit
 
 import android.os.Build
 import io.flutter.embedding.android.FlutterActivity

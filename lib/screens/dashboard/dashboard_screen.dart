@@ -113,55 +113,25 @@ class _DashboardScreenState extends State<DashboardScreen>
           backgroundColor: AppColors.surface,
           child: CustomScrollView(
             slivers: [
-              // Offline/Pending Sync Banner
-              if (!provider.isOnline || provider.pendingOperationsCount > 0)
+              // Offline / Syncing / Sync-Done Banner
+              if (!provider.isOnline ||
+                  provider.pendingOperationsCount > 0 ||
+                  provider.syncStatus == SyncStatus.syncing ||
+                  provider.syncStatus == SyncStatus.done)
                 SliverToBoxAdapter(
-                  child: Container(
-                    margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: provider.isOnline
-                          ? AppColors.primary.withAlpha(20)
-                          : AppColors.accent.withAlpha(15),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: provider.isOnline
-                            ? AppColors.primary.withAlpha(40)
-                            : AppColors.accent.withAlpha(45),
-                        width: 1,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 400),
+                    transitionBuilder: (child, animation) => FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0, -0.5),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          provider.isOnline
-                              ? Icons.sync_rounded
-                              : Icons.cloud_off_rounded,
-                          size: 18,
-                          color: provider.isOnline
-                              ? AppColors.primary
-                              : AppColors.accent,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            provider.isOnline
-                                ? 'Syncing ${provider.pendingOperationsCount} ${provider.pendingOperationsCount == 1 ? "item" : "items"}...'
-                                : 'Offline - Changes will sync when back online',
-                            style: TextStyle(
-                              color: provider.isOnline
-                                  ? AppColors.primary
-                                  : AppColors.accent,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    child: _buildSyncBanner(provider),
                   ),
                 ),
 
@@ -393,6 +363,78 @@ class _DashboardScreenState extends State<DashboardScreen>
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSyncBanner(AppProvider provider) {
+    final isDone = provider.syncStatus == SyncStatus.done;
+    final isSyncing = provider.syncStatus == SyncStatus.syncing ||
+        (provider.isOnline && provider.pendingOperationsCount > 0);
+
+    late Color bgColor;
+    late Color borderColor;
+    late Color iconColor;
+    late IconData icon;
+    late String message;
+
+    if (isDone) {
+      bgColor = Colors.green.withAlpha(20);
+      borderColor = Colors.green.withAlpha(50);
+      iconColor = Colors.green;
+      icon = Icons.check_circle_rounded;
+      message = 'All changes synced';
+    } else if (isSyncing) {
+      bgColor = AppColors.primary.withAlpha(20);
+      borderColor = AppColors.primary.withAlpha(40);
+      iconColor = AppColors.primary;
+      icon = Icons.sync_rounded;
+      final count = provider.pendingOperationsCount;
+      message = count > 0
+          ? 'Syncing $count ${count == 1 ? "item" : "items"}...'
+          : 'Syncing...';
+    } else {
+      // offline
+      bgColor = AppColors.accent.withAlpha(15);
+      borderColor = AppColors.accent.withAlpha(45);
+      iconColor = AppColors.accent;
+      icon = Icons.cloud_off_rounded;
+      message = 'Offline – changes will sync when back online';
+    }
+
+    return Container(
+      key: ValueKey(isDone ? 'done' : isSyncing ? 'syncing' : 'offline'),
+      margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: borderColor, width: 1),
+      ),
+      child: Row(
+        children: [
+          isSyncing && !isDone
+              ? SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(iconColor),
+                  ),
+                )
+              : Icon(icon, size: 18, color: iconColor),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                color: iconColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
