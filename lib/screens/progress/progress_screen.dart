@@ -27,6 +27,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final provider = context.watch<AppProvider>();
     final weightEntries = provider.weightEntries;
     final weeklyCalories = provider.weeklyCalories;
@@ -41,8 +42,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
                 child: Text(
                   AppLocalizations.of(context)!.progress,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
+                  style: TextStyle(
+                    color: isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary,
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
                   ),
@@ -57,6 +60,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 child: Row(
                   children: [
                     _statCard(
+                      context,
                       AppLocalizations.of(context)!.current,
                       weightEntries.isNotEmpty
                           ? UnitConverter.formatWeight(
@@ -69,6 +73,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     ),
                     const SizedBox(width: 10),
                     _statCard(
+                      context,
                       AppLocalizations.of(context)!.bmi,
                       provider.userProfile.bmi.toStringAsFixed(1),
                       Icons.speed_rounded,
@@ -76,6 +81,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     ),
                     const SizedBox(width: 10),
                     _statCard(
+                      context,
                       AppLocalizations.of(context)!.streak,
                       '${provider.currentStreak} ${AppLocalizations.of(context)!.days}',
                       Icons.local_fire_department_rounded,
@@ -93,9 +99,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: AppColors.card,
+                    color: isDark ? AppColors.darkCard : AppColors.card,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(
+                      color: isDark ? AppColors.darkBorder : AppColors.border,
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,14 +284,23 @@ class _ProgressScreenState extends State<ProgressScreen> {
     );
   }
 
-  Widget _statCard(String label, String value, IconData icon, Color color) {
+  Widget _statCard(
+    BuildContext context,
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.card,
+          color: isDark ? AppColors.darkCard : AppColors.card,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : AppColors.border,
+          ),
         ),
         child: Column(
           children: [
@@ -291,8 +308,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
             const SizedBox(height: 10),
             Text(
               value,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
+              style: TextStyle(
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.textPrimary,
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
               ),
@@ -301,8 +320,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
             const SizedBox(height: 4),
             Text(
               label,
-              style: const TextStyle(
-                color: AppColors.textTertiary,
+              style: TextStyle(
+                color: isDark
+                    ? AppColors.darkTextTertiary
+                    : AppColors.textTertiary,
                 fontSize: 11,
               ),
             ),

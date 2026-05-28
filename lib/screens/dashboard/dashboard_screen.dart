@@ -369,7 +369,8 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   Widget _buildSyncBanner(AppProvider provider) {
     final isDone = provider.syncStatus == SyncStatus.done;
-    final isSyncing = provider.syncStatus == SyncStatus.syncing ||
+    final isSyncing =
+        provider.syncStatus == SyncStatus.syncing ||
         (provider.isOnline && provider.pendingOperationsCount > 0);
 
     late Color bgColor;
@@ -403,7 +404,13 @@ class _DashboardScreenState extends State<DashboardScreen>
     }
 
     return Container(
-      key: ValueKey(isDone ? 'done' : isSyncing ? 'syncing' : 'offline'),
+      key: ValueKey(
+        isDone
+            ? 'done'
+            : isSyncing
+            ? 'syncing'
+            : 'offline',
+      ),
       margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(

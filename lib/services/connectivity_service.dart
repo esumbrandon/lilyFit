@@ -24,7 +24,9 @@ class ConnectivityService {
       final result = await _connectivity.checkConnectivity();
       _isOnline = _hasConnection(result);
 
-      debugPrint('ConnectivityService initialized: ${_isOnline ? "online" : "offline"}');
+      debugPrint(
+        'ConnectivityService initialized: ${_isOnline ? "online" : "offline"}',
+      );
 
       // Listen for connectivity changes
       _connectivitySubscription = _connectivity.onConnectivityChanged.listen((
@@ -32,7 +34,6 @@ class ConnectivityService {
       ) {
         final wasOnline = _isOnline;
         _isOnline = _hasConnection(result);
-
 
         if (wasOnline != _isOnline) {
           _connectivityController.add(_isOnline);

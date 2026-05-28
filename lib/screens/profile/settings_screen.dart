@@ -18,9 +18,10 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -30,8 +31,10 @@ class SettingsScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
                 child: Text(
                   AppLocalizations.of(context)!.settings,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
+                  style: TextStyle(
+                    color: isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary,
                     fontSize: 32,
                     fontWeight: FontWeight.w800,
                     letterSpacing: -0.5,
@@ -53,6 +56,17 @@ class SettingsScreen extends StatelessWidget {
                 onTap: () {
                   HapticFeedback.lightImpact();
                   _showLanguagePicker(context, provider);
+                },
+              ),
+              _divider(),
+              _settingsTile(
+                icon: Icons.palette_rounded,
+                iconColor: const Color(0xFF8B5CF6),
+                title: 'Theme',
+                subtitle: _currentThemeName(provider),
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  _showThemePicker(context, provider);
                 },
               ),
               _divider(),
@@ -191,14 +205,26 @@ class SettingsScreen extends StatelessWidget {
     return '${match['flag']} ${match['name']}';
   }
 
+  String _currentThemeName(AppProvider provider) {
+    switch (provider.themeMode) {
+      case ThemeMode.light:
+        return '☀️ Light Mode';
+      case ThemeMode.dark:
+        return '🌙 Dark Mode';
+      case ThemeMode.system:
+        return '⚙️ System Default';
+    }
+  }
+
   SliverToBoxAdapter _sectionHeader(BuildContext context, String title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
         child: Text(
           title.toUpperCase(),
-          style: const TextStyle(
-            color: AppColors.textTertiary,
+          style: TextStyle(
+            color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
             fontSize: 11,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -210,16 +236,23 @@ class SettingsScreen extends StatelessWidget {
 
   SliverToBoxAdapter _sectionCard(List<Widget> children) {
     return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Container(
-          decoration: BoxDecoration(
-            color: AppColors.card,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Column(children: children),
-        ),
+      child: Builder(
+        builder: (context) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Container(
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkCard : AppColors.card,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark ? AppColors.darkBorder : AppColors.border,
+                ),
+              ),
+              child: Column(children: children),
+            ),
+          );
+        },
       ),
     );
   }
@@ -232,42 +265,56 @@ class SettingsScreen extends StatelessWidget {
     required VoidCallback onTap,
     bool isDestructive = false,
   }) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-      leading: Container(
-        width: 38,
-        height: 38,
-        decoration: BoxDecoration(
-          color: iconColor.withAlpha(28),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Icon(icon, color: iconColor, size: 20),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: isDestructive ? AppColors.error : AppColors.textPrimary,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(
-          color: isDestructive
-              ? AppColors.error.withAlpha(150)
-              : AppColors.textTertiary,
-          fontSize: 12,
-        ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      trailing: Icon(
-        Icons.chevron_right_rounded,
-        color: AppColors.textTertiary,
-        size: 20,
-      ),
-      onTap: onTap,
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 4,
+          ),
+          leading: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: iconColor.withAlpha(28),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: iconColor, size: 20),
+          ),
+          title: Text(
+            title,
+            style: TextStyle(
+              color: isDestructive
+                  ? AppColors.error
+                  : (isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: TextStyle(
+              color: isDestructive
+                  ? AppColors.error.withAlpha(150)
+                  : (isDark
+                        ? AppColors.darkTextTertiary
+                        : AppColors.textTertiary),
+              fontSize: 12,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          trailing: Icon(
+            Icons.chevron_right_rounded,
+            color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+            size: 20,
+          ),
+          onTap: onTap,
+        );
+      },
     );
   }
 
@@ -351,7 +398,16 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _divider() {
-    return const Divider(color: AppColors.cardLight, height: 1, indent: 74);
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Divider(
+          color: isDark ? AppColors.darkCardLight : AppColors.cardLight,
+          height: 1,
+          indent: 74,
+        );
+      },
+    );
   }
 
   void _showComingSoonSnackBar(BuildContext context) {
@@ -380,10 +436,13 @@ class SettingsScreen extends StatelessWidget {
         String selected = currentCode;
         return StatefulBuilder(
           builder: (ctx, setSheetState) {
+            final isDark = Theme.of(ctx).brightness == Brightness.dark;
             return Container(
-              decoration: const BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkSurface : AppColors.surface,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(28),
+                ),
               ),
               padding: EdgeInsets.fromLTRB(
                 24,
@@ -402,7 +461,9 @@ class SettingsScreen extends StatelessWidget {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: AppColors.cardLight,
+                        color: isDark
+                            ? AppColors.darkCardLight
+                            : AppColors.cardLight,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -411,7 +472,9 @@ class SettingsScreen extends StatelessWidget {
                   Text(
                     AppLocalizations.of(ctx)!.chooseLanguage,
                     style: TextStyle(
-                      color: AppColors.textPrimary,
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.textPrimary,
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                     ),
@@ -424,8 +487,12 @@ class SettingsScreen extends StatelessWidget {
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: languages.length,
-                      separatorBuilder: (_, _) =>
-                          const Divider(color: AppColors.cardLight, height: 1),
+                      separatorBuilder: (_, __) => Divider(
+                        color: isDark
+                            ? AppColors.darkCardLight
+                            : AppColors.cardLight,
+                        height: 1,
+                      ),
                       itemBuilder: (_, i) {
                         final lang = languages[i];
                         final code = lang['code']!;
@@ -441,7 +508,9 @@ class SettingsScreen extends StatelessWidget {
                             style: TextStyle(
                               color: isSelected
                                   ? AppColors.primary
-                                  : AppColors.textPrimary,
+                                  : (isDark
+                                        ? AppColors.darkTextPrimary
+                                        : AppColors.textPrimary),
                               fontWeight: isSelected
                                   ? FontWeight.w600
                                   : FontWeight.w400,
@@ -449,8 +518,10 @@ class SettingsScreen extends StatelessWidget {
                           ),
                           subtitle: Text(
                             lang['native']!,
-                            style: const TextStyle(
-                              color: AppColors.textTertiary,
+                            style: TextStyle(
+                              color: isDark
+                                  ? AppColors.darkTextTertiary
+                                  : AppColors.textTertiary,
                               fontSize: 12,
                             ),
                           ),
@@ -504,6 +575,162 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  // ── Theme Picker ──────────────────────────────────────────────────
+
+  void _showThemePicker(BuildContext context, AppProvider provider) {
+    final themes = [
+      {
+        'mode': ThemeMode.light,
+        'name': 'Light Mode',
+        'icon': '☀️',
+        'desc': 'Always use light theme',
+      },
+      {
+        'mode': ThemeMode.dark,
+        'name': 'Dark Mode',
+        'icon': '🌙',
+        'desc': 'Always use dark theme',
+      },
+      {
+        'mode': ThemeMode.system,
+        'name': 'System Default',
+        'icon': '⚙️',
+        'desc': 'Match device settings',
+      },
+    ];
+    final currentMode = provider.themeMode;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) {
+        ThemeMode selected = currentMode;
+        return StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            final isDark = Theme.of(ctx).brightness == Brightness.dark;
+            return Container(
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkSurface : AppColors.surface,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(28),
+                ),
+              ),
+              padding: EdgeInsets.fromLTRB(
+                24,
+                24,
+                24,
+                MediaQuery.of(ctx).viewInsets.bottom +
+                    MediaQuery.of(ctx).padding.bottom +
+                    24,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? AppColors.darkCardLight
+                            : AppColors.cardLight,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Choose Theme',
+                    style: TextStyle(
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.textPrimary,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: themes.length,
+                    separatorBuilder: (_, __) => Divider(
+                      color: isDark
+                          ? AppColors.darkCardLight
+                          : AppColors.cardLight,
+                      height: 1,
+                    ),
+                    itemBuilder: (_, i) {
+                      final theme = themes[i];
+                      final mode = theme['mode'] as ThemeMode;
+                      final isSelected = selected == mode;
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Text(
+                          theme['icon'] as String,
+                          style: const TextStyle(fontSize: 24),
+                        ),
+                        title: Text(
+                          theme['name'] as String,
+                          style: TextStyle(
+                            color: isSelected
+                                ? AppColors.primary
+                                : (isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.textPrimary),
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                        ),
+                        subtitle: Text(
+                          theme['desc'] as String,
+                          style: TextStyle(
+                            color: isDark
+                                ? AppColors.darkTextTertiary
+                                : AppColors.textTertiary,
+                            fontSize: 12,
+                          ),
+                        ),
+                        trailing: isSelected
+                            ? const Icon(
+                                Icons.check_circle_rounded,
+                                color: AppColors.primary,
+                              )
+                            : null,
+                        onTap: () => setSheetState(() => selected = mode),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        HapticFeedback.mediumImpact();
+                        await provider.setThemeMode(selected);
+                        if (ctx.mounted) Navigator.pop(ctx);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: const Text('Apply Theme'),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   // ── Email Update ─────────────────────────────────────────────────
 
   void _showEmailUpdateSheet(BuildContext context, AppProvider provider) {
@@ -516,6 +743,7 @@ class SettingsScreen extends StatelessWidget {
       builder: (ctx) {
         bool isSaving = false;
         String? errorMsg;
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
 
         return StatefulBuilder(
           builder: (ctx, setSheetState) {
@@ -524,9 +752,11 @@ class SettingsScreen extends StatelessWidget {
                 bottom: MediaQuery.of(ctx).viewInsets.bottom,
               ),
               child: Container(
-                decoration: const BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.darkSurface : AppColors.surface,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(28),
+                  ),
                 ),
                 padding: EdgeInsets.fromLTRB(
                   24,
@@ -543,25 +773,31 @@ class SettingsScreen extends StatelessWidget {
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: AppColors.cardLight,
+                          color: isDark
+                              ? AppColors.darkCardLight
+                              : AppColors.cardLight,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
+                    Text(
                       'Update Email',
                       style: TextStyle(
-                        color: AppColors.textPrimary,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'A confirmation link will be sent to your new email address.',
                       style: TextStyle(
-                        color: AppColors.textSecondary,
+                        color: isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.textSecondary,
                         fontSize: 13,
                       ),
                     ),
@@ -570,21 +806,33 @@ class SettingsScreen extends StatelessWidget {
                       controller: controller,
                       keyboardType: TextInputType.emailAddress,
                       autofillHints: const [AutofillHints.email],
-                      style: const TextStyle(color: AppColors.textPrimary),
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
+                      ),
                       decoration: InputDecoration(
                         labelText: AppLocalizations.of(
                           context,
                         )!.newEmailAddress,
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.email_outlined,
-                          color: AppColors.textSecondary,
+                          color: isDark
+                              ? AppColors.darkTextSecondary
+                              : AppColors.textSecondary,
                         ),
                         errorText: errorMsg,
                         filled: true,
-                        fillColor: AppColors.surfaceMuted,
+                        fillColor: isDark
+                            ? AppColors.darkSurfaceMuted
+                            : AppColors.surfaceMuted,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: AppColors.border),
+                          borderSide: BorderSide(
+                            color: isDark
+                                ? AppColors.darkBorder
+                                : AppColors.border,
+                          ),
                         ),
                       ),
                     ),
@@ -674,159 +922,204 @@ class SettingsScreen extends StatelessWidget {
   void _showAboutDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Row(
-          children: [
-            Icon(Icons.restaurant_menu_rounded, color: AppColors.primary),
-            SizedBox(width: 10),
-            Text(
-              'LilyFit',
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'A smart calorie and nutrition management app that helps you reach your health goals. Features global food database with strong support for African cuisines.',
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Version 1.0.0',
-              style: TextStyle(color: AppColors.textTertiary, fontSize: 13),
-            ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(AppLocalizations.of(context)!.close),
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        return AlertDialog(
+          backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
           ),
-        ],
-      ),
+          title: Row(
+            children: [
+              const Icon(
+                Icons.restaurant_menu_rounded,
+                color: AppColors.primary,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'LilyFit',
+                style: TextStyle(
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'A smart calorie and nutrition management app that helps you reach your health goals. Features global food database with strong support for African cuisines.',
+                style: TextStyle(
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Version 1.0.0',
+                style: TextStyle(
+                  color: isDark
+                      ? AppColors.darkTextTertiary
+                      : AppColors.textTertiary,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(AppLocalizations.of(context)!.close),
+            ),
+          ],
+        );
+      },
     );
   }
 
   void _showResetDialog(BuildContext context, AppProvider provider) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          AppLocalizations.of(context)!.resetAllDataQuestion,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w700,
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        return AlertDialog(
+          backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
           ),
-        ),
-        content: Text(
-          AppLocalizations.of(context)!.resetAllDataBody,
-          style: const TextStyle(color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              AppLocalizations.of(context)!.cancel,
-              style: const TextStyle(color: AppColors.textTertiary),
+          title: Text(
+            AppLocalizations.of(context)!.resetAllDataQuestion,
+            style: TextStyle(
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          ElevatedButton(
-            onPressed: () async {
-              HapticFeedback.heavyImpact();
-              await provider.resetAllData();
-              if (!context.mounted) return;
-              Navigator.pop(ctx);
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-                (route) => false,
-              );
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-            child: Text(AppLocalizations.of(context)!.reset),
+          content: Text(
+            AppLocalizations.of(context)!.resetAllDataBody,
+            style: TextStyle(
+              color: isDark
+                  ? AppColors.darkTextSecondary
+                  : AppColors.textSecondary,
+            ),
           ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: TextStyle(
+                  color: isDark
+                      ? AppColors.darkTextTertiary
+                      : AppColors.textTertiary,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                HapticFeedback.heavyImpact();
+                await provider.resetAllData();
+                if (!context.mounted) return;
+                Navigator.pop(ctx);
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+                  (route) => false,
+                );
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
+              child: Text(AppLocalizations.of(context)!.reset),
+            ),
+          ],
+        );
+      },
     );
   }
 
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          AppLocalizations.of(context)!.logout,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w700,
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        return AlertDialog(
+          backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
           ),
-        ),
-        content: Text(
-          AppLocalizations.of(context)!.logoutConfirm,
-          style: const TextStyle(color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              AppLocalizations.of(context)!.cancel,
-              style: const TextStyle(color: AppColors.textTertiary),
+          title: Text(
+            AppLocalizations.of(context)!.logout,
+            style: TextStyle(
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          ElevatedButton(
-            onPressed: () async {
-              HapticFeedback.mediumImpact();
-              Navigator.pop(ctx);
-
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => const Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
+          content: Text(
+            AppLocalizations.of(context)!.logoutConfirm,
+            style: TextStyle(
+              color: isDark
+                  ? AppColors.darkTextSecondary
+                  : AppColors.textSecondary,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: TextStyle(
+                  color: isDark
+                      ? AppColors.darkTextTertiary
+                      : AppColors.textTertiary,
                 ),
-              );
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                HapticFeedback.mediumImpact();
+                Navigator.pop(ctx);
 
-              try {
-                await SupabaseService().signOut();
-
-                if (!context.mounted) return;
-                Navigator.of(context).pop();
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const AuthScreen()),
-                  (route) => false,
-                );
-              } catch (e) {
-                if (!context.mounted) return;
-                Navigator.of(context).pop();
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      AppLocalizations.of(context)!.logoutFailed(e.toString()),
-                    ),
-                    backgroundColor: AppColors.error,
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => const Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
                   ),
                 );
-              }
-            },
-            child: Text(AppLocalizations.of(context)!.logout),
-          ),
-        ],
-      ),
+
+                try {
+                  await SupabaseService().signOut();
+
+                  if (!context.mounted) return;
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const AuthScreen()),
+                    (route) => false,
+                  );
+                } catch (e) {
+                  if (!context.mounted) return;
+                  Navigator.of(context).pop();
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.logoutFailed(e.toString()),
+                      ),
+                      backgroundColor: AppColors.error,
+                    ),
+                  );
+                }
+              },
+              child: Text(AppLocalizations.of(context)!.logout),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -841,9 +1134,10 @@ class _NotificationSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -853,17 +1147,21 @@ class _NotificationSettingsScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.arrow_back_ios_new_rounded,
-                        color: AppColors.textPrimary,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
                         size: 20,
                       ),
                       onPressed: () => Navigator.pop(context),
                     ),
                     Text(
                       AppLocalizations.of(context)!.notifications,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
                       ),
@@ -878,7 +1176,7 @@ class _NotificationSettingsScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: AppColors.card,
+                    color: isDark ? AppColors.darkCard : AppColors.card,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Column(
@@ -927,56 +1225,76 @@ class _NotificationSettingsScreen extends StatelessWidget {
                         },
                       ),
                       if (provider.waterRemindersEnabled) ...[
-                        const Divider(
-                          color: AppColors.cardLight,
-                          height: 1,
-                          indent: 74,
+                        Builder(
+                          builder: (context) {
+                            final isDark =
+                                Theme.of(context).brightness == Brightness.dark;
+                            return Divider(
+                              color: isDark
+                                  ? AppColors.darkCardLight
+                                  : AppColors.cardLight,
+                              height: 1,
+                              indent: 74,
+                            );
+                          },
                         ),
-                        ListTile(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 4,
-                          ),
-                          leading: Container(
-                            width: 38,
-                            height: 38,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withAlpha(28),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(
-                              Icons.tune_rounded,
-                              color: AppColors.primary,
-                              size: 20,
-                            ),
-                          ),
-                          title: const Text(
-                            'Configure Schedule',
-                            style: TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          subtitle: const Text(
-                            'Set interval, start & end time',
-                            style: TextStyle(
-                              color: AppColors.textTertiary,
-                              fontSize: 12,
-                            ),
-                          ),
-                          trailing: const Icon(
-                            Icons.chevron_right_rounded,
-                            color: AppColors.textTertiary,
-                            size: 20,
-                          ),
-                          onTap: () {
-                            HapticFeedback.lightImpact();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const WaterReminderScreen(),
+                        Builder(
+                          builder: (context) {
+                            final isDark =
+                                Theme.of(context).brightness == Brightness.dark;
+                            return ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 4,
                               ),
+                              leading: Container(
+                                width: 38,
+                                height: 38,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withAlpha(28),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(
+                                  Icons.tune_rounded,
+                                  color: AppColors.primary,
+                                  size: 20,
+                                ),
+                              ),
+                              title: Text(
+                                'Configure Schedule',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.textPrimary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              subtitle: Text(
+                                'Set interval, start & end time',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? AppColors.darkTextTertiary
+                                      : AppColors.textTertiary,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              trailing: Icon(
+                                Icons.chevron_right_rounded,
+                                color: isDark
+                                    ? AppColors.darkTextTertiary
+                                    : AppColors.textTertiary,
+                                size: 20,
+                              ),
+                              onTap: () {
+                                HapticFeedback.lightImpact();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const WaterReminderScreen(),
+                                  ),
+                                );
+                              },
                             );
                           },
                         ),
@@ -1001,34 +1319,47 @@ class _NotificationSettingsScreen extends StatelessWidget {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-      leading: Container(
-        width: 38,
-        height: 38,
-        decoration: BoxDecoration(
-          color: iconColor.withAlpha(28),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Icon(icon, color: iconColor, size: 20),
-      ),
-      title: Text(
-        title,
-        style: const TextStyle(
-          color: AppColors.textPrimary,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: const TextStyle(color: AppColors.textTertiary, fontSize: 12),
-      ),
-      trailing: Switch.adaptive(
-        value: value,
-        onChanged: onChanged,
-        activeThumbColor: AppColors.primary,
-      ),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 4,
+          ),
+          leading: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: iconColor.withAlpha(28),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: iconColor, size: 20),
+          ),
+          title: Text(
+            title,
+            style: TextStyle(
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: TextStyle(
+              color: isDark
+                  ? AppColors.darkTextTertiary
+                  : AppColors.textTertiary,
+              fontSize: 12,
+            ),
+          ),
+          trailing: Switch.adaptive(
+            value: value,
+            onChanged: onChanged,
+            activeThumbColor: AppColors.primary,
+          ),
+        );
+      },
     );
   }
 }
@@ -1065,8 +1396,9 @@ class _HelpSupportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -1076,17 +1408,21 @@ class _HelpSupportScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.arrow_back_ios_new_rounded,
-                        color: AppColors.textPrimary,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
                         size: 20,
                       ),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    const Text(
+                    Text(
                       'Help & Support',
                       style: TextStyle(
-                        color: AppColors.textPrimary,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
                       ),
@@ -1130,18 +1466,26 @@ class _HelpSupportScreen extends StatelessWidget {
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
             // FAQ header
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(24, 0, 24, 12),
-                child: Text(
-                  'FREQUENTLY ASKED QUESTIONS',
-                  style: TextStyle(
-                    color: AppColors.textTertiary,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.2,
-                  ),
-                ),
+            SliverToBoxAdapter(
+              child: Builder(
+                builder: (context) {
+                  final isDark =
+                      Theme.of(context).brightness == Brightness.dark;
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
+                    child: Text(
+                      'FREQUENTLY ASKED QUESTIONS',
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColors.darkTextTertiary
+                            : AppColors.textTertiary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
 
@@ -1149,29 +1493,37 @@ class _HelpSupportScreen extends StatelessWidget {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.card,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    children: _faqs.asMap().entries.map((entry) {
-                      final i = entry.key;
-                      final faq = entry.value;
-                      return Column(
-                        children: [
-                          _FaqTile(question: faq.q, answer: faq.a),
-                          if (i < _faqs.length - 1)
-                            const Divider(
-                              color: AppColors.cardLight,
-                              height: 1,
-                              indent: 20,
-                              endIndent: 20,
-                            ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
+                child: Builder(
+                  builder: (context) {
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkCard : AppColors.card,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        children: _faqs.asMap().entries.map((entry) {
+                          final i = entry.key;
+                          final faq = entry.value;
+                          return Column(
+                            children: [
+                              _FaqTile(question: faq.q, answer: faq.a),
+                              if (i < _faqs.length - 1)
+                                Divider(
+                                  color: isDark
+                                      ? AppColors.darkCardLight
+                                      : AppColors.cardLight,
+                                  height: 1,
+                                  indent: 20,
+                                  endIndent: 20,
+                                ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -1190,6 +1542,7 @@ class _HelpSupportScreen extends StatelessWidget {
     required String title,
     required String subtitle,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -1208,7 +1561,7 @@ class _HelpSupportScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.card,
+          color: isDark ? AppColors.darkCard : AppColors.card,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
@@ -1225,8 +1578,10 @@ class _HelpSupportScreen extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               title,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
+              style: TextStyle(
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.textPrimary,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -1234,8 +1589,10 @@ class _HelpSupportScreen extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               subtitle,
-              style: const TextStyle(
-                color: AppColors.textTertiary,
+              style: TextStyle(
+                color: isDark
+                    ? AppColors.darkTextTertiary
+                    : AppColors.textTertiary,
                 fontSize: 11,
               ),
               textAlign: TextAlign.center,
@@ -1262,6 +1619,7 @@ class _FaqTileState extends State<_FaqTile> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedSize(
       duration: const Duration(milliseconds: 220),
       curve: Curves.easeInOut,
@@ -1275,8 +1633,10 @@ class _FaqTileState extends State<_FaqTile> {
             ),
             title: Text(
               widget.question,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
+              style: TextStyle(
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.textPrimary,
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),
@@ -1284,9 +1644,11 @@ class _FaqTileState extends State<_FaqTile> {
             trailing: AnimatedRotation(
               turns: _expanded ? 0.5 : 0,
               duration: const Duration(milliseconds: 220),
-              child: const Icon(
+              child: Icon(
                 Icons.keyboard_arrow_down_rounded,
-                color: AppColors.textTertiary,
+                color: isDark
+                    ? AppColors.darkTextTertiary
+                    : AppColors.textTertiary,
               ),
             ),
             onTap: () {
@@ -1299,8 +1661,10 @@ class _FaqTileState extends State<_FaqTile> {
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
               child: Text(
                 widget.answer,
-                style: const TextStyle(
-                  color: AppColors.textSecondary,
+                style: TextStyle(
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.textSecondary,
                   fontSize: 13,
                   height: 1.5,
                 ),
@@ -1322,9 +1686,10 @@ class _PrivacySecurityScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.read<AppProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -1334,17 +1699,21 @@ class _PrivacySecurityScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.arrow_back_ios_new_rounded,
-                        color: AppColors.textPrimary,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
                         size: 20,
                       ),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    const Text(
+                    Text(
                       'Privacy & Security',
                       style: TextStyle(
-                        color: AppColors.textPrimary,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
                       ),
@@ -1356,68 +1725,88 @@ class _PrivacySecurityScreen extends StatelessWidget {
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
             // Data section
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(24, 0, 24, 8),
-                child: Text(
-                  'DATA',
-                  style: TextStyle(
-                    color: AppColors.textTertiary,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.2,
-                  ),
-                ),
+            SliverToBoxAdapter(
+              child: Builder(
+                builder: (context) {
+                  final isDark =
+                      Theme.of(context).brightness == Brightness.dark;
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+                    child: Text(
+                      'DATA',
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColors.darkTextTertiary
+                            : AppColors.textTertiary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.card,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    children: [
-                      _infoTile(
-                        icon: Icons.storage_rounded,
-                        iconColor: AppColors.primary,
-                        title: AppLocalizations.of(context)!.dataStorage,
-                        subtitle:
-                            'Your data is stored locally and securely synced to our servers',
+                child: Builder(
+                  builder: (context) {
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkCard : AppColors.card,
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      const Divider(
-                        color: AppColors.cardLight,
-                        height: 1,
-                        indent: 74,
+                      child: Column(
+                        children: [
+                          _infoTile(
+                            icon: Icons.storage_rounded,
+                            iconColor: AppColors.primary,
+                            title: AppLocalizations.of(context)!.dataStorage,
+                            subtitle:
+                                'Your data is stored locally and securely synced to our servers',
+                          ),
+                          Divider(
+                            color: isDark
+                                ? AppColors.darkCardLight
+                                : AppColors.cardLight,
+                            height: 1,
+                            indent: 74,
+                          ),
+                          _infoTile(
+                            icon: Icons.sync_rounded,
+                            iconColor: AppColors.secondary,
+                            title: AppLocalizations.of(context)!.dataSync,
+                            subtitle:
+                                'Automatically synced when you are connected to the internet',
+                          ),
+                          Divider(
+                            color: isDark
+                                ? AppColors.darkCardLight
+                                : AppColors.cardLight,
+                            height: 1,
+                            indent: 74,
+                          ),
+                          _actionTile(
+                            icon: Icons.delete_sweep_rounded,
+                            iconColor: AppColors.warning,
+                            title: AppLocalizations.of(
+                              context,
+                            )!.clearLocalCache,
+                            subtitle: AppLocalizations.of(
+                              context,
+                            )!.clearCacheSubtitle,
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              _showClearCacheDialog(context);
+                            },
+                          ),
+                        ],
                       ),
-                      _infoTile(
-                        icon: Icons.sync_rounded,
-                        iconColor: AppColors.secondary,
-                        title: AppLocalizations.of(context)!.dataSync,
-                        subtitle:
-                            'Automatically synced when you are connected to the internet',
-                      ),
-                      const Divider(
-                        color: AppColors.cardLight,
-                        height: 1,
-                        indent: 74,
-                      ),
-                      _actionTile(
-                        icon: Icons.delete_sweep_rounded,
-                        iconColor: AppColors.warning,
-                        title: AppLocalizations.of(context)!.clearLocalCache,
-                        subtitle: AppLocalizations.of(
-                          context,
-                        )!.clearCacheSubtitle,
-                        onTap: () {
-                          HapticFeedback.lightImpact();
-                          _showClearCacheDialog(context);
-                        },
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -1425,61 +1814,77 @@ class _PrivacySecurityScreen extends StatelessWidget {
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
             // Legal section
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(24, 0, 24, 8),
-                child: Text(
-                  'LEGAL',
-                  style: TextStyle(
-                    color: AppColors.textTertiary,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.2,
-                  ),
-                ),
+            SliverToBoxAdapter(
+              child: Builder(
+                builder: (context) {
+                  final isDark =
+                      Theme.of(context).brightness == Brightness.dark;
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+                    child: Text(
+                      'LEGAL',
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColors.darkTextTertiary
+                            : AppColors.textTertiary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.card,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    children: [
-                      _actionTile(
-                        icon: Icons.policy_rounded,
-                        iconColor: AppColors.primary,
-                        title: AppLocalizations.of(context)!.privacyPolicy,
-                        subtitle: AppLocalizations.of(
-                          context,
-                        )!.privacyPolicySubtitle,
-                        onTap: () {
-                          HapticFeedback.lightImpact();
-                          _showPrivacyPolicy(context);
-                        },
+                child: Builder(
+                  builder: (context) {
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkCard : AppColors.card,
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      const Divider(
-                        color: AppColors.cardLight,
-                        height: 1,
-                        indent: 74,
+                      child: Column(
+                        children: [
+                          _actionTile(
+                            icon: Icons.policy_rounded,
+                            iconColor: AppColors.primary,
+                            title: AppLocalizations.of(context)!.privacyPolicy,
+                            subtitle: AppLocalizations.of(
+                              context,
+                            )!.privacyPolicySubtitle,
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              _showPrivacyPolicy(context);
+                            },
+                          ),
+                          Divider(
+                            color: isDark
+                                ? AppColors.darkCardLight
+                                : AppColors.cardLight,
+                            height: 1,
+                            indent: 74,
+                          ),
+                          _actionTile(
+                            icon: Icons.description_rounded,
+                            iconColor: const Color(0xFF818CF8),
+                            title: AppLocalizations.of(context)!.termsOfService,
+                            subtitle: AppLocalizations.of(
+                              context,
+                            )!.termsOfServiceSubtitle,
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              _showTermsOfService(context);
+                            },
+                          ),
+                        ],
                       ),
-                      _actionTile(
-                        icon: Icons.description_rounded,
-                        iconColor: const Color(0xFF818CF8),
-                        title: AppLocalizations.of(context)!.termsOfService,
-                        subtitle: AppLocalizations.of(
-                          context,
-                        )!.termsOfServiceSubtitle,
-                        onTap: () {
-                          HapticFeedback.lightImpact();
-                          _showTermsOfService(context);
-                        },
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -1487,41 +1892,55 @@ class _PrivacySecurityScreen extends StatelessWidget {
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
             // Danger zone
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(24, 0, 24, 8),
-                child: Text(
-                  'DANGER ZONE',
-                  style: TextStyle(
-                    color: AppColors.textTertiary,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.2,
-                  ),
-                ),
+            SliverToBoxAdapter(
+              child: Builder(
+                builder: (context) {
+                  final isDark =
+                      Theme.of(context).brightness == Brightness.dark;
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+                    child: Text(
+                      'DANGER ZONE',
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColors.darkTextTertiary
+                            : AppColors.textTertiary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.card,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: _actionTile(
-                    icon: Icons.no_accounts_rounded,
-                    iconColor: AppColors.error,
-                    title: AppLocalizations.of(context)!.deleteAccount,
-                    subtitle: AppLocalizations.of(
-                      context,
-                    )!.deleteAccountSubtitle,
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      _showDeleteAccountDialog(context, provider);
-                    },
-                    isDestructive: true,
-                  ),
+                child: Builder(
+                  builder: (context) {
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkCard : AppColors.card,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: _actionTile(
+                        icon: Icons.no_accounts_rounded,
+                        iconColor: AppColors.error,
+                        title: AppLocalizations.of(context)!.deleteAccount,
+                        subtitle: AppLocalizations.of(
+                          context,
+                        )!.deleteAccountSubtitle,
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _showDeleteAccountDialog(context, provider);
+                        },
+                        isDestructive: true,
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -1539,29 +1958,42 @@ class _PrivacySecurityScreen extends StatelessWidget {
     required String title,
     required String subtitle,
   }) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-      leading: Container(
-        width: 38,
-        height: 38,
-        decoration: BoxDecoration(
-          color: iconColor.withAlpha(28),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Icon(icon, color: iconColor, size: 20),
-      ),
-      title: Text(
-        title,
-        style: const TextStyle(
-          color: AppColors.textPrimary,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: const TextStyle(color: AppColors.textTertiary, fontSize: 12),
-      ),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 4,
+          ),
+          leading: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: iconColor.withAlpha(28),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: iconColor, size: 20),
+          ),
+          title: Text(
+            title,
+            style: TextStyle(
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: TextStyle(
+              color: isDark
+                  ? AppColors.darkTextTertiary
+                  : AppColors.textTertiary,
+              fontSize: 12,
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -1573,85 +2005,112 @@ class _PrivacySecurityScreen extends StatelessWidget {
     required VoidCallback onTap,
     bool isDestructive = false,
   }) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-      leading: Container(
-        width: 38,
-        height: 38,
-        decoration: BoxDecoration(
-          color: iconColor.withAlpha(28),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Icon(icon, color: iconColor, size: 20),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: isDestructive ? AppColors.error : AppColors.textPrimary,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(
-          color: isDestructive
-              ? AppColors.error.withAlpha(150)
-              : AppColors.textTertiary,
-          fontSize: 12,
-        ),
-      ),
-      trailing: Icon(
-        Icons.chevron_right_rounded,
-        color: isDestructive
-            ? AppColors.error.withAlpha(150)
-            : AppColors.textTertiary,
-        size: 20,
-      ),
-      onTap: onTap,
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 4,
+          ),
+          leading: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: iconColor.withAlpha(28),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: iconColor, size: 20),
+          ),
+          title: Text(
+            title,
+            style: TextStyle(
+              color: isDestructive
+                  ? AppColors.error
+                  : (isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: TextStyle(
+              color: isDestructive
+                  ? AppColors.error.withAlpha(150)
+                  : (isDark
+                        ? AppColors.darkTextTertiary
+                        : AppColors.textTertiary),
+              fontSize: 12,
+            ),
+          ),
+          trailing: Icon(
+            Icons.chevron_right_rounded,
+            color: isDestructive
+                ? AppColors.error.withAlpha(150)
+                : (isDark
+                      ? AppColors.darkTextTertiary
+                      : AppColors.textTertiary),
+            size: 20,
+          ),
+          onTap: onTap,
+        );
+      },
     );
   }
 
   void _showClearCacheDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          AppLocalizations.of(context)!.clearCacheQuestion,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w700,
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        return AlertDialog(
+          backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
           ),
-        ),
-        content: Text(
-          AppLocalizations.of(context)!.clearCacheBody,
-          style: const TextStyle(color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(AppLocalizations.of(context)!.cancel),
+          title: Text(
+            AppLocalizations.of(context)!.clearCacheQuestion,
+            style: TextStyle(
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
+            ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(AppLocalizations.of(context)!.cacheClearedMsg),
-                  backgroundColor: AppColors.success,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+          content: Text(
+            AppLocalizations.of(context)!.clearCacheBody,
+            style: TextStyle(
+              color: isDark
+                  ? AppColors.darkTextSecondary
+                  : AppColors.textSecondary,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)!.cacheClearedMsg,
+                    ),
+                    backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                ),
-              );
-            },
-            child: Text(AppLocalizations.of(context)!.clear),
-          ),
-        ],
-      ),
+                );
+              },
+              child: Text(AppLocalizations.of(context)!.clear),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -1664,70 +2123,84 @@ class _PrivacySecurityScreen extends StatelessWidget {
         initialChildSize: 0.85,
         maxChildSize: 0.95,
         minChildSize: 0.5,
-        builder: (_, controller) => Container(
-          decoration: const BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-          ),
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppColors.cardLight,
-                    borderRadius: BorderRadius.circular(2),
+        builder: (_, controller) {
+          final isDark = Theme.of(ctx).brightness == Brightness.dark;
+          return Container(
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.darkSurface : AppColors.surface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(28),
+              ),
+            ),
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.darkCardLight
+                          : AppColors.cardLight,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                AppLocalizations.of(context)!.privacyPolicy,
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
+                const SizedBox(height: 20),
+                Text(
+                  AppLocalizations.of(context)!.privacyPolicy,
+                  style: TextStyle(
+                    color: isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                'Last updated: May 2026',
-                style: TextStyle(color: AppColors.textTertiary, fontSize: 12),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: ListView(
-                  controller: controller,
-                  children: [
-                    _PolicySection(
-                      title: AppLocalizations.of(context)!.dataWeCollect,
-                      body: AppLocalizations.of(context)!.dataWeCollectBody,
-                    ),
-                    _PolicySection(
-                      title: AppLocalizations.of(context)!.howWeUseData,
-                      body: AppLocalizations.of(context)!.howWeUseDataBody,
-                    ),
-                    _PolicySection(
-                      title: AppLocalizations.of(context)!.dataStorageTitle,
-                      body: AppLocalizations.of(context)!.dataStorageBody,
-                    ),
-                    _PolicySection(
-                      title: AppLocalizations.of(context)!.yourRights,
-                      body: AppLocalizations.of(context)!.yourRightsBody,
-                    ),
-                    _PolicySection(
-                      title: AppLocalizations.of(context)!.contactUs,
-                      body: AppLocalizations.of(context)!.contactUsBody,
-                    ),
-                  ],
+                const SizedBox(height: 4),
+                Text(
+                  'Last updated: May 2026',
+                  style: TextStyle(
+                    color: isDark
+                        ? AppColors.darkTextTertiary
+                        : AppColors.textTertiary,
+                    fontSize: 12,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: ListView(
+                    controller: controller,
+                    children: [
+                      _PolicySection(
+                        title: AppLocalizations.of(context)!.dataWeCollect,
+                        body: AppLocalizations.of(context)!.dataWeCollectBody,
+                      ),
+                      _PolicySection(
+                        title: AppLocalizations.of(context)!.howWeUseData,
+                        body: AppLocalizations.of(context)!.howWeUseDataBody,
+                      ),
+                      _PolicySection(
+                        title: AppLocalizations.of(context)!.dataStorageTitle,
+                        body: AppLocalizations.of(context)!.dataStorageBody,
+                      ),
+                      _PolicySection(
+                        title: AppLocalizations.of(context)!.yourRights,
+                        body: AppLocalizations.of(context)!.yourRightsBody,
+                      ),
+                      _PolicySection(
+                        title: AppLocalizations.of(context)!.contactUs,
+                        body: AppLocalizations.of(context)!.contactUsBody,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -1741,77 +2214,92 @@ class _PrivacySecurityScreen extends StatelessWidget {
         initialChildSize: 0.85,
         maxChildSize: 0.95,
         minChildSize: 0.5,
-        builder: (_, controller) => Container(
-          decoration: const BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-          ),
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppColors.cardLight,
-                    borderRadius: BorderRadius.circular(2),
+        builder: (_, controller) {
+          final isDark = Theme.of(ctx).brightness == Brightness.dark;
+          return Container(
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.darkSurface : AppColors.surface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(28),
+              ),
+            ),
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.darkCardLight
+                          : AppColors.cardLight,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                AppLocalizations.of(context)!.termsOfService,
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
+                const SizedBox(height: 20),
+                Text(
+                  AppLocalizations.of(context)!.termsOfService,
+                  style: TextStyle(
+                    color: isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                AppLocalizations.of(context)!.lastUpdated('May 2026'),
-                style: const TextStyle(
-                  color: AppColors.textTertiary,
-                  fontSize: 12,
+                const SizedBox(height: 4),
+                Text(
+                  AppLocalizations.of(context)!.lastUpdated('May 2026'),
+                  style: TextStyle(
+                    color: isDark
+                        ? AppColors.darkTextTertiary
+                        : AppColors.textTertiary,
+                    fontSize: 12,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: ListView(
-                  controller: controller,
-                  children: [
-                    _PolicySection(
-                      title: AppLocalizations.of(context)!.acceptanceOfTerms,
-                      body: AppLocalizations.of(context)!.acceptanceOfTermsBody,
-                    ),
-                    _PolicySection(
-                      title: AppLocalizations.of(context)!.useOfApp,
-                      body: AppLocalizations.of(context)!.useOfAppBody,
-                    ),
-                    _PolicySection(
-                      title: AppLocalizations.of(context)!.healthDisclaimer,
-                      body: AppLocalizations.of(context)!.healthDisclaimerBody,
-                    ),
-                    _PolicySection(
-                      title: AppLocalizations.of(
-                        context,
-                      )!.accountResponsibility,
-                      body: AppLocalizations.of(
-                        context,
-                      )!.accountResponsibilityBody,
-                    ),
-                    _PolicySection(
-                      title: AppLocalizations.of(context)!.contactLabel,
-                      body: AppLocalizations.of(context)!.contactLabelBody,
-                    ),
-                  ],
+                const SizedBox(height: 16),
+                Expanded(
+                  child: ListView(
+                    controller: controller,
+                    children: [
+                      _PolicySection(
+                        title: AppLocalizations.of(context)!.acceptanceOfTerms,
+                        body: AppLocalizations.of(
+                          context,
+                        )!.acceptanceOfTermsBody,
+                      ),
+                      _PolicySection(
+                        title: AppLocalizations.of(context)!.useOfApp,
+                        body: AppLocalizations.of(context)!.useOfAppBody,
+                      ),
+                      _PolicySection(
+                        title: AppLocalizations.of(context)!.healthDisclaimer,
+                        body: AppLocalizations.of(
+                          context,
+                        )!.healthDisclaimerBody,
+                      ),
+                      _PolicySection(
+                        title: AppLocalizations.of(
+                          context,
+                        )!.accountResponsibility,
+                        body: AppLocalizations.of(
+                          context,
+                        )!.accountResponsibilityBody,
+                      ),
+                      _PolicySection(
+                        title: AppLocalizations.of(context)!.contactLabel,
+                        body: AppLocalizations.of(context)!.contactLabelBody,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -1819,43 +2307,52 @@ class _PrivacySecurityScreen extends StatelessWidget {
   void _showDeleteAccountDialog(BuildContext context, AppProvider provider) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          AppLocalizations.of(context)!.deleteAccountQuestion,
-          style: const TextStyle(
-            color: AppColors.error,
-            fontWeight: FontWeight.w700,
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        return AlertDialog(
+          backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
           ),
-        ),
-        content: Text(
-          AppLocalizations.of(context)!.deleteAccountBody,
-          style: const TextStyle(color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(AppLocalizations.of(context)!.cancel),
+          title: Text(
+            AppLocalizations.of(context)!.deleteAccountQuestion,
+            style: const TextStyle(
+              color: AppColors.error,
+              fontWeight: FontWeight.w700,
+            ),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-            onPressed: () async {
-              Navigator.pop(ctx);
-              try {
-                await provider.resetAllData();
-                await Supabase.instance.client.auth.admin.deleteUser(
-                  Supabase.instance.client.auth.currentUser?.id ?? '',
-                );
-              } catch (_) {
-                // If admin delete fails, sign out is sufficient for the user
-                await Supabase.instance.client.auth.signOut();
-              }
-            },
-            child: Text(AppLocalizations.of(context)!.deleteAccount),
+          content: Text(
+            AppLocalizations.of(context)!.deleteAccountBody,
+            style: TextStyle(
+              color: isDark
+                  ? AppColors.darkTextSecondary
+                  : AppColors.textSecondary,
+            ),
           ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
+              onPressed: () async {
+                Navigator.pop(ctx);
+                try {
+                  await provider.resetAllData();
+                  await Supabase.instance.client.auth.admin.deleteUser(
+                    Supabase.instance.client.auth.currentUser?.id ?? '',
+                  );
+                } catch (_) {
+                  // If admin delete fails, sign out is sufficient for the user
+                  await Supabase.instance.client.auth.signOut();
+                }
+              },
+              child: Text(AppLocalizations.of(context)!.deleteAccount),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -1868,6 +2365,7 @@ class _PolicySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
@@ -1875,8 +2373,8 @@ class _PolicySection extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              color: AppColors.textPrimary,
+            style: TextStyle(
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
@@ -1884,8 +2382,10 @@ class _PolicySection extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             body,
-            style: const TextStyle(
-              color: AppColors.textSecondary,
+            style: TextStyle(
+              color: isDark
+                  ? AppColors.darkTextSecondary
+                  : AppColors.textSecondary,
               fontSize: 13,
               height: 1.6,
             ),

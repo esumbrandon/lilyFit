@@ -47,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       extendBody: true,
       body: IndexedStack(index: _currentIndex, children: _screens),
@@ -54,12 +55,14 @@ class _HomeScreenState extends State<HomeScreen>
         minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
         child: Container(
           decoration: BoxDecoration(
-            color: AppColors.card,
+            color: isDark ? AppColors.darkCard : AppColors.card,
             borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(
+              color: isDark ? AppColors.darkBorder : AppColors.border,
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
+                color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
                 blurRadius: 24,
                 offset: const Offset(0, 10),
               ),
@@ -119,6 +122,7 @@ class _HomeScreenState extends State<HomeScreen>
     String label,
   ) {
     final isActive = _currentIndex == index;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTapDown: (_) {
         _scaleController.forward();
@@ -152,14 +156,22 @@ class _HomeScreenState extends State<HomeScreen>
             children: [
               Icon(
                 isActive ? activeIcon : inactiveIcon,
-                color: isActive ? AppColors.primary : AppColors.textTertiary,
+                color: isActive
+                    ? AppColors.primary
+                    : (isDark
+                          ? AppColors.darkTextTertiary
+                          : AppColors.textTertiary),
                 size: 24,
               ),
               const SizedBox(height: 4),
               Text(
                 label,
                 style: TextStyle(
-                  color: isActive ? AppColors.primary : AppColors.textTertiary,
+                  color: isActive
+                      ? AppColors.primary
+                      : (isDark
+                            ? AppColors.darkTextTertiary
+                            : AppColors.textTertiary),
                   fontSize: 11,
                   fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
                 ),

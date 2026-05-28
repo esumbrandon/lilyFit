@@ -26,16 +26,8 @@ void main() async {
   // Initialize notification service (must come after ensureInitialized).
   await NotificationService.initialize();
 
-  // Set system UI overlay style
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.light,
-      systemNavigationBarColor: AppColors.background,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ),
-  );
+  // System UI overlay style will be set dynamically based on theme
+  // in the MaterialApp widget
 
   final appProvider = AppProvider();
   await appProvider.initialize();
@@ -67,10 +59,35 @@ class LilyFitApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = context.watch<AppProvider>().themeMode;
+    final isDarkMode =
+        themeMode == ThemeMode.dark ||
+        (themeMode == ThemeMode.system &&
+            MediaQuery.platformBrightnessOf(context) == Brightness.dark);
+
+    // Update system UI overlay style based on theme
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDarkMode
+            ? Brightness.light
+            : Brightness.dark,
+        statusBarBrightness: isDarkMode ? Brightness.dark : Brightness.light,
+        systemNavigationBarColor: isDarkMode
+            ? AppColors.darkBackground
+            : AppColors.background,
+        systemNavigationBarIconBrightness: isDarkMode
+            ? Brightness.light
+            : Brightness.dark,
+      ),
+    );
+
     return MaterialApp(
       title: 'LilyFit',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeMode,
       // Localization configuration
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
@@ -262,7 +279,9 @@ class _AppInitializerState extends State<AppInitializer> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      isOnline ? Icons.cloud_done_rounded : Icons.cloud_off_rounded,
+                      isOnline
+                          ? Icons.cloud_done_rounded
+                          : Icons.cloud_off_rounded,
                       size: 16,
                       color: isOnline ? Colors.green : AppColors.textTertiary,
                     ),
@@ -359,7 +378,9 @@ class _AuthWrapperState extends State<AuthWrapper> {
       // Check connectivity first
       if (!provider.isOnline) {
         // Offline with no local data - show onboarding (they'll save data locally first)
-        debugPrint('Offline after auth with no local data - showing onboarding');
+        debugPrint(
+          'Offline after auth with no local data - showing onboarding',
+        );
         setState(() {
           _currentScreen = const OnboardingScreen();
           _isLoading = false;

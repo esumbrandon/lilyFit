@@ -19,7 +19,8 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
   final ConnectivityService _connectivityService = ConnectivityService();
   final OfflineQueueService _offlineQueue = OfflineQueueService();
   StreamSubscription<bool>? _connectivitySubscription;
-  Timer? _syncCompleteTimer; // Track timer so we can cancel it on lifecycle changes
+  Timer?
+  _syncCompleteTimer; // Track timer so we can cancel it on lifecycle changes
 
   UserProfile _userProfile = UserProfile();
   bool _isOnboarded = false;
@@ -32,6 +33,7 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
   bool _isOnline = true;
   SyncStatus _syncStatus = SyncStatus.idle;
   bool _isSyncingFromSupabase = false; // guard for syncFromSupabase concurrency
+  ThemeMode _themeMode = ThemeMode.system; // Default to system theme
 
   // ─── Water Reminder Settings ────────────────────────────────────
   bool _waterRemindersEnabled = false;
@@ -53,6 +55,7 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
   bool get isOnline => _isOnline;
   SyncStatus get syncStatus => _syncStatus;
   int get pendingOperationsCount => _offlineQueue.pendingCount;
+  ThemeMode get themeMode => _themeMode;
 
   // Water reminder getters
   bool get waterRemindersEnabled => _waterRemindersEnabled;
@@ -190,12 +193,15 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
         }
 
         // If we came back online and have pending operations, sync them
-        if (_isOnline && _offlineQueue.pendingCount > 0 && _syncStatus != SyncStatus.syncing) {
+        if (_isOnline &&
+            _offlineQueue.pendingCount > 0 &&
+            _syncStatus != SyncStatus.syncing) {
           debugPrint('Resumed with pending operations - syncing');
           _syncWhenOnline();
         }
       });
-    } else if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
       // Cancel timer when going to background to prevent orphaned callbacks
       _syncCompleteTimer?.cancel();
     }
@@ -296,6 +302,23 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
       _currentLocale = Locale(savedLang);
     }
 
+    // Load theme mode preference
+    final savedThemeMode = _prefs.getString('theme_mode');
+    if (savedThemeMode != null) {
+      switch (savedThemeMode) {
+        case 'light':
+          _themeMode = ThemeMode.light;
+          break;
+        case 'dark':
+          _themeMode = ThemeMode.dark;
+          break;
+        case 'system':
+        default:
+          _themeMode = ThemeMode.system;
+          break;
+      }
+    }
+
     final profileJson = _prefs.getString('userProfile');
     if (profileJson != null) {
       _userProfile = UserProfile.decode(profileJson);
@@ -346,7 +369,9 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
 
     // Prevent concurrent calls (e.g. pull-to-refresh racing with _syncWhenOnline)
     if (_isSyncingFromSupabase) {
-      debugPrint('syncFromSupabase already in progress, skipping duplicate call');
+      debugPrint(
+        'syncFromSupabase already in progress, skipping duplicate call',
+      );
       return;
     }
     _isSyncingFromSupabase = true;
@@ -826,6 +851,7 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
     _waterGoal = 2500;
     _weightEntries = [];
     _selectedDate = DateTime.now();
+    _themeMode = ThemeMode.system;
     _waterRemindersEnabled = false;
     _waterReminderIntervalMinutes = 60;
     _waterReminderStartHour = 8;
@@ -878,6 +904,25 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
       );
     }
 
+    notifyListeners();
+  }
+
+  // ─── Theme Management ──────────────────────────────────────────
+  Future<void> setThemeMode(ThemeMode mode) async {
+    _themeMode = mode;
+    String modeString;
+    switch (mode) {
+      case ThemeMode.light:
+        modeString = 'light';
+        break;
+      case ThemeMode.dark:
+        modeString = 'dark';
+        break;
+      case ThemeMode.system:
+        modeString = 'system';
+        break;
+    }
+    await _prefs.setString('theme_mode', modeString);
     notifyListeners();
   }
 }

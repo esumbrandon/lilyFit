@@ -116,6 +116,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -157,18 +158,26 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
                   child: TextField(
                     controller: _searchController,
-                    style: const TextStyle(color: AppColors.textPrimary),
+                    style: TextStyle(
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.textPrimary,
+                    ),
                     decoration: InputDecoration(
                       hintText: AppLocalizations.of(context)!.searchHint,
-                      prefixIcon: const Icon(
+                      prefixIcon: Icon(
                         Icons.search_rounded,
-                        color: AppColors.textTertiary,
+                        color: isDark
+                            ? AppColors.darkTextTertiary
+                            : AppColors.textTertiary,
                       ),
                       suffixIcon: _searchQuery.isNotEmpty
                           ? IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.clear_rounded,
-                                color: AppColors.textTertiary,
+                                color: isDark
+                                    ? AppColors.darkTextTertiary
+                                    : AppColors.textTertiary,
                               ),
                               onPressed: () {
                                 HapticFeedback.lightImpact();
@@ -197,6 +206,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                     itemBuilder: (context, index) {
                       final region = FoodDatabase.regions[index];
                       final selected = _selectedRegion == region;
+                      final isDark =
+                          Theme.of(context).brightness == Brightness.dark;
                       return GestureDetector(
                         onTap: () {
                           HapticFeedback.selectionClick();
@@ -224,12 +235,18 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             gradient: selected
                                 ? AppColors.primaryGradient
                                 : null,
-                            color: selected ? null : AppColors.card,
+                            color: selected
+                                ? null
+                                : (isDark
+                                      ? AppColors.darkCard
+                                      : AppColors.card),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: selected
                                   ? Colors.transparent
-                                  : AppColors.cardLight,
+                                  : (isDark
+                                        ? AppColors.darkCardLight
+                                        : AppColors.cardLight),
                               width: 1.5,
                             ),
                             boxShadow: selected
@@ -256,7 +273,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                                 style: TextStyle(
                                   color: selected
                                       ? AppColors.onPrimary
-                                      : AppColors.textSecondary,
+                                      : (isDark
+                                            ? AppColors.darkTextSecondary
+                                            : AppColors.textSecondary),
                                   fontWeight: selected
                                       ? FontWeight.w700
                                       : FontWeight.w500,
@@ -436,6 +455,7 @@ class _FoodItemCardState extends State<_FoodItemCard>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final opacity = CurvedAnimation(parent: _entrance, curve: Curves.easeOut);
     final slide = Tween<Offset>(
       begin: const Offset(0, 0.08),
@@ -453,9 +473,11 @@ class _FoodItemCardState extends State<_FoodItemCard>
           child: Container(
             margin: const EdgeInsets.only(bottom: 8),
             child: Material(
-              color: AppColors.card,
+              color: isDark ? AppColors.darkCard : AppColors.card,
               shape: RoundedRectangleBorder(
-                side: const BorderSide(color: AppColors.border),
+                side: BorderSide(
+                  color: isDark ? AppColors.darkBorder : AppColors.border,
+                ),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: InkWell(
@@ -479,7 +501,9 @@ class _FoodItemCardState extends State<_FoodItemCard>
                         width: 46,
                         height: 46,
                         decoration: BoxDecoration(
-                          color: AppColors.cardLight,
+                          color: isDark
+                              ? AppColors.darkCardLight
+                              : AppColors.cardLight,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         alignment: Alignment.center,
@@ -496,8 +520,10 @@ class _FoodItemCardState extends State<_FoodItemCard>
                           children: [
                             Text(
                               widget.food.name,
-                              style: const TextStyle(
-                                color: AppColors.textPrimary,
+                              style: TextStyle(
+                                color: isDark
+                                    ? AppColors.darkTextPrimary
+                                    : AppColors.textPrimary,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -505,8 +531,10 @@ class _FoodItemCardState extends State<_FoodItemCard>
                             const SizedBox(height: 3),
                             Text(
                               '${widget.food.servingSize} · ${FoodDatabase.regionLabel(widget.food.region)}',
-                              style: const TextStyle(
-                                color: AppColors.textTertiary,
+                              style: TextStyle(
+                                color: isDark
+                                    ? AppColors.darkTextTertiary
+                                    : AppColors.textTertiary,
                                 fontSize: 12,
                               ),
                             ),
@@ -566,6 +594,7 @@ class _FoodDetailSheetState extends State<_FoodDetailSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final food = widget.food;
     final cals = food.calories * _servings;
     final protein = food.protein * _servings;
@@ -573,9 +602,9 @@ class _FoodDetailSheetState extends State<_FoodDetailSheet> {
     final fat = food.fat * _servings;
 
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkSurface : AppColors.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
       padding: const EdgeInsets.all(24),
       child: Column(
