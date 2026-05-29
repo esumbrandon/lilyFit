@@ -8,6 +8,7 @@ import '../../theme/app_theme.dart';
 import '../../providers/app_provider.dart';
 import '../../models/meal_log.dart';
 import '../../utils/unit_converter.dart';
+import '../../widgets/monthly_carbs_chart.dart';
 
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
@@ -31,6 +32,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
     final provider = context.watch<AppProvider>();
     final weightEntries = provider.weightEntries;
     final weeklyCalories = provider.weeklyCalories;
+    final monthlyCarbs = provider.monthlyCarbs;
 
     return Scaffold(
       body: SafeArea(
@@ -224,6 +226,73 @@ class _ProgressScreenState extends State<ProgressScreen> {
                           provider.userProfile.targetCalories,
                           AppLocalizations.of(context)!.target,
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Monthly Carbs Chart
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.darkCard : AppColors.card,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isDark ? AppColors.darkBorder : AppColors.border,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.analytics_rounded,
+                            color: AppColors.carbs,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Monthly Carbs Tracking',
+                            style: TextStyle(
+                              color: isDark
+                                  ? AppColors.darkTextPrimary
+                                  : AppColors.textPrimary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.carbs.withAlpha(20),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              'Last 30 Days',
+                              style: TextStyle(
+                                color: AppColors.carbs,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      MonthlyCarbsChart(
+                        data: monthlyCarbs,
+                        targetCarbs: provider.userProfile.targetCarbs,
+                        isDarkMode: isDark,
                       ),
                     ],
                   ),

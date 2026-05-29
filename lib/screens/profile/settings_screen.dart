@@ -471,7 +471,7 @@ class SettingsScreen extends StatelessWidget {
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: languages.length,
-                      separatorBuilder: (_, __) => Divider(
+                      separatorBuilder: (_, _) => Divider(
                         color: isDark
                             ? AppColors.darkCardLight
                             : AppColors.cardLight,
@@ -640,7 +640,7 @@ class SettingsScreen extends StatelessWidget {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: themes.length,
-                    separatorBuilder: (_, __) => Divider(
+                    separatorBuilder: (_, _) => Divider(
                       color: isDark
                           ? AppColors.darkCardLight
                           : AppColors.cardLight,

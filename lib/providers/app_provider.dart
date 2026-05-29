@@ -880,6 +880,18 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
     });
   }
 
+  /// Returns daily carbs consumption for the past 30 days
+  List<MapEntry<DateTime, double>> get monthlyCarbs {
+    final now = DateTime.now();
+    return List.generate(30, (i) {
+      final date = now.subtract(Duration(days: 29 - i));
+      final dayCarbs = _mealLogs
+          .where((m) => _isSameDay(m.dateTime, date))
+          .fold(0.0, (sum, m) => sum + m.totalCarbs);
+      return MapEntry(date, dayCarbs);
+    });
+  }
+
   // ─── Locale Management ──────────────────────────────────────────
   Future<void> setLocale(
     Locale locale, {
