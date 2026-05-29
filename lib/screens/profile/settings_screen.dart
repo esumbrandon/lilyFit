@@ -110,7 +110,10 @@ class SettingsScreen extends StatelessWidget {
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
             // ── Support & About section ───────────────────────────────
-            _sectionHeader(context, '${AppLocalizations.of(context)!.support} & ${AppLocalizations.of(context)!.about}'),
+            _sectionHeader(
+              context,
+              '${AppLocalizations.of(context)!.support} & ${AppLocalizations.of(context)!.about}',
+            ),
             _sectionCard([
               _settingsTile(
                 icon: Icons.help_rounded,
@@ -963,7 +966,6 @@ class SettingsScreen extends StatelessWidget {
       },
     );
   }
-
 
   void _showLogoutDialog(BuildContext context) {
     showDialog(
