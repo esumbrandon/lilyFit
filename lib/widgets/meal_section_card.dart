@@ -20,13 +20,16 @@ class MealSectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final totalCalories = meals.fold(0.0, (sum, m) => sum + m.totalCalories);
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.card,
+        color: isDark ? AppColors.darkCard : AppColors.card,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.border,
+        ),
       ),
       child: Column(
         children: [
@@ -43,8 +46,8 @@ class MealSectionCard extends StatelessWidget {
                     children: [
                       Text(
                         mealType.label,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
+                        style: TextStyle(
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -52,8 +55,8 @@ class MealSectionCard extends StatelessWidget {
                       if (meals.isNotEmpty)
                         Text(
                           '${totalCalories.toInt()} kcal · ${meals.length} item${meals.length == 1 ? '' : 's'}',
-                          style: const TextStyle(
-                            color: AppColors.textTertiary,
+                          style: TextStyle(
+                            color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
                             fontSize: 12,
                           ),
                         ),
@@ -86,11 +89,16 @@ class MealSectionCard extends StatelessWidget {
 
           // Food items
           if (meals.isNotEmpty) ...[
-            const Divider(
-              color: AppColors.cardLight,
-              height: 1,
-              indent: 20,
-              endIndent: 20,
+            Builder(
+              builder: (context) {
+                final isDark = Theme.of(context).brightness == Brightness.dark;
+                return Divider(
+                  color: isDark ? AppColors.darkCardLight : AppColors.cardLight,
+                  height: 1,
+                  indent: 20,
+                  endIndent: 20,
+                );
+              },
             ),
             ...meals.map(
               (meal) => _FoodItemTile(
@@ -99,15 +107,21 @@ class MealSectionCard extends StatelessWidget {
               ),
             ),
           ] else
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
-              child: Text(
-                AppLocalizations.of(context)!.tapToAddFood,
-                style: TextStyle(
-                  color: AppColors.textTertiary.withAlpha(120),
-                  fontSize: 13,
-                ),
-              ),
+            Builder(
+              builder: (context) {
+                final isDark = Theme.of(context).brightness == Brightness.dark;
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
+                  child: Text(
+                    AppLocalizations.of(context)!.tapToAddFood,
+                    style: TextStyle(
+                      color: (isDark ? AppColors.darkTextTertiary : AppColors.textTertiary)
+                          .withAlpha(120),
+                      fontSize: 13,
+                    ),
+                  ),
+                );
+              },
             ),
         ],
       ),
@@ -123,6 +137,7 @@ class _FoodItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Dismissible(
       key: Key(meal.id),
       direction: DismissDirection.endToStart,
@@ -151,16 +166,16 @@ class _FoodItemTile extends StatelessWidget {
                 children: [
                   Text(
                     meal.food.name,
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
+                    style: TextStyle(
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   Text(
                     '${meal.servings > 1 ? '${meal.servings}x ' : ''}${meal.food.servingSize}',
-                    style: const TextStyle(
-                      color: AppColors.textTertiary,
+                    style: TextStyle(
+                      color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
                       fontSize: 12,
                     ),
                   ),

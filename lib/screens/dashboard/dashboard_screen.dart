@@ -104,13 +104,14 @@ class _DashboardScreenState extends State<DashboardScreen>
     final provider = context.watch<AppProvider>();
     final profile = provider.userProfile;
     final now = DateTime.now();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () => _refreshData(context),
           color: AppColors.primary,
-          backgroundColor: AppColors.surface,
+          backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
           child: CustomScrollView(
             slivers: [
               // Offline / Syncing / Sync-Done Banner
@@ -150,8 +151,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                           children: [
                             Text(
                               DateFormat('EEEE, MMMM d').format(now),
-                              style: const TextStyle(
-                                color: AppColors.textTertiary,
+                              style: TextStyle(
+                                color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w400,
                                 letterSpacing: 0.2,
@@ -185,8 +186,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                         // Greeting label
                         Text(
                           _greetingLabel(context, now),
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
+                          style: TextStyle(
+                            color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 0.4,
@@ -288,8 +289,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                     padding: const EdgeInsets.fromLTRB(24, 28, 24, 12),
                     child: Text(
                       AppLocalizations.of(context)!.todaysMeals,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
+                      style: TextStyle(
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),
@@ -334,8 +335,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                     padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
                     child: Text(
                       AppLocalizations.of(context)!.hydration,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
+                      style: TextStyle(
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),

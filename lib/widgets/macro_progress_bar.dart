@@ -20,11 +20,12 @@ class MacroProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = target > 0 ? (current / target).clamp(0.0, 1.0) : 0.0;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.card,
+        color: isDark ? AppColors.darkCard : AppColors.card,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: color.withAlpha(30), width: 1),
       ),
@@ -49,8 +50,8 @@ class MacroProgressBar extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 '${current.toInt()}$unit',
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
+                style: TextStyle(
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
@@ -98,7 +99,10 @@ class MacroProgressBar extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             '/ ${target.toInt()}$unit',
-            style: const TextStyle(color: AppColors.textTertiary, fontSize: 11),
+            style: TextStyle(
+              color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+              fontSize: 11,
+            ),
           ),
         ],
       ),

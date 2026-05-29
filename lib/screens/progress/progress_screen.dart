@@ -118,8 +118,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
                           const SizedBox(width: 8),
                           Text(
                             AppLocalizations.of(context)!.weightHistory,
-                            style: const TextStyle(
-                              color: AppColors.textPrimary,
+                            style: TextStyle(
+                              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -137,7 +137,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                   )!.logAtLeast2Weights,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: AppColors.textTertiary.withAlpha(
+                                    color: (isDark
+                                        ? AppColors.darkTextTertiary
+                                        : AppColors.textTertiary).withAlpha(
                                       150,
                                     ),
                                     fontSize: 14,
@@ -183,9 +185,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: AppColors.card,
+                    color: isDark ? AppColors.darkCard : AppColors.card,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(
+                      color: isDark ? AppColors.darkBorder : AppColors.border,
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,8 +204,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
                           const SizedBox(width: 8),
                           Text(
                             AppLocalizations.of(context)!.weeklyCalories,
-                            style: const TextStyle(
-                              color: AppColors.textPrimary,
+                            style: TextStyle(
+                              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -230,17 +234,19 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: AppColors.card,
+                    color: isDark ? AppColors.darkCard : AppColors.card,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(
+                      color: isDark ? AppColors.darkBorder : AppColors.border,
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         AppLocalizations.of(context)!.weeklySummary,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
+                        style: TextStyle(
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -251,13 +257,19 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         '${_weeklyAverage(weeklyCalories).toInt()} kcal',
                         AppColors.primary,
                       ),
-                      const Divider(color: AppColors.cardLight, height: 24),
+                      Divider(
+                        color: isDark ? AppColors.darkCardLight : AppColors.cardLight,
+                        height: 24,
+                      ),
                       _summaryRow(
                         AppLocalizations.of(context)!.totalMealsLogged,
                         '${provider.allMealLogs.length}',
                         AppColors.secondary,
                       ),
-                      const Divider(color: AppColors.cardLight, height: 24),
+                      Divider(
+                        color: isDark ? AppColors.darkCardLight : AppColors.cardLight,
+                        height: 24,
+                      ),
                       _summaryRow(
                         AppLocalizations.of(context)!.weightChange,
                         _weightChange(
@@ -343,83 +355,88 @@ class _ProgressScreenState extends State<ProgressScreen> {
     final maxY =
         entries.map((e) => e.weight).reduce((a, b) => a > b ? a : b) + 2;
 
-    return LineChart(
-      LineChartData(
-        gridData: FlGridData(
-          show: true,
-          drawVerticalLine: false,
-          horizontalInterval: (maxY - minY) / 4,
-          getDrawingHorizontalLine: (value) =>
-              FlLine(color: AppColors.cardLight, strokeWidth: 1),
-        ),
-        titlesData: FlTitlesData(
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 42,
-              getTitlesWidget: (value, meta) {
-                final displayValue = weightUnit == 'lbs'
-                    ? UnitConverter.kgToLbs(value)
-                    : value;
-                final unit = weightUnit == 'lbs' ? 'lbs' : 'kg';
-                return Text(
-                  '${displayValue.toInt()} $unit',
-                  style: const TextStyle(
-                    color: AppColors.textTertiary,
-                    fontSize: 10,
-                  ),
-                );
-              },
-            ),
-          ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (value, meta) {
-                final index = value.toInt();
-                if (index >= 0 && index < entries.length) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      DateFormat('d/M').format(entries[index].date),
-                      style: const TextStyle(
-                        color: AppColors.textTertiary,
-                        fontSize: 10,
-                      ),
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-          ),
-          topTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          rightTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-        ),
-        borderData: FlBorderData(show: false),
-        minY: minY,
-        maxY: maxY,
-        lineBarsData: [
-          LineChartBarData(
-            spots: spots,
-            isCurved: true,
-            color: AppColors.primary,
-            barWidth: 3,
-            isStrokeCapRound: true,
-            dotData: FlDotData(
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return LineChart(
+          LineChartData(
+            gridData: FlGridData(
               show: true,
-              getDotPainter: (p0, p1, p2, p3) => FlDotCirclePainter(
-                radius: 4,
-                color: AppColors.primary,
-                strokeWidth: 2,
-                strokeColor: AppColors.card,
+              drawVerticalLine: false,
+              horizontalInterval: (maxY - minY) / 4,
+              getDrawingHorizontalLine: (value) => FlLine(
+                color: isDark ? AppColors.darkCardLight : AppColors.cardLight,
+                strokeWidth: 1,
               ),
             ),
-            belowBarData: BarAreaData(
+            titlesData: FlTitlesData(
+              leftTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  reservedSize: 42,
+                  getTitlesWidget: (value, meta) {
+                    final displayValue = weightUnit == 'lbs'
+                        ? UnitConverter.kgToLbs(value)
+                        : value;
+                    final unit = weightUnit == 'lbs' ? 'lbs' : 'kg';
+                    return Text(
+                      '${displayValue.toInt()} $unit',
+                      style: TextStyle(
+                        color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+                        fontSize: 10,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              bottomTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  getTitlesWidget: (value, meta) {
+                    final index = value.toInt();
+                    if (index >= 0 && index < entries.length) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          DateFormat('d/M').format(entries[index].date),
+                          style: TextStyle(
+                            color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+                            fontSize: 10,
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ),
+              topTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+              rightTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+            ),
+            borderData: FlBorderData(show: false),
+            minY: minY,
+            maxY: maxY,
+            lineBarsData: [
+              LineChartBarData(
+                spots: spots,
+                isCurved: true,
+                color: AppColors.primary,
+                barWidth: 3,
+                isStrokeCapRound: true,
+                dotData: FlDotData(
+                  show: true,
+                  getDotPainter: (p0, p1, p2, p3) => FlDotCirclePainter(
+                    radius: 4,
+                    color: AppColors.primary,
+                    strokeWidth: 2,
+                    strokeColor: isDark ? AppColors.darkCard : AppColors.card,
+                  ),
+                ),
+                belowBarData: BarAreaData(
               show: true,
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -434,13 +451,14 @@ class _ProgressScreenState extends State<ProgressScreen> {
         ],
         lineTouchData: LineTouchData(
           touchTooltipData: LineTouchTooltipData(
-            getTooltipColor: (touchedSpot) => AppColors.card,
+            getTooltipColor: (touchedSpot) =>
+                isDark ? AppColors.darkCard : AppColors.card,
             tooltipRoundedRadius: 12,
             getTooltipItems: (spots) => spots.map((spot) {
               return LineTooltipItem(
                 UnitConverter.formatWeight(spot.y, weightUnit),
-                const TextStyle(
-                  color: AppColors.primary,
+                TextStyle(
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
                 ),
@@ -449,6 +467,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
           ),
         ),
       ),
+    );
+      },
     );
   }
 
@@ -461,106 +481,112 @@ class _ProgressScreenState extends State<ProgressScreen> {
         .map((e) => e.value)
         .fold(target, (a, b) => a > b ? a : b);
 
-    return BarChart(
-      BarChartData(
-        alignment: BarChartAlignment.spaceAround,
-        maxY: maxCal + 200,
-        gridData: FlGridData(
-          show: true,
-          drawVerticalLine: false,
-          horizontalInterval: maxCal / 4,
-          getDrawingHorizontalLine: (value) =>
-              FlLine(color: AppColors.cardLight, strokeWidth: 1),
-        ),
-        titlesData: FlTitlesData(
-          leftTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          rightTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          topTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (value, meta) {
-                final index = value.toInt();
-                if (index >= 0 && index < data.length) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      DateFormat('E').format(data[index].key).substring(0, 2),
-                      style: const TextStyle(
-                        color: AppColors.textTertiary,
-                        fontSize: 11,
-                      ),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return BarChart(
+          BarChartData(
+            alignment: BarChartAlignment.spaceAround,
+            maxY: maxCal + 200,
+            gridData: FlGridData(
+              show: true,
+              drawVerticalLine: false,
+              horizontalInterval: maxCal / 4,
+              getDrawingHorizontalLine: (value) => FlLine(
+                color: isDark ? AppColors.darkCardLight : AppColors.cardLight,
+                strokeWidth: 1,
+              ),
+            ),
+            titlesData: FlTitlesData(
+              leftTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+              rightTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+              topTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
+              bottomTitles: AxisTitles(
+                sideTitles: SideTitles(
+                  showTitles: true,
+                  getTitlesWidget: (value, meta) {
+                    final index = value.toInt();
+                    if (index >= 0 && index < data.length) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          DateFormat('E').format(data[index].key).substring(0, 2),
+                          style: TextStyle(
+                            color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+                            fontSize: 11,
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ),
+            ),
+            borderData: FlBorderData(show: false),
+            barGroups: data.asMap().entries.map((entry) {
+              final isToday = entry.key == data.length - 1;
+              final isOverTarget = entry.value.value > target;
+              return BarChartGroupData(
+                x: entry.key,
+                barRods: [
+                  BarChartRodData(
+                    toY: entry.value.value,
+                    width: 20,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(6),
                     ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: isOverTarget
+                          ? [AppColors.accent, AppColors.carbs]
+                          : isToday
+                          ? [AppColors.primary, AppColors.secondary]
+                          : [
+                              AppColors.primary.withAlpha(100),
+                              AppColors.secondary.withAlpha(100),
+                            ],
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
+            extraLinesData: ExtraLinesData(
+              horizontalLines: [
+                HorizontalLine(
+                  y: target,
+                  color: AppColors.carbs.withAlpha(100),
+                  strokeWidth: 1,
+                  dashArray: [8, 4],
+                  label: HorizontalLineLabel(
+                    show: true,
+                    labelResolver: (_) => targetLabel,
+                    style: const TextStyle(
+                      color: AppColors.carbs,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ),
-        borderData: FlBorderData(show: false),
-        barGroups: data.asMap().entries.map((entry) {
-          final isToday = entry.key == data.length - 1;
-          final isOverTarget = entry.value.value > target;
-          return BarChartGroupData(
-            x: entry.key,
-            barRods: [
-              BarChartRodData(
-                toY: entry.value.value,
-                width: 20,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(6),
-                ),
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: isOverTarget
-                      ? [AppColors.accent, AppColors.carbs]
-                      : isToday
-                      ? [AppColors.primary, AppColors.secondary]
-                      : [
-                          AppColors.primary.withAlpha(100),
-                          AppColors.secondary.withAlpha(100),
-                        ],
-                ),
-              ),
-            ],
-          );
-        }).toList(),
-        extraLinesData: ExtraLinesData(
-          horizontalLines: [
-            HorizontalLine(
-              y: target,
-              color: AppColors.carbs.withAlpha(100),
-              strokeWidth: 1,
-              dashArray: [8, 4],
-              label: HorizontalLineLabel(
-                show: true,
-                labelResolver: (_) => targetLabel,
-                style: const TextStyle(
-                  color: AppColors.carbs,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ],
-        ),
         barTouchData: BarTouchData(
           touchTooltipData: BarTouchTooltipData(
-            getTooltipColor: (group) => AppColors.card,
+            getTooltipColor: (group) =>
+                isDark ? AppColors.darkCard : AppColors.card,
             tooltipRoundedRadius: 12,
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
               return BarTooltipItem(
                 '${rod.toY.toInt()} kcal',
-                const TextStyle(
-                  color: AppColors.primary,
+                TextStyle(
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
                 ),
@@ -569,26 +595,36 @@ class _ProgressScreenState extends State<ProgressScreen> {
           ),
         ),
       ),
+        );
+      },
     );
   }
 
   Widget _summaryRow(String label, String value, Color color) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            color: color,
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ],
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                fontSize: 14,
+              ),
+            ),
+            Text(
+              value,
+              style: TextStyle(
+                color: color,
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -625,15 +661,16 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
     _weightController.text = displayWeight.toStringAsFixed(1);
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           AppLocalizations.of(context)!.logWeight,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
+          style: TextStyle(
+            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -642,7 +679,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
           children: [
             Text(
               AppLocalizations.of(context)!.enterCurrentWeight,
-              style: const TextStyle(color: AppColors.textSecondary),
+              style: TextStyle(
+                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+              ),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -650,23 +689,25 @@ class _ProgressScreenState extends State<ProgressScreen> {
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
-              style: const TextStyle(
-                color: AppColors.textPrimary,
+              style: TextStyle(
+                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
               ),
               textAlign: TextAlign.center,
               decoration: InputDecoration(
                 suffixText: weightUnit,
-                suffixStyle: const TextStyle(
-                  color: AppColors.textTertiary,
+                suffixStyle: TextStyle(
+                  color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
                   fontSize: 16,
                 ),
                 filled: true,
-                fillColor: AppColors.surfaceMuted,
+                fillColor: isDark ? AppColors.darkSurfaceMuted : AppColors.surfaceMuted,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: AppColors.border),
+                  borderSide: BorderSide(
+                    color: isDark ? AppColors.darkBorder : AppColors.border,
+                  ),
                 ),
               ),
             ),
@@ -677,7 +718,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
             onPressed: () => Navigator.pop(ctx),
             child: Text(
               AppLocalizations.of(context)!.cancel,
-              style: const TextStyle(color: AppColors.textTertiary),
+              style: TextStyle(
+                color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+              ),
             ),
           ),
           ElevatedButton(

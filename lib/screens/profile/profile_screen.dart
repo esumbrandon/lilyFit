@@ -138,193 +138,211 @@ class ProfileScreen extends StatelessWidget {
 
             // Body Info - Redesigned
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                child: Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: AppColors.card,
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: AppColors.cardLight.withAlpha(50),
-                      width: 1,
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+              child: Builder(
+                builder: (context) {
+                  final isDark = Theme.of(context).brightness == Brightness.dark;
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                    child: Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkCard : AppColors.card,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: (isDark ? AppColors.darkCardLight : AppColors.cardLight)
+                              .withAlpha(50),
+                          width: 1,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withAlpha(25),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Icon(
-                              Icons.person_outline_rounded,
-                              color: AppColors.primary,
-                              size: 20,
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withAlpha(25),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Icons.person_outline_rounded,
+                                  color: AppColors.primary,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                AppLocalizations.of(context)!.bodyInformation,
+                                style: TextStyle(
+                                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          _infoRow(
+                            Icons.cake_outlined,
+                            AppLocalizations.of(context)!.age,
+                            '${profile.age} ${AppLocalizations.of(context)!.years}',
+                          ),
+                          _infoRow(
+                            Icons.monitor_weight_outlined,
+                            AppLocalizations.of(context)!.weight,
+                            UnitConverter.formatWeight(
+                              profile.weight,
+                              profile.weightUnit,
                             ),
                           ),
-                          const SizedBox(width: 12),
-                          Text(
-                            AppLocalizations.of(context)!.bodyInformation,
-                            style: const TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w700,
+                          _infoRow(
+                            Icons.height_rounded,
+                            AppLocalizations.of(context)!.height,
+                            UnitConverter.formatHeight(
+                              profile.height,
+                              profile.heightUnit,
                             ),
+                          ),
+                          _infoRow(
+                            Icons.wc_rounded,
+                            AppLocalizations.of(context)!.gender,
+                            profile.gender == 'male'
+                                ? AppLocalizations.of(context)!.male
+                                : (profile.gender == 'female'
+                                      ? AppLocalizations.of(context)!.female
+                                      : AppLocalizations.of(context)!.other),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
-                      _infoRow(
-                        Icons.cake_outlined,
-                        AppLocalizations.of(context)!.age,
-                        '${profile.age} ${AppLocalizations.of(context)!.years}',
-                      ),
-                      _infoRow(
-                        Icons.monitor_weight_outlined,
-                        AppLocalizations.of(context)!.weight,
-                        UnitConverter.formatWeight(
-                          profile.weight,
-                          profile.weightUnit,
-                        ),
-                      ),
-                      _infoRow(
-                        Icons.height_rounded,
-                        AppLocalizations.of(context)!.height,
-                        UnitConverter.formatHeight(
-                          profile.height,
-                          profile.heightUnit,
-                        ),
-                      ),
-                      _infoRow(
-                        Icons.wc_rounded,
-                        AppLocalizations.of(context)!.gender,
-                        profile.gender == 'male'
-                            ? AppLocalizations.of(context)!.male
-                            : (profile.gender == 'female'
-                                  ? AppLocalizations.of(context)!.female
-                                  : AppLocalizations.of(context)!.other),
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
             ),
 
             // Daily Targets - Redesigned
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                child: Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: AppColors.card,
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: AppColors.cardLight.withAlpha(50),
-                      width: 1,
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+              child: Builder(
+                builder: (context) {
+                  final isDark = Theme.of(context).brightness == Brightness.dark;
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                    child: Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkCard : AppColors.card,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: (isDark ? AppColors.darkCardLight : AppColors.cardLight)
+                              .withAlpha(50),
+                          width: 1,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withAlpha(25),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Icon(
-                              Icons.track_changes_rounded,
-                              color: AppColors.primary,
-                              size: 20,
-                            ),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withAlpha(25),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Icons.track_changes_rounded,
+                                  color: AppColors.primary,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                AppLocalizations.of(context)!.dailyTargets,
+                                style: TextStyle(
+                                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 12),
-                          Text(
-                            AppLocalizations.of(context)!.dailyTargets,
-                            style: const TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w700,
-                            ),
+                          const SizedBox(height: 20),
+                          _targetRow(
+                            AppLocalizations.of(context)!.calories,
+                            '${profile.targetCalories.toInt()} kcal',
+                            AppColors.primary,
+                          ),
+                          _targetRow(
+                            AppLocalizations.of(context)!.protein,
+                            '${profile.targetProtein.toInt()} g',
+                            AppColors.protein,
+                          ),
+                          _targetRow(
+                            AppLocalizations.of(context)!.carbs,
+                            '${profile.targetCarbs.toInt()} g',
+                            AppColors.carbs,
+                          ),
+                          _targetRow(
+                            AppLocalizations.of(context)!.fat,
+                            '${profile.targetFat.toInt()} g',
+                            AppColors.fat,
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
-                      _targetRow(
-                        AppLocalizations.of(context)!.calories,
-                        '${profile.targetCalories.toInt()} kcal',
-                        AppColors.primary,
-                      ),
-                      _targetRow(
-                        AppLocalizations.of(context)!.protein,
-                        '${profile.targetProtein.toInt()} g',
-                        AppColors.protein,
-                      ),
-                      _targetRow(
-                        AppLocalizations.of(context)!.carbs,
-                        '${profile.targetCarbs.toInt()} g',
-                        AppColors.carbs,
-                      ),
-                      _targetRow(
-                        AppLocalizations.of(context)!.fat,
-                        '${profile.targetFat.toInt()} g',
-                        AppColors.fat,
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
             ),
 
             // Settings section
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.card,
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: AppColors.cardLight.withAlpha(50),
-                      width: 1,
+              child: Builder(
+                builder: (context) {
+                  final isDark = Theme.of(context).brightness == Brightness.dark;
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkCard : AppColors.card,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: (isDark ? AppColors.darkCardLight : AppColors.cardLight)
+                              .withAlpha(50),
+                          width: 1,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          _settingsTile(
+                            Icons.water_drop_outlined,
+                            AppLocalizations.of(context)!.waterGoal,
+                            '${provider.waterGoal.toInt()} ml/day',
+                            () {
+                              HapticFeedback.lightImpact();
+                              _showWaterGoalDialog(context, provider);
+                            },
+                          ),
+                          _divider(),
+                          _settingsTile(
+                            Icons.settings_outlined,
+                            AppLocalizations.of(context)!.settings,
+                            'Notifications, privacy, account and more',
+                            () {
+                              HapticFeedback.lightImpact();
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const SettingsScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      _settingsTile(
-                        Icons.water_drop_outlined,
-                        AppLocalizations.of(context)!.waterGoal,
-                        '${provider.waterGoal.toInt()} ml/day',
-                        () {
-                          HapticFeedback.lightImpact();
-                          _showWaterGoalDialog(context, provider);
-                        },
-                      ),
-                      _divider(),
-                      _settingsTile(
-                        Icons.settings_outlined,
-                        AppLocalizations.of(context)!.settings,
-                        'Notifications, privacy, account and more',
-                        () {
-                          HapticFeedback.lightImpact();
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const SettingsScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+                  );
+                },
               ),
             ),
 
@@ -422,16 +440,22 @@ class ProfileScreen extends StatelessWidget {
     String value,
     String subtitle,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.card, AppColors.card.withAlpha(200)],
+          colors: isDark
+              ? [AppColors.darkCard, AppColors.darkCard.withAlpha(200)]
+              : [AppColors.card, AppColors.card.withAlpha(200)],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.cardLight.withAlpha(50), width: 1),
+        border: Border.all(
+          color: (isDark ? AppColors.darkCardLight : AppColors.cardLight).withAlpha(50),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(25),
@@ -460,8 +484,8 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             label,
-            style: const TextStyle(
-              color: AppColors.textSecondary,
+            style: TextStyle(
+              color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
               fontSize: 12,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.5,
@@ -470,8 +494,8 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(
-              color: AppColors.textPrimary,
+            style: TextStyle(
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
               fontSize: 22,
               fontWeight: FontWeight.w700,
             ),
@@ -479,7 +503,10 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: TextStyle(color: AppColors.textTertiary, fontSize: 11),
+            style: TextStyle(
+              color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+              fontSize: 11,
+            ),
           ),
         ],
       ),
@@ -487,65 +514,79 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _infoRow(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Icon(icon, color: AppColors.textTertiary, size: 20),
-          const SizedBox(width: 14),
-          Text(
-            label,
-            style: const TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
-            ),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+                size: 20,
+              ),
+              const SizedBox(width: 14),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                  fontSize: 14,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                value,
+                style: TextStyle(
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
-          const Spacer(),
-          Text(
-            value,
-            style: const TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _targetRow(String label, String value, Color color) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Container(
-            width: 12,
-            height: 12,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(3),
-            ),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            children: [
+              Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                  fontSize: 14,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                value,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 14),
-          Text(
-            label,
-            style: const TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
-            ),
-          ),
-          const Spacer(),
-          Text(
-            value,
-            style: TextStyle(
-              color: color,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -556,38 +597,47 @@ class ProfileScreen extends StatelessWidget {
     VoidCallback onTap, {
     bool isDestructive = false,
   }) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-      leading: Icon(
-        icon,
-        color: isDestructive ? AppColors.error : AppColors.textSecondary,
-        size: 22,
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: isDestructive ? AppColors.error : AppColors.textPrimary,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(
-          color: isDestructive
-              ? AppColors.error.withAlpha(150)
-              : AppColors.textTertiary,
-          fontSize: 12,
-        ),
-      ),
-      trailing: Icon(
-        Icons.chevron_right_rounded,
-        color: isDestructive
-            ? AppColors.error.withAlpha(100)
-            : AppColors.textTertiary,
-        size: 20,
-      ),
-      onTap: onTap,
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+          leading: Icon(
+            icon,
+            color: isDestructive
+                ? AppColors.error
+                : (isDark ? AppColors.darkTextSecondary : AppColors.textSecondary),
+            size: 22,
+          ),
+          title: Text(
+            title,
+            style: TextStyle(
+              color: isDestructive
+                  ? AppColors.error
+                  : (isDark ? AppColors.darkTextPrimary : AppColors.textPrimary),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: TextStyle(
+              color: isDestructive
+                  ? AppColors.error.withAlpha(150)
+                  : (isDark ? AppColors.darkTextTertiary : AppColors.textTertiary),
+              fontSize: 12,
+            ),
+          ),
+          trailing: Icon(
+            Icons.chevron_right_rounded,
+            color: isDestructive
+                ? AppColors.error.withAlpha(100)
+                : (isDark ? AppColors.darkTextTertiary : AppColors.textTertiary),
+            size: 20,
+          ),
+          onTap: onTap,
+        );
+      },
     );
   }
 
@@ -639,10 +689,11 @@ class ProfileScreen extends StatelessWidget {
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setSheetState) {
+            final isDark = Theme.of(ctx).brightness == Brightness.dark;
             return Container(
-              decoration: const BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkSurface : AppColors.surface,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
               ),
               padding: EdgeInsets.fromLTRB(
                 24,
@@ -668,8 +719,8 @@ class ProfileScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                     Text(
                       AppLocalizations.of(ctx)!.editProfile,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
+                      style: TextStyle(
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
                       ),
@@ -717,8 +768,8 @@ class ProfileScreen extends StatelessWidget {
                     // Goal
                     Text(
                       AppLocalizations.of(context)!.goal,
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
+                      style: TextStyle(
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -794,29 +845,34 @@ class ProfileScreen extends StatelessWidget {
     int decimals = 0,
     required ValueChanged<double> onChanged,
   }) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Column(
           children: [
-            Text(
-              label,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w500,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  '${value.toStringAsFixed(decimals)} $unit',
+                  style: const TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
             ),
-            Text(
-              '${value.toStringAsFixed(decimals)} $unit',
-              style: const TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
+            Slider(value: value, min: min, max: max, onChanged: onChanged),
           ],
-        ),
-        Slider(value: value, min: min, max: max, onChanged: onChanged),
-      ],
+        );
+      },
     );
   }
 
@@ -828,6 +884,7 @@ class ProfileScreen extends StatelessWidget {
     ValueChanged<String> onChanged,
   ) {
     final selected = current == value;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -837,7 +894,9 @@ class ProfileScreen extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: selected ? AppColors.primary.withAlpha(25) : AppColors.card,
+            color: selected 
+                ? AppColors.primary.withAlpha(25) 
+                : (isDark ? AppColors.darkCard : AppColors.card),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: selected ? AppColors.primary : Colors.transparent,
@@ -847,7 +906,9 @@ class ProfileScreen extends StatelessWidget {
             label,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: selected ? AppColors.primary : AppColors.textSecondary,
+              color: selected 
+                  ? AppColors.primary 
+                  : (isDark ? AppColors.darkTextSecondary : AppColors.textSecondary),
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
@@ -861,23 +922,24 @@ class ProfileScreen extends StatelessWidget {
     final controller = TextEditingController(
       text: provider.waterGoal.toInt().toString(),
     );
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text(
+        title: Text(
           'Water Goal',
           style: TextStyle(
-            color: AppColors.textPrimary,
+            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
             fontWeight: FontWeight.w700,
           ),
         ),
         content: TextField(
           controller: controller,
           keyboardType: TextInputType.number,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
+          style: TextStyle(
+            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
             fontSize: 20,
             fontWeight: FontWeight.w700,
           ),
@@ -885,19 +947,23 @@ class ProfileScreen extends StatelessWidget {
           decoration: InputDecoration(
             suffixText: 'ml',
             filled: true,
-            fillColor: AppColors.surfaceMuted,
+            fillColor: isDark ? AppColors.darkSurfaceMuted : AppColors.surfaceMuted,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: AppColors.border),
+              borderSide: BorderSide(
+                color: isDark ? AppColors.darkBorder : AppColors.border,
+              ),
             ),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text(
+            child: Text(
               'Cancel',
-              style: TextStyle(color: AppColors.textTertiary),
+              style: TextStyle(
+                color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+              ),
             ),
           ),
           ElevatedButton(
