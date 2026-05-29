@@ -140,7 +140,8 @@ class ProfileScreen extends StatelessWidget {
             SliverToBoxAdapter(
               child: Builder(
                 builder: (context) {
-                  final isDark = Theme.of(context).brightness == Brightness.dark;
+                  final isDark =
+                      Theme.of(context).brightness == Brightness.dark;
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
                     child: Container(
@@ -149,8 +150,11 @@ class ProfileScreen extends StatelessWidget {
                         color: isDark ? AppColors.darkCard : AppColors.card,
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: (isDark ? AppColors.darkCardLight : AppColors.cardLight)
-                              .withAlpha(50),
+                          color:
+                              (isDark
+                                      ? AppColors.darkCardLight
+                                      : AppColors.cardLight)
+                                  .withAlpha(50),
                           width: 1,
                         ),
                       ),
@@ -175,7 +179,9 @@ class ProfileScreen extends StatelessWidget {
                               Text(
                                 AppLocalizations.of(context)!.bodyInformation,
                                 style: TextStyle(
-                                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                                  color: isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.textPrimary,
                                   fontSize: 17,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -225,7 +231,8 @@ class ProfileScreen extends StatelessWidget {
             SliverToBoxAdapter(
               child: Builder(
                 builder: (context) {
-                  final isDark = Theme.of(context).brightness == Brightness.dark;
+                  final isDark =
+                      Theme.of(context).brightness == Brightness.dark;
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
                     child: Container(
@@ -234,8 +241,11 @@ class ProfileScreen extends StatelessWidget {
                         color: isDark ? AppColors.darkCard : AppColors.card,
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: (isDark ? AppColors.darkCardLight : AppColors.cardLight)
-                              .withAlpha(50),
+                          color:
+                              (isDark
+                                      ? AppColors.darkCardLight
+                                      : AppColors.cardLight)
+                                  .withAlpha(50),
                           width: 1,
                         ),
                       ),
@@ -260,7 +270,9 @@ class ProfileScreen extends StatelessWidget {
                               Text(
                                 AppLocalizations.of(context)!.dailyTargets,
                                 style: TextStyle(
-                                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                                  color: isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.textPrimary,
                                   fontSize: 17,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -300,7 +312,8 @@ class ProfileScreen extends StatelessWidget {
             SliverToBoxAdapter(
               child: Builder(
                 builder: (context) {
-                  final isDark = Theme.of(context).brightness == Brightness.dark;
+                  final isDark =
+                      Theme.of(context).brightness == Brightness.dark;
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
                     child: Container(
@@ -308,8 +321,11 @@ class ProfileScreen extends StatelessWidget {
                         color: isDark ? AppColors.darkCard : AppColors.card,
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: (isDark ? AppColors.darkCardLight : AppColors.cardLight)
-                              .withAlpha(50),
+                          color:
+                              (isDark
+                                      ? AppColors.darkCardLight
+                                      : AppColors.cardLight)
+                                  .withAlpha(50),
                           width: 1,
                         ),
                       ),
@@ -453,7 +469,8 @@ class ProfileScreen extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? AppColors.darkCardLight : AppColors.cardLight).withAlpha(50),
+          color: (isDark ? AppColors.darkCardLight : AppColors.cardLight)
+              .withAlpha(50),
           width: 1,
         ),
         boxShadow: [
@@ -485,7 +502,9 @@ class ProfileScreen extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+              color: isDark
+                  ? AppColors.darkTextSecondary
+                  : AppColors.textSecondary,
               fontSize: 12,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.5,
@@ -504,7 +523,9 @@ class ProfileScreen extends StatelessWidget {
           Text(
             subtitle,
             style: TextStyle(
-              color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+              color: isDark
+                  ? AppColors.darkTextTertiary
+                  : AppColors.textTertiary,
               fontSize: 11,
             ),
           ),
@@ -523,14 +544,18 @@ class ProfileScreen extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+                color: isDark
+                    ? AppColors.darkTextTertiary
+                    : AppColors.textTertiary,
                 size: 20,
               ),
               const SizedBox(width: 14),
               Text(
                 label,
                 style: TextStyle(
-                  color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.textSecondary,
                   fontSize: 14,
                 ),
               ),
@@ -538,7 +563,9 @@ class ProfileScreen extends StatelessWidget {
               Text(
                 value,
                 style: TextStyle(
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -570,7 +597,9 @@ class ProfileScreen extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.textSecondary,
                   fontSize: 14,
                 ),
               ),
@@ -601,12 +630,17 @@ class ProfileScreen extends StatelessWidget {
       builder: (context) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 4,
+          ),
           leading: Icon(
             icon,
             color: isDestructive
                 ? AppColors.error
-                : (isDark ? AppColors.darkTextSecondary : AppColors.textSecondary),
+                : (isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.textSecondary),
             size: 22,
           ),
           title: Text(
@@ -614,7 +648,9 @@ class ProfileScreen extends StatelessWidget {
             style: TextStyle(
               color: isDestructive
                   ? AppColors.error
-                  : (isDark ? AppColors.darkTextPrimary : AppColors.textPrimary),
+                  : (isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary),
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
@@ -624,7 +660,9 @@ class ProfileScreen extends StatelessWidget {
             style: TextStyle(
               color: isDestructive
                   ? AppColors.error.withAlpha(150)
-                  : (isDark ? AppColors.darkTextTertiary : AppColors.textTertiary),
+                  : (isDark
+                        ? AppColors.darkTextTertiary
+                        : AppColors.textTertiary),
               fontSize: 12,
             ),
           ),
@@ -632,7 +670,9 @@ class ProfileScreen extends StatelessWidget {
             Icons.chevron_right_rounded,
             color: isDestructive
                 ? AppColors.error.withAlpha(100)
-                : (isDark ? AppColors.darkTextTertiary : AppColors.textTertiary),
+                : (isDark
+                      ? AppColors.darkTextTertiary
+                      : AppColors.textTertiary),
             size: 20,
           ),
           onTap: onTap,
@@ -693,7 +733,9 @@ class ProfileScreen extends StatelessWidget {
             return Container(
               decoration: BoxDecoration(
                 color: isDark ? AppColors.darkSurface : AppColors.surface,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(28),
+                ),
               ),
               padding: EdgeInsets.fromLTRB(
                 24,
@@ -720,7 +762,9 @@ class ProfileScreen extends StatelessWidget {
                     Text(
                       AppLocalizations.of(ctx)!.editProfile,
                       style: TextStyle(
-                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
                       ),
@@ -769,7 +813,9 @@ class ProfileScreen extends StatelessWidget {
                     Text(
                       AppLocalizations.of(context)!.goal,
                       style: TextStyle(
-                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                        color: isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.textSecondary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -856,7 +902,9 @@ class ProfileScreen extends StatelessWidget {
                 Text(
                   label,
                   style: TextStyle(
-                    color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                    color: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -894,8 +942,8 @@ class ProfileScreen extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: selected 
-                ? AppColors.primary.withAlpha(25) 
+            color: selected
+                ? AppColors.primary.withAlpha(25)
                 : (isDark ? AppColors.darkCard : AppColors.card),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
@@ -906,9 +954,11 @@ class ProfileScreen extends StatelessWidget {
             label,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: selected 
-                  ? AppColors.primary 
-                  : (isDark ? AppColors.darkTextSecondary : AppColors.textSecondary),
+              color: selected
+                  ? AppColors.primary
+                  : (isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.textSecondary),
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
@@ -947,7 +997,9 @@ class ProfileScreen extends StatelessWidget {
           decoration: InputDecoration(
             suffixText: 'ml',
             filled: true,
-            fillColor: isDark ? AppColors.darkSurfaceMuted : AppColors.surfaceMuted,
+            fillColor: isDark
+                ? AppColors.darkSurfaceMuted
+                : AppColors.surfaceMuted,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
@@ -962,7 +1014,9 @@ class ProfileScreen extends StatelessWidget {
             child: Text(
               'Cancel',
               style: TextStyle(
-                color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+                color: isDark
+                    ? AppColors.darkTextTertiary
+                    : AppColors.textTertiary,
               ),
             ),
           ),

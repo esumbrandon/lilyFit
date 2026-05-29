@@ -51,7 +51,9 @@ class MacroProgressBar extends StatelessWidget {
               Text(
                 '${current.toInt()}$unit',
                 style: TextStyle(
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
@@ -100,7 +102,9 @@ class MacroProgressBar extends StatelessWidget {
           Text(
             '/ ${target.toInt()}$unit',
             style: TextStyle(
-              color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+              color: isDark
+                  ? AppColors.darkTextTertiary
+                  : AppColors.textTertiary,
               fontSize: 11,
             ),
           ),

@@ -141,76 +141,136 @@ class _DashboardScreenState extends State<DashboardScreen>
                 child: _buildAnimatedSection(
                   0,
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Top meta row — date · streak
+                        // Date and Streak Row
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              DateFormat('EEEE, MMMM d').format(now),
-                              style: TextStyle(
-                                color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: 0.2,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  DateFormat('EEEE').format(now),
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? AppColors.darkTextPrimary
+                                        : AppColors.textPrimary,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  DateFormat('MMMM d, y').format(now),
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? AppColors.darkTextTertiary
+                                        : AppColors.textTertiary,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
                             if (provider.currentStreak > 0)
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Text(
-                                    '🔥',
-                                    style: TextStyle(fontSize: 13),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      AppColors.carbs.withAlpha(25),
+                                      AppColors.carbs.withAlpha(15),
+                                    ],
                                   ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    AppLocalizations.of(
-                                      context,
-                                    )!.dayStreak(provider.currentStreak),
-                                    style: const TextStyle(
-                                      color: AppColors.carbs,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 0.1,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: AppColors.carbs.withAlpha(60),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text(
+                                      '🔥',
+                                      style: TextStyle(fontSize: 18),
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 8),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          '${provider.currentStreak} ${provider.currentStreak == 1 ? "Day" : "Days"}',
+                                          style: const TextStyle(
+                                            color: AppColors.carbs,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w800,
+                                            height: 1,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          'Streak',
+                                          style: TextStyle(
+                                            color: AppColors.carbs.withAlpha(
+                                              180,
+                                            ),
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                           ],
                         ),
-                        const SizedBox(height: 22),
-                        // Greeting label
-                        Text(
-                          _greetingLabel(context, now),
-                          style: TextStyle(
-                            color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 0.4,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        // Name — gradient shimmer
-                        ShaderMask(
-                          shaderCallback: (bounds) =>
-                              AppColors.primaryGradient.createShader(bounds),
-                          blendMode: BlendMode.srcIn,
-                          child: Text(
-                            profile.name.isNotEmpty
-                                ? profile.name
-                                : AppLocalizations.of(context)!.user,
-                            style: const TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 32,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: -1.0,
-                              height: 1.05,
+                        const SizedBox(height: 20),
+                        // Quick Stats Row - Enhanced
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildQuickStat(
+                                context,
+                                Icons.local_fire_department_rounded,
+                                '${provider.consumedCalories.toInt()}',
+                                'Consumed',
+                                AppColors.carbs,
+                              ),
                             ),
-                          ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: _buildQuickStat(
+                                context,
+                                Icons.flag_rounded,
+                                '${profile.targetCalories.toInt()}',
+                                'Target',
+                                AppColors.primary,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: _buildQuickStat(
+                                context,
+                                Icons.restaurant_rounded,
+                                '${provider.allMealLogs.length}',
+                                'Meals',
+                                AppColors.secondary,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -290,7 +350,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                     child: Text(
                       AppLocalizations.of(context)!.todaysMeals,
                       style: TextStyle(
-                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),
@@ -336,7 +398,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                     child: Text(
                       AppLocalizations.of(context)!.hydration,
                       style: TextStyle(
-                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),
@@ -447,12 +511,48 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  String _greetingLabel(BuildContext context, DateTime now) {
-    final l10n = AppLocalizations.of(context)!;
-    final hour = now.hour;
-    if (hour < 12) return l10n.goodMorning;
-    if (hour < 17) return l10n.goodAfternoon;
-    return l10n.goodEvening;
+  Widget _buildQuickStat(
+    BuildContext context,
+    IconData icon,
+    String value,
+    String label,
+    Color color,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkCard : AppColors.card,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withAlpha(30), width: 1),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            style: TextStyle(
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              height: 1,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: TextStyle(
+              color: isDark
+                  ? AppColors.darkTextTertiary
+                  : AppColors.textTertiary,
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _navigateToFoodSearch(BuildContext context, MealType mealType) {

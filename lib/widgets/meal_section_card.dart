@@ -47,7 +47,9 @@ class MealSectionCard extends StatelessWidget {
                       Text(
                         mealType.label,
                         style: TextStyle(
-                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                          color: isDark
+                              ? AppColors.darkTextPrimary
+                              : AppColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -56,7 +58,9 @@ class MealSectionCard extends StatelessWidget {
                         Text(
                           '${totalCalories.toInt()} kcal · ${meals.length} item${meals.length == 1 ? '' : 's'}',
                           style: TextStyle(
-                            color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+                            color: isDark
+                                ? AppColors.darkTextTertiary
+                                : AppColors.textTertiary,
                             fontSize: 12,
                           ),
                         ),
@@ -115,8 +119,11 @@ class MealSectionCard extends StatelessWidget {
                   child: Text(
                     AppLocalizations.of(context)!.tapToAddFood,
                     style: TextStyle(
-                      color: (isDark ? AppColors.darkTextTertiary : AppColors.textTertiary)
-                          .withAlpha(120),
+                      color:
+                          (isDark
+                                  ? AppColors.darkTextTertiary
+                                  : AppColors.textTertiary)
+                              .withAlpha(120),
                       fontSize: 13,
                     ),
                   ),
@@ -167,7 +174,9 @@ class _FoodItemTile extends StatelessWidget {
                   Text(
                     meal.food.name,
                     style: TextStyle(
-                      color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.textPrimary,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -175,7 +184,9 @@ class _FoodItemTile extends StatelessWidget {
                   Text(
                     '${meal.servings > 1 ? '${meal.servings}x ' : ''}${meal.food.servingSize}',
                     style: TextStyle(
-                      color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+                      color: isDark
+                          ? AppColors.darkTextTertiary
+                          : AppColors.textTertiary,
                       fontSize: 12,
                     ),
                   ),

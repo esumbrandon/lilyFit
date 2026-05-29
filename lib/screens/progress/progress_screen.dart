@@ -119,7 +119,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                           Text(
                             AppLocalizations.of(context)!.weightHistory,
                             style: TextStyle(
-                              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                              color: isDark
+                                  ? AppColors.darkTextPrimary
+                                  : AppColors.textPrimary,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -137,11 +139,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                   )!.logAtLeast2Weights,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: (isDark
-                                        ? AppColors.darkTextTertiary
-                                        : AppColors.textTertiary).withAlpha(
-                                      150,
-                                    ),
+                                    color:
+                                        (isDark
+                                                ? AppColors.darkTextTertiary
+                                                : AppColors.textTertiary)
+                                            .withAlpha(150),
                                     fontSize: 14,
                                   ),
                                 ),
@@ -205,7 +207,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                           Text(
                             AppLocalizations.of(context)!.weeklyCalories,
                             style: TextStyle(
-                              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                              color: isDark
+                                  ? AppColors.darkTextPrimary
+                                  : AppColors.textPrimary,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -246,7 +250,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       Text(
                         AppLocalizations.of(context)!.weeklySummary,
                         style: TextStyle(
-                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                          color: isDark
+                              ? AppColors.darkTextPrimary
+                              : AppColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -258,7 +264,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         AppColors.primary,
                       ),
                       Divider(
-                        color: isDark ? AppColors.darkCardLight : AppColors.cardLight,
+                        color: isDark
+                            ? AppColors.darkCardLight
+                            : AppColors.cardLight,
                         height: 24,
                       ),
                       _summaryRow(
@@ -267,7 +275,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         AppColors.secondary,
                       ),
                       Divider(
-                        color: isDark ? AppColors.darkCardLight : AppColors.cardLight,
+                        color: isDark
+                            ? AppColors.darkCardLight
+                            : AppColors.cardLight,
                         height: 24,
                       ),
                       _summaryRow(
@@ -382,7 +392,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     return Text(
                       '${displayValue.toInt()} $unit',
                       style: TextStyle(
-                        color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+                        color: isDark
+                            ? AppColors.darkTextTertiary
+                            : AppColors.textTertiary,
                         fontSize: 10,
                       ),
                     );
@@ -400,7 +412,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         child: Text(
                           DateFormat('d/M').format(entries[index].date),
                           style: TextStyle(
-                            color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+                            color: isDark
+                                ? AppColors.darkTextTertiary
+                                : AppColors.textTertiary,
                             fontSize: 10,
                           ),
                         ),
@@ -437,37 +451,39 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   ),
                 ),
                 belowBarData: BarAreaData(
-              show: true,
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.primary.withAlpha(60),
-                  AppColors.primary.withAlpha(5),
-                ],
+                  show: true,
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.primary.withAlpha(60),
+                      AppColors.primary.withAlpha(5),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+            lineTouchData: LineTouchData(
+              touchTooltipData: LineTouchTooltipData(
+                getTooltipColor: (touchedSpot) =>
+                    isDark ? AppColors.darkCard : AppColors.card,
+                tooltipRoundedRadius: 12,
+                getTooltipItems: (spots) => spots.map((spot) {
+                  return LineTooltipItem(
+                    UnitConverter.formatWeight(spot.y, weightUnit),
+                    TextStyle(
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+                  );
+                }).toList(),
               ),
             ),
           ),
-        ],
-        lineTouchData: LineTouchData(
-          touchTooltipData: LineTouchTooltipData(
-            getTooltipColor: (touchedSpot) =>
-                isDark ? AppColors.darkCard : AppColors.card,
-            tooltipRoundedRadius: 12,
-            getTooltipItems: (spots) => spots.map((spot) {
-              return LineTooltipItem(
-                UnitConverter.formatWeight(spot.y, weightUnit),
-                TextStyle(
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      ),
-    );
+        );
       },
     );
   }
@@ -516,9 +532,13 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       return Padding(
                         padding: const EdgeInsets.only(top: 8),
                         child: Text(
-                          DateFormat('E').format(data[index].key).substring(0, 2),
+                          DateFormat(
+                            'E',
+                          ).format(data[index].key).substring(0, 2),
                           style: TextStyle(
-                            color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+                            color: isDark
+                                ? AppColors.darkTextTertiary
+                                : AppColors.textTertiary,
                             fontSize: 11,
                           ),
                         ),
@@ -577,24 +597,26 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 ),
               ],
             ),
-        barTouchData: BarTouchData(
-          touchTooltipData: BarTouchTooltipData(
-            getTooltipColor: (group) =>
-                isDark ? AppColors.darkCard : AppColors.card,
-            tooltipRoundedRadius: 12,
-            getTooltipItem: (group, groupIndex, rod, rodIndex) {
-              return BarTooltipItem(
-                '${rod.toY.toInt()} kcal',
-                TextStyle(
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                ),
-              );
-            },
+            barTouchData: BarTouchData(
+              touchTooltipData: BarTouchTooltipData(
+                getTooltipColor: (group) =>
+                    isDark ? AppColors.darkCard : AppColors.card,
+                tooltipRoundedRadius: 12,
+                getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                  return BarTooltipItem(
+                    '${rod.toY.toInt()} kcal',
+                    TextStyle(
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
-        ),
-      ),
         );
       },
     );
@@ -610,7 +632,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
             Text(
               label,
               style: TextStyle(
-                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                color: isDark
+                    ? AppColors.darkTextSecondary
+                    : AppColors.textSecondary,
                 fontSize: 14,
               ),
             ),
@@ -680,7 +704,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
             Text(
               AppLocalizations.of(context)!.enterCurrentWeight,
               style: TextStyle(
-                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                color: isDark
+                    ? AppColors.darkTextSecondary
+                    : AppColors.textSecondary,
               ),
             ),
             const SizedBox(height: 16),
@@ -690,7 +716,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 decimal: true,
               ),
               style: TextStyle(
-                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.textPrimary,
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
               ),
@@ -698,11 +726,15 @@ class _ProgressScreenState extends State<ProgressScreen> {
               decoration: InputDecoration(
                 suffixText: weightUnit,
                 suffixStyle: TextStyle(
-                  color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+                  color: isDark
+                      ? AppColors.darkTextTertiary
+                      : AppColors.textTertiary,
                   fontSize: 16,
                 ),
                 filled: true,
-                fillColor: isDark ? AppColors.darkSurfaceMuted : AppColors.surfaceMuted,
+                fillColor: isDark
+                    ? AppColors.darkSurfaceMuted
+                    : AppColors.surfaceMuted,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
@@ -719,7 +751,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
             child: Text(
               AppLocalizations.of(context)!.cancel,
               style: TextStyle(
-                color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+                color: isDark
+                    ? AppColors.darkTextTertiary
+                    : AppColors.textTertiary,
               ),
             ),
           ),

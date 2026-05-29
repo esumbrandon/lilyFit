@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "app.cipherwave.lilyfit"
+    namespace = "app.cypherwave.lilyfit"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "28.2.13676358"
 

@@ -42,7 +42,9 @@ class WaterTrackerCard extends StatelessWidget {
                 child: Text(
                   AppLocalizations.of(context)!.waterIntake,
                   style: TextStyle(
-                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                    color: isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -51,7 +53,9 @@ class WaterTrackerCard extends StatelessWidget {
               Text(
                 '${currentGlasses * 250} / ${goalGlasses * 250} ml',
                 style: TextStyle(
-                  color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.textSecondary,
                   fontSize: 13,
                 ),
               ),
@@ -75,7 +79,9 @@ class WaterTrackerCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: isFilled
                             ? AppColors.secondary.withAlpha(200)
-                            : (isDark ? AppColors.darkCardLight : AppColors.cardLight),
+                            : (isDark
+                                  ? AppColors.darkCardLight
+                                  : AppColors.cardLight),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: isFilled
@@ -117,7 +123,9 @@ class WaterTrackerCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: value,
-                  backgroundColor: isDark ? AppColors.darkCardLight : AppColors.cardLight,
+                  backgroundColor: isDark
+                      ? AppColors.darkCardLight
+                      : AppColors.cardLight,
                   valueColor: const AlwaysStoppedAnimation(AppColors.secondary),
                   minHeight: 6,
                 ),
@@ -138,7 +146,9 @@ class WaterTrackerCard extends StatelessWidget {
                   icon: const Icon(Icons.remove, size: 18),
                   label: Text(AppLocalizations.of(context)!.removeGlass),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                    foregroundColor: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.textSecondary,
                     side: BorderSide(
                       color: isDark ? AppColors.darkBorder : AppColors.border,
                     ),
