@@ -55,24 +55,51 @@ void main() {
 
   group('CalorieRingPainter', () {
     test('shouldRepaint returns true when progress changes', () {
-      final p1 = CalorieRingPainter(progress: 0.5);
-      final p2 = CalorieRingPainter(progress: 0.8);
+      final p1 = CalorieRingPainter(
+        progress: 0.5,
+        backgroundColor: AppColors.cardLight,
+        dotColor: AppColors.card,
+      );
+      final p2 = CalorieRingPainter(
+        progress: 0.8,
+        backgroundColor: AppColors.cardLight,
+        dotColor: AppColors.card,
+      );
       expect(p1.shouldRepaint(p2), isTrue);
     });
 
     test('shouldRepaint returns false when progress is the same', () {
-      final p1 = CalorieRingPainter(progress: 0.5);
-      final p2 = CalorieRingPainter(progress: 0.5);
+      final p1 = CalorieRingPainter(
+        progress: 0.5,
+        backgroundColor: AppColors.cardLight,
+        dotColor: AppColors.card,
+      );
+      final p2 = CalorieRingPainter(
+        progress: 0.5,
+        backgroundColor: AppColors.cardLight,
+        dotColor: AppColors.card,
+      );
       expect(p1.shouldRepaint(p2), isFalse);
     });
 
     test('clamps progress to 1.0 for drawing', () {
       // Just ensure construction with > 1.0 progress does not throw
-      expect(() => CalorieRingPainter(progress: 1.5), returnsNormally);
+      expect(
+        () => CalorieRingPainter(
+          progress: 1.5,
+          backgroundColor: AppColors.cardLight,
+          dotColor: AppColors.card,
+        ),
+        returnsNormally,
+      );
     });
 
     test('can be constructed with default colors', () {
-      final painter = CalorieRingPainter(progress: 0.75);
+      final painter = CalorieRingPainter(
+        progress: 0.75,
+        backgroundColor: AppColors.cardLight,
+        dotColor: AppColors.card,
+      );
       expect(painter.progress, 0.75);
       expect(painter.strokeWidth, 14);
     });
