@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -135,7 +136,13 @@ class OfflineQueueService {
 
       for (var operation in operationsToSync) {
         try {
-          await syncFunction(operation);
+          // Add timeout to prevent operations from hanging indefinitely
+          await syncFunction(operation).timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw TimeoutException('Operation timed out after 30 seconds');
+            },
+          );
           await _removeOperation(operation.id);
           debugPrint('Successfully synced operation: ${operation.type.name}');
         } catch (e) {

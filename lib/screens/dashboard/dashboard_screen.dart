@@ -116,7 +116,6 @@ class _DashboardScreenState extends State<DashboardScreen>
             slivers: [
               // Offline / Syncing / Sync-Done Banner
               if (!provider.isOnline ||
-                  provider.pendingOperationsCount > 0 ||
                   provider.syncStatus == SyncStatus.syncing ||
                   provider.syncStatus == SyncStatus.done)
                 SliverToBoxAdapter(
@@ -434,9 +433,9 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   Widget _buildSyncBanner(AppProvider provider) {
     final isDone = provider.syncStatus == SyncStatus.done;
-    final isSyncing =
-        provider.syncStatus == SyncStatus.syncing ||
-        (provider.isOnline && provider.pendingOperationsCount > 0);
+    final isSyncing = provider.syncStatus == SyncStatus.syncing;
+    final hasPendingItems = provider.pendingOperationsCount > 0;
+    final isOffline = !provider.isOnline;
 
     late Color bgColor;
     late Color borderColor;
@@ -459,13 +458,25 @@ class _DashboardScreenState extends State<DashboardScreen>
       message = count > 0
           ? 'Syncing $count ${count == 1 ? "item" : "items"}...'
           : 'Syncing...';
-    } else {
-      // offline
+    } else if (isOffline && hasPendingItems) {
+      // Offline with pending items
       bgColor = AppColors.accent.withAlpha(15);
       borderColor = AppColors.accent.withAlpha(45);
       iconColor = AppColors.accent;
       icon = Icons.cloud_off_rounded;
-      message = 'Offline – changes will sync when back online';
+      final count = provider.pendingOperationsCount;
+      message = 'Offline – $count ${count == 1 ? "change" : "changes"} pending';
+    } else if (isOffline) {
+      // Just offline, no pending items
+      bgColor = AppColors.accent.withAlpha(15);
+      borderColor = AppColors.accent.withAlpha(45);
+      iconColor = AppColors.accent;
+      icon = Icons.cloud_off_rounded;
+      message = 'Offline mode';
+    } else {
+      // This shouldn't happen but handle it gracefully
+      // Online with pending items but not syncing (shouldn't display)
+      return const SizedBox.shrink();
     }
 
     return Container(

@@ -179,7 +179,9 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
       _syncCompleteTimer?.cancel();
 
       // If we were showing "sync done", reset it since the timer might not have fired
-      if (_syncStatus == SyncStatus.done) {
+      // Also reset if we were stuck in syncing state (safety measure for iOS)
+      if (_syncStatus == SyncStatus.done || 
+          (_syncStatus == SyncStatus.syncing && !_isSyncingFromSupabase)) {
         _syncStatus = SyncStatus.idle;
         notifyListeners();
       }
@@ -223,7 +225,7 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
 
     try {
       // Sync pending operations from offline queue
-      await _offlineQueue.syncPendingOperations((operation) async {
+      final syncSuccess = await _offlineQueue.syncPendingOperations((operation) async {
         switch (operation.type) {
           case OfflineOperationType.addMeal:
             await _supabaseService.logMeal(
@@ -262,26 +264,54 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
         }
       });
 
-      // After syncing pending operations, sync data from Supabase
-      await syncFromSupabase();
-      debugPrint('Successfully synced all pending operations');
+      if (syncSuccess) {
+        // After syncing pending operations successfully, sync data from Supabase
+        await syncFromSupabase();
+        debugPrint('Successfully synced all pending operations');
 
-      _syncStatus = SyncStatus.done;
-      notifyListeners();
+        _syncStatus = SyncStatus.done;
+        notifyListeners();
 
-      // Auto-dismiss the "Sync complete" banner after 3 seconds
-      // Use a Timer (not Future.delayed) so we can cancel it on iOS lifecycle events
-      _syncCompleteTimer?.cancel();
-      _syncCompleteTimer = Timer(const Duration(seconds: 3), () {
-        if (_syncStatus == SyncStatus.done) {
-          _syncStatus = SyncStatus.idle;
-          notifyListeners();
-        }
-      });
+        // Auto-dismiss the "Sync complete" banner after 2.5 seconds
+        // Use a Timer (not Future.delayed) so we can cancel it on iOS lifecycle events
+        _syncCompleteTimer?.cancel();
+        _syncCompleteTimer = Timer(const Duration(milliseconds: 2500), () {
+          if (_syncStatus == SyncStatus.done) {
+            _syncStatus = SyncStatus.idle;
+            notifyListeners();
+          }
+        });
+      } else {
+        // Some operations failed to sync - reset to idle and keep operations in queue
+        debugPrint('Some operations failed to sync - will retry later');
+        _syncStatus = SyncStatus.idle;
+        notifyListeners();
+      }
     } catch (e) {
       debugPrint('Error syncing pending operations: $e');
       _syncStatus = SyncStatus.idle;
       notifyListeners();
+    }
+  }
+
+  /// Force reset sync status (useful for recovering from stuck states)
+  void resetSyncStatus() {
+    _syncCompleteTimer?.cancel();
+    _syncStatus = SyncStatus.idle;
+    _isSyncingFromSupabase = false;
+    notifyListeners();
+    debugPrint('Sync status forcefully reset');
+  }
+
+  /// Manually retry syncing pending operations
+  Future<void> retrySync() async {
+    if (_isOnline && _offlineQueue.pendingCount > 0) {
+      debugPrint('Manual sync retry initiated');
+      await _syncWhenOnline();
+    } else if (!_isOnline) {
+      debugPrint('Cannot retry sync - device is offline');
+    } else {
+      debugPrint('No pending operations to sync');
     }
   }
 
