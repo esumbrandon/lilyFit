@@ -9,7 +9,6 @@ import '../../services/language_service.dart';
 import '../../services/notification_service.dart';
 import '../../services/supabase_service.dart';
 import 'water_reminder_screen.dart';
-import '../onboarding/onboarding_screen.dart';
 import '../auth/auth_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -110,8 +109,8 @@ class SettingsScreen extends StatelessWidget {
 
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
-            // ── Support section ───────────────────────────────────────
-            _sectionHeader(context, AppLocalizations.of(context)!.support),
+            // ── Support & About section ───────────────────────────────
+            _sectionHeader(context, '${AppLocalizations.of(context)!.support} & ${AppLocalizations.of(context)!.about}'),
             _sectionCard([
               _settingsTile(
                 icon: Icons.help_rounded,
@@ -144,23 +143,6 @@ class SettingsScreen extends StatelessWidget {
                   );
                 },
               ),
-            ]),
-
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-            // ── App section ───────────────────────────────────────────
-            _sectionHeader(context, AppLocalizations.of(context)!.about),
-            _sectionCard([
-              _settingsTile(
-                icon: Icons.info_outline_rounded,
-                iconColor: const Color(0xFF818CF8),
-                title: AppLocalizations.of(context)!.about,
-                subtitle: 'Version 1.0.0',
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  _showAboutDialog(context);
-                },
-              ),
               _divider(),
               _settingsTile(
                 icon: Icons.logout_rounded,
@@ -174,15 +156,14 @@ class SettingsScreen extends StatelessWidget {
               ),
               _divider(),
               _settingsTile(
-                icon: Icons.restart_alt_rounded,
-                iconColor: AppColors.error,
-                title: AppLocalizations.of(context)!.resetData,
-                subtitle: AppLocalizations.of(context)!.resetDataDescription,
+                icon: Icons.info_outline_rounded,
+                iconColor: const Color(0xFF818CF8),
+                title: AppLocalizations.of(context)!.about,
+                subtitle: 'Version 1.0.0',
                 onTap: () {
                   HapticFeedback.lightImpact();
-                  _showResetDialog(context, provider);
+                  _showAboutDialog(context);
                 },
-                isDestructive: true,
               ),
             ]),
 
@@ -983,62 +964,6 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  void _showResetDialog(BuildContext context, AppProvider provider) {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        final isDark = Theme.of(ctx).brightness == Brightness.dark;
-        return AlertDialog(
-          backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-          title: Text(
-            AppLocalizations.of(context)!.resetAllDataQuestion,
-            style: TextStyle(
-              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          content: Text(
-            AppLocalizations.of(context)!.resetAllDataBody,
-            style: TextStyle(
-              color: isDark
-                  ? AppColors.darkTextSecondary
-                  : AppColors.textSecondary,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(
-                AppLocalizations.of(context)!.cancel,
-                style: TextStyle(
-                  color: isDark
-                      ? AppColors.darkTextTertiary
-                      : AppColors.textTertiary,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                HapticFeedback.heavyImpact();
-                await provider.resetAllData();
-                if (!context.mounted) return;
-                Navigator.pop(ctx);
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-                  (route) => false,
-                );
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-              child: Text(AppLocalizations.of(context)!.reset),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   void _showLogoutDialog(BuildContext context) {
     showDialog(
@@ -1387,10 +1312,6 @@ class _HelpSupportScreen extends StatelessWidget {
     (
       q: 'Is my data stored securely?',
       a: 'Your nutrition and profile data is stored locally on your device and optionally synced to our secure Supabase backend when you are signed in.',
-    ),
-    (
-      q: 'How do I reset all my data?',
-      a: 'Go to Profile and scroll to the bottom. Tap "Reset All Data" to clear everything and start fresh. This action cannot be undone.',
     ),
   ];
 
