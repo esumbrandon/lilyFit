@@ -180,7 +180,7 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
 
       // If we were showing "sync done", reset it since the timer might not have fired
       // Also reset if we were stuck in syncing state (safety measure for iOS)
-      if (_syncStatus == SyncStatus.done || 
+      if (_syncStatus == SyncStatus.done ||
           (_syncStatus == SyncStatus.syncing && !_isSyncingFromSupabase)) {
         _syncStatus = SyncStatus.idle;
         notifyListeners();
@@ -225,7 +225,9 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
 
     try {
       // Sync pending operations from offline queue
-      final syncSuccess = await _offlineQueue.syncPendingOperations((operation) async {
+      final syncSuccess = await _offlineQueue.syncPendingOperations((
+        operation,
+      ) async {
         switch (operation.type) {
           case OfflineOperationType.addMeal:
             await _supabaseService.logMeal(
