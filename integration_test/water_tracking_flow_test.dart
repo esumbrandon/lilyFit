@@ -170,7 +170,10 @@ void main() {
       expect(provider.waterIntake, 1000.0);
 
       // The water card should display the current intake
-      expect(find.text('1000 / ${provider.waterGoal.toInt()} ml'), findsOneWidget);
+      expect(
+        find.text('1000 / ${provider.waterGoal.toInt()} ml'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Water resets at start of new day', (tester) async {
@@ -225,7 +228,9 @@ void main() {
       expect(provider.waterProgress, 0.5); // 1500 / 3000
     });
 
-    testWidgets('Water card displays visual progress correctly', (tester) async {
+    testWidgets('Water card displays visual progress correctly', (
+      tester,
+    ) async {
       await tester.pumpWidget(createTestApp(provider, const HomeScreen()));
       await tester.pumpAndSettle();
 

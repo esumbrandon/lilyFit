@@ -109,7 +109,9 @@ void main() {
       }
     });
 
-    testWidgets('Weight entries are displayed in chronological order', (tester) async {
+    testWidgets('Weight entries are displayed in chronological order', (
+      tester,
+    ) async {
       // Add multiple weight entries
       await provider.addWeight(80.0);
       await Future.delayed(const Duration(milliseconds: 100));
@@ -159,7 +161,9 @@ void main() {
       expect(lastWeight, lessThanOrEqualTo(firstWeight));
     });
 
-    testWidgets('User can view different progress time periods', (tester) async {
+    testWidgets('User can view different progress time periods', (
+      tester,
+    ) async {
       // Add weight entries
       await provider.addWeight(80.0);
 
@@ -225,7 +229,9 @@ void main() {
       expect(currentWeight, lessThan(startWeight));
     });
 
-    testWidgets('Empty progress screen shows appropriate message', (tester) async {
+    testWidgets('Empty progress screen shows appropriate message', (
+      tester,
+    ) async {
       // Create new provider without weight entries (except initial from onboarding)
       final emptyProvider = AppProvider();
       await emptyProvider.initialize();
@@ -400,5 +406,3 @@ void main() {
     });
   });
 }
-
-

@@ -30,8 +30,6 @@ void main() {
     );
   }
 
-
-
   group('Onboarding Flow Tests', () {
     setUp(() async {
       // Clear all shared preferences before each test
@@ -43,7 +41,9 @@ void main() {
       final provider = AppProvider();
       await provider.initialize();
 
-      await tester.pumpWidget(createTestApp(provider, const OnboardingScreen()));
+      await tester.pumpWidget(
+        createTestApp(provider, const OnboardingScreen()),
+      );
       await tester.pumpAndSettle();
 
       // Verify we're on the Welcome page (page 0)
@@ -55,10 +55,7 @@ void main() {
 
       // Page 1: Name Input
       expect(find.text('What\'s your name?'), findsOneWidget);
-      await tester.enterText(
-        find.byType(TextField).first,
-        'Jane Doe',
-      );
+      await tester.enterText(find.byType(TextField).first, 'Jane Doe');
       await tester.pumpAndSettle();
 
       // Tap Next
@@ -151,11 +148,15 @@ void main() {
       expect(provider.userProfile.targetCalories, greaterThan(0));
     });
 
-    testWidgets('User can navigate back through onboarding pages', (tester) async {
+    testWidgets('User can navigate back through onboarding pages', (
+      tester,
+    ) async {
       final provider = AppProvider();
       await provider.initialize();
 
-      await tester.pumpWidget(createTestApp(provider, const OnboardingScreen()));
+      await tester.pumpWidget(
+        createTestApp(provider, const OnboardingScreen()),
+      );
       await tester.pumpAndSettle();
 
       // Go forward 2 pages
@@ -175,14 +176,19 @@ void main() {
 
       // Verify on page 1 (Name)
       expect(find.text('What\'s your name?'), findsOneWidget);
-      expect(find.text('Test User'), findsOneWidget); // Name should be preserved
+      expect(
+        find.text('Test User'),
+        findsOneWidget,
+      ); // Name should be preserved
     });
 
     testWidgets('Name validation prevents empty submission', (tester) async {
       final provider = AppProvider();
       await provider.initialize();
 
-      await tester.pumpWidget(createTestApp(provider, const OnboardingScreen()));
+      await tester.pumpWidget(
+        createTestApp(provider, const OnboardingScreen()),
+      );
       await tester.pumpAndSettle();
 
       // Skip welcome page
@@ -194,7 +200,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show error message
-      expect(find.textContaining('name'), findsAtLeastNWidgets(2)); // Label + error
+      expect(
+        find.textContaining('name'),
+        findsAtLeastNWidgets(2),
+      ); // Label + error
 
       // Should still be on name page
       expect(find.text('What\'s your name?'), findsOneWidget);
@@ -204,7 +213,9 @@ void main() {
       final provider = AppProvider();
       await provider.initialize();
 
-      await tester.pumpWidget(createTestApp(provider, const OnboardingScreen()));
+      await tester.pumpWidget(
+        createTestApp(provider, const OnboardingScreen()),
+      );
       await tester.pumpAndSettle();
 
       // The progress indicator should be present
@@ -231,7 +242,9 @@ void main() {
       final provider = AppProvider();
       await provider.initialize();
 
-      await tester.pumpWidget(createTestApp(provider, const OnboardingScreen()));
+      await tester.pumpWidget(
+        createTestApp(provider, const OnboardingScreen()),
+      );
       await tester.pumpAndSettle();
 
       // Navigate to weight page
@@ -264,5 +277,3 @@ void main() {
     });
   });
 }
-
-

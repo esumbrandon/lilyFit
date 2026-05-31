@@ -31,8 +31,6 @@ void main() {
     );
   }
 
-
-
   group('Profile Management Flow Tests', () {
     late AppProvider provider;
 
@@ -483,5 +481,3 @@ void main() {
     });
   });
 }
-
-

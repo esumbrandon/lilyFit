@@ -35,17 +35,19 @@ void main() {
     );
   }
 
-
-
   group('Complete User Journey - End to End', () {
-    testWidgets('New user: Complete onboarding and use app for a day', (tester) async {
+    testWidgets('New user: Complete onboarding and use app for a day', (
+      tester,
+    ) async {
       // Clear all data to simulate first launch
       SharedPreferences.setMockInitialValues({});
 
       final provider = AppProvider();
       await provider.initialize();
 
-      await tester.pumpWidget(createTestApp(provider, const OnboardingScreen()));
+      await tester.pumpWidget(
+        createTestApp(provider, const OnboardingScreen()),
+      );
       await tester.pumpAndSettle();
 
       // ═══════════════════════════════════════════════════════════
@@ -337,7 +339,8 @@ void main() {
       expect(find.byType(DashboardScreen), findsOneWidget);
 
       // Dashboard shows progress
-      final calorieProgress = provider.consumedCalories / provider.userProfile.targetCalories;
+      final calorieProgress =
+          provider.consumedCalories / provider.userProfile.targetCalories;
       expect(calorieProgress, greaterThan(0));
       expect(calorieProgress, lessThanOrEqualTo(2.0)); // Reasonable upper bound
     });
@@ -397,7 +400,9 @@ void main() {
       expect(provider.waterIntake, greaterThan(0));
     });
 
-    testWidgets('User corrects mistake: Remove meal and re-log', (tester) async {
+    testWidgets('User corrects mistake: Remove meal and re-log', (
+      tester,
+    ) async {
       SharedPreferences.setMockInitialValues({});
 
       final provider = AppProvider();
@@ -519,5 +524,3 @@ void main() {
     });
   });
 }
-
-

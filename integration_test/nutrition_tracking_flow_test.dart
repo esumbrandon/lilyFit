@@ -57,9 +57,7 @@ void main() {
     });
 
     testWidgets('User can search for food and view details', (tester) async {
-      await tester.pumpWidget(
-        createTestApp(provider, const HomeScreen()),
-      );
+      await tester.pumpWidget(createTestApp(provider, const HomeScreen()));
       await tester.pumpAndSettle();
 
       // Tap on Food Search tab
@@ -85,9 +83,7 @@ void main() {
     });
 
     testWidgets('User can log a meal for breakfast', (tester) async {
-      await tester.pumpWidget(
-        createTestApp(provider, const HomeScreen()),
-      );
+      await tester.pumpWidget(createTestApp(provider, const HomeScreen()));
       await tester.pumpAndSettle();
 
       final initialCalories = provider.consumedCalories;
@@ -116,7 +112,10 @@ void main() {
 
       // Verify meal was added
       expect(provider.consumedCalories, greaterThan(initialCalories));
-      expect(provider.allMealLogs.any((log) => log.mealType == MealType.breakfast), isTrue);
+      expect(
+        provider.allMealLogs.any((log) => log.mealType == MealType.breakfast),
+        isTrue,
+      );
 
       // Return to dashboard
       await tester.tap(find.text('Home'));
@@ -128,10 +127,10 @@ void main() {
       expect(provider.consumedCalories, greaterThan(0));
     });
 
-    testWidgets('User can log multiple meals throughout the day', (tester) async {
-      await tester.pumpWidget(
-        createTestApp(provider, const HomeScreen()),
-      );
+    testWidgets('User can log multiple meals throughout the day', (
+      tester,
+    ) async {
+      await tester.pumpWidget(createTestApp(provider, const HomeScreen()));
       await tester.pumpAndSettle();
 
       // Helper function to add a meal
@@ -145,7 +144,9 @@ void main() {
         await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
         // Tap on food item
-        await tester.tap(find.textContaining(foodName, findRichText: true).first);
+        await tester.tap(
+          find.textContaining(foodName, findRichText: true).first,
+        );
         await tester.pumpAndSettle();
 
         // Select meal type
@@ -178,15 +179,28 @@ void main() {
 
       // Verify all meal logs exist
       expect(provider.allMealLogs.length, 3);
-      expect(provider.allMealLogs.where((log) => log.mealType == MealType.breakfast).length, 1);
-      expect(provider.allMealLogs.where((log) => log.mealType == MealType.lunch).length, 1);
-      expect(provider.allMealLogs.where((log) => log.mealType == MealType.dinner).length, 1);
+      expect(
+        provider.allMealLogs
+            .where((log) => log.mealType == MealType.breakfast)
+            .length,
+        1,
+      );
+      expect(
+        provider.allMealLogs
+            .where((log) => log.mealType == MealType.lunch)
+            .length,
+        1,
+      );
+      expect(
+        provider.allMealLogs
+            .where((log) => log.mealType == MealType.dinner)
+            .length,
+        1,
+      );
     });
 
     testWidgets('User can adjust serving size before logging', (tester) async {
-      await tester.pumpWidget(
-        createTestApp(provider, const HomeScreen()),
-      );
+      await tester.pumpWidget(createTestApp(provider, const HomeScreen()));
       await tester.pumpAndSettle();
 
       // Go to Food Search
@@ -231,9 +245,7 @@ void main() {
     });
 
     testWidgets('User can remove a logged meal', (tester) async {
-      await tester.pumpWidget(
-        createTestApp(provider, const HomeScreen()),
-      );
+      await tester.pumpWidget(createTestApp(provider, const HomeScreen()));
       await tester.pumpAndSettle();
 
       // Add a meal first
@@ -277,10 +289,10 @@ void main() {
       }
     });
 
-    testWidgets('Calorie ring updates in real-time as meals are logged', (tester) async {
-      await tester.pumpWidget(
-        createTestApp(provider, const HomeScreen()),
-      );
+    testWidgets('Calorie ring updates in real-time as meals are logged', (
+      tester,
+    ) async {
+      await tester.pumpWidget(createTestApp(provider, const HomeScreen()));
       await tester.pumpAndSettle();
 
       // Get initial state
@@ -320,9 +332,7 @@ void main() {
     });
 
     testWidgets('Macro progress bars update with logged meals', (tester) async {
-      await tester.pumpWidget(
-        createTestApp(provider, const HomeScreen()),
-      );
+      await tester.pumpWidget(createTestApp(provider, const HomeScreen()));
       await tester.pumpAndSettle();
 
       final initialProtein = provider.consumedProtein;
