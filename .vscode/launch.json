@@ -1,0 +1,69 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Integration Tests - All",
+      "request": "launch",
+      "type": "dart",
+      "program": "integration_test/",
+      "args": []
+    },
+    {
+      "name": "Integration Tests - Onboarding Flow",
+      "request": "launch",
+      "type": "dart",
+      "program": "integration_test/onboarding_flow_test.dart",
+      "args": []
+    },
+    {
+      "name": "Integration Tests - Nutrition Tracking",
+      "request": "launch",
+      "type": "dart",
+      "program": "integration_test/nutrition_tracking_flow_test.dart",
+      "args": []
+    },
+    {
+      "name": "Integration Tests - Water Tracking",
+      "request": "launch",
+      "type": "dart",
+      "program": "integration_test/water_tracking_flow_test.dart",
+      "args": []
+    },
+    {
+      "name": "Integration Tests - Progress Flow",
+      "request": "launch",
+      "type": "dart",
+      "program": "integration_test/progress_flow_test.dart",
+      "args": []
+    },
+    {
+      "name": "Integration Tests - Profile Management",
+      "request": "launch",
+      "type": "dart",
+      "program": "integration_test/profile_flow_test.dart",
+      "args": []
+    },
+    {
+      "name": "Integration Tests - Complete User Journey",
+      "request": "launch",
+      "type": "dart",
+      "program": "integration_test/complete_user_journey_test.dart",
+      "args": []
+    },
+    {
+      "name": "Integration Tests - Legacy Tests",
+      "request": "launch",
+      "type": "dart",
+      "program": "integration_test/app_test.dart",
+      "args": []
+    },
+    {
+      "name": "LilyFit - Development",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": []
+    }
+  ]
+}
+
