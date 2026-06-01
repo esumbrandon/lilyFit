@@ -45,9 +45,17 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Android Keystore files - DO NOT COMMIT
+*.jks
+*.keystore
+upload-keystore.jks
+**/android/key.properties
+key.properties
+
 
 # Project docs
 Implementation.md
 superbase_schema.sql
 superbase_foods_schema.sql
 pubspec.lock
+
