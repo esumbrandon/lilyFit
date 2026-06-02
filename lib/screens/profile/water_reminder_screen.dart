@@ -65,6 +65,40 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
 
   // ─── Actions ────────────────────────────────────────────────────
 
+  Future<void> _handleToggleChange(bool value) async {
+    HapticFeedback.selectionClick();
+
+    // If turning on, check and request permissions first
+    if (value) {
+      // Check if permissions are already granted
+      final alreadyGranted = await NotificationService.arePermissionsGranted();
+
+      if (!alreadyGranted) {
+        // Request permissions
+        final granted = await NotificationService.requestPermissions();
+
+        if (!mounted) return;
+
+        if (!granted) {
+          // Permission denied - show error and keep toggle off
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text(
+                'Notification permission is required for water reminders.\n\nPlease enable notifications in your device Settings:\nSettings > Apps > LilyFit > Notifications',
+              ),
+              duration: const Duration(seconds: 5),
+              backgroundColor: AppColors.error,
+            ),
+          );
+          return; // Don't change the toggle state
+        }
+      }
+    }
+
+    // Permission granted or turning off - update state
+    setState(() => _enabled = value);
+  }
+
   Future<void> _pickTime(bool isStart) async {
     final initial = isStart ? _startTime : _endTime;
     final picked = await showTimePicker(context: context, initialTime: initial);
@@ -111,23 +145,6 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
     final notificationBody = AppLocalizations.of(
       context,
     )!.waterReminderNotificationBody;
-
-    // Request permission when the user turns reminders on.
-    if (_enabled) {
-      final granted = await NotificationService.requestPermissions();
-      if (!mounted) return;
-      if (!granted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Notification permission denied. Please enable it in Settings.',
-            ),
-          ),
-        );
-        setState(() => _saving = false);
-        return;
-      }
-    }
 
     final provider = context.read<AppProvider>();
     await provider.updateWaterReminders(
@@ -382,10 +399,7 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
         ),
         Switch(
           value: _enabled,
-          onChanged: (v) {
-            HapticFeedback.selectionClick();
-            setState(() => _enabled = v);
-          },
+          onChanged: _saving ? null : _handleToggleChange,
           activeThumbColor: AppColors.primary,
           activeTrackColor: AppColors.primary.withAlpha(100),
         ),

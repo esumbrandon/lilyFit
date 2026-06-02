@@ -47,6 +47,24 @@ class NotificationService {
       const InitializationSettings(android: androidInit, iOS: iosInit),
     );
 
+    if (Platform.isAndroid) {
+      final androidImpl = _plugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+
+      if (androidImpl != null) {
+        await androidImpl.createNotificationChannel(
+          const AndroidNotificationChannel(
+            _waterChannelId,
+            _waterChannelName,
+            description: _waterChannelDesc,
+            importance: Importance.defaultImportance,
+            playSound: true,
+            enableVibration: true,
+          ),
+        );
+      }
+    }
+
     _initialized = true;
   }
 
