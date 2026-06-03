@@ -9,6 +9,7 @@ import '../../widgets/calorie_ring_painter.dart';
 import '../../widgets/macro_progress_bar.dart';
 import '../../widgets/meal_section_card.dart';
 import '../../widgets/water_tracker_card.dart';
+import '../../widgets/adaptive_loading_indicator.dart';
 import '../food_search/food_search_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -500,9 +501,10 @@ class _DashboardScreenState extends State<DashboardScreen>
               ? SizedBox(
                   width: 18,
                   height: 18,
-                  child: CircularProgressIndicator(
+                  child: AdaptiveLoadingIndicator(
+                    color: iconColor,
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(iconColor),
+                    size: 18,
                   ),
                 )
               : Icon(icon, size: 18, color: iconColor),

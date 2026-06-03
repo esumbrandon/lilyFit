@@ -7,6 +7,7 @@ import '../../theme/app_theme.dart';
 import '../../services/supabase_service.dart';
 import '../../utils/validators.dart';
 import '../../providers/app_provider.dart';
+import '../../widgets/adaptive_loading_indicator.dart';
 import '../onboarding/onboarding_screen.dart';
 import '../home/home_screen.dart';
 
@@ -88,8 +89,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(color: AppColors.primary),
+      builder: (context) => const CenteredAdaptiveLoadingIndicator(
+        color: AppColors.primary,
       ),
     );
 
@@ -163,8 +164,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(color: AppColors.primary),
+      builder: (context) => const CenteredAdaptiveLoadingIndicator(
+        color: AppColors.primary,
       ),
     );
 
@@ -277,8 +278,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(color: AppColors.primary),
+      builder: (context) => const CenteredAdaptiveLoadingIndicator(
+        color: AppColors.primary,
       ),
     );
 

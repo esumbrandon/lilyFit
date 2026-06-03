@@ -8,6 +8,7 @@ import '../../providers/app_provider.dart';
 import '../../services/supabase_service.dart';
 import '../../utils/validators.dart';
 import '../../utils/unit_converter.dart';
+import '../../widgets/adaptive_loading_indicator.dart';
 import '../home/home_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -116,8 +117,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(color: AppColors.primary),
+      builder: (context) => const CenteredAdaptiveLoadingIndicator(
+        color: AppColors.primary,
       ),
     );
 

@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../models/user_profile.dart';
 import '../../providers/app_provider.dart';
 import '../../utils/unit_converter.dart';
-import 'settings_screen.dart';
+import '../../services/language_service.dart';
+import '../../services/supabase_service.dart';
+import '../../widgets/adaptive_loading_indicator.dart';
+import 'water_reminder_screen.dart';
+import '../auth/auth_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -308,7 +313,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
-            // Settings section
+            // Water Goal section
             SliverToBoxAdapter(
               child: Builder(
                 builder: (context) {
@@ -329,38 +334,138 @@ class ProfileScreen extends StatelessWidget {
                           width: 1,
                         ),
                       ),
-                      child: Column(
-                        children: [
-                          _settingsTile(
-                            Icons.water_drop_outlined,
-                            AppLocalizations.of(context)!.waterGoal,
-                            '${provider.waterGoal.toInt()} ml/day',
-                            () {
-                              HapticFeedback.lightImpact();
-                              _showWaterGoalDialog(context, provider);
-                            },
-                          ),
-                          _divider(),
-                          _settingsTile(
-                            Icons.settings_outlined,
-                            AppLocalizations.of(context)!.settings,
-                            'Notifications, privacy, account and more',
-                            () {
-                              HapticFeedback.lightImpact();
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => const SettingsScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
+                      child: _settingsTile(
+                        Icons.water_drop_outlined,
+                        AppLocalizations.of(context)!.waterGoal,
+                        '${provider.waterGoal.toInt()} ml/day',
+                        () {
+                          HapticFeedback.lightImpact();
+                          _showWaterGoalDialog(context, provider);
+                        },
                       ),
                     ),
                   );
                 },
               ),
             ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 8)),
+
+            // ── Preferences section ───────────────────────────────────
+            _sectionHeader(context, AppLocalizations.of(context)!.preferences),
+            _sectionCard([
+              _settingsListTile(
+                icon: Icons.language_rounded,
+                iconColor: AppColors.primary,
+                title: AppLocalizations.of(context)!.language,
+                subtitle: _currentLanguageName(provider),
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  _showLanguagePicker(context, provider);
+                },
+              ),
+              _divider(),
+              _settingsListTile(
+                icon: Icons.palette_rounded,
+                iconColor: const Color(0xFF8B5CF6),
+                title: 'Theme',
+                subtitle: _currentThemeName(provider),
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  _showThemePicker(context, provider);
+                },
+              ),
+              _divider(),
+              _settingsListTile(
+                icon: Icons.notifications_rounded,
+                iconColor: const Color(0xFFFBBF24),
+                title: AppLocalizations.of(context)!.notifications,
+                subtitle: provider.waterRemindersEnabled
+                    ? AppLocalizations.of(context)!.waterRemindersActive
+                    : AppLocalizations.of(context)!.configureReminders,
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const WaterReminderScreen(),
+                    ),
+                  );
+                },
+              ),
+              _divider(),
+              _settingsListTile(
+                icon: Icons.email_rounded,
+                iconColor: AppColors.secondary,
+                title: AppLocalizations.of(context)!.emailUpdate,
+                subtitle: provider.userProfile.email.isNotEmpty
+                    ? provider.userProfile.email
+                    : AppLocalizations.of(context)!.updateEmailAddress,
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  _showEmailUpdateSheet(context, provider);
+                },
+              ),
+            ]),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+            // ── Subscription section ──────────────────────────────────
+            _sectionHeader(context, AppLocalizations.of(context)!.membership),
+            _sectionCard([_premiumTile(context)]),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+            // ── Support & About section ───────────────────────────────
+            _sectionHeader(
+              context,
+              '${AppLocalizations.of(context)!.support} & ${AppLocalizations.of(context)!.about}',
+            ),
+            _sectionCard([
+              _settingsListTile(
+                icon: Icons.help_rounded,
+                iconColor: const Color(0xFF818CF8),
+                title: AppLocalizations.of(context)!.helpAndSupport,
+                subtitle: AppLocalizations.of(context)!.faqsContactUs,
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  _showComingSoonSnackBar(context, 'Help & Support');
+                },
+              ),
+              _divider(),
+              _settingsListTile(
+                icon: Icons.security_rounded,
+                iconColor: AppColors.primary,
+                title: AppLocalizations.of(context)!.privacyAndSecurity,
+                subtitle: AppLocalizations.of(context)!.dataPermissionsPrivacy,
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  _showComingSoonSnackBar(context, 'Privacy & Security');
+                },
+              ),
+              _divider(),
+              _settingsListTile(
+                icon: Icons.logout_rounded,
+                iconColor: AppColors.warning,
+                title: AppLocalizations.of(context)!.logout,
+                subtitle: 'Sign out of your account',
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  _showLogoutDialog(context);
+                },
+              ),
+              _divider(),
+              _settingsListTile(
+                icon: Icons.info_outline_rounded,
+                iconColor: const Color(0xFF818CF8),
+                title: AppLocalizations.of(context)!.about,
+                subtitle: 'Version 1.0.0',
+                onTap: () {
+                  HapticFeedback.lightImpact();
+                  _showAboutDialog(context);
+                },
+              ),
+            ]),
 
             // Edit Profile button - Moved to bottom
             SliverToBoxAdapter(
@@ -1033,6 +1138,867 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  // ── Settings Helper Methods ───────────────────────────────────────
+
+  String _currentLanguageName(AppProvider provider) {
+    final code = provider.currentLocale.languageCode;
+    final langs = LanguageService.getAvailableLanguages();
+    final match = langs.firstWhere(
+      (l) => l['code'] == code,
+      orElse: () => {'name': 'English', 'flag': '🇬🇧'},
+    );
+    return '${match['flag']} ${match['name']}';
+  }
+
+  String _currentThemeName(AppProvider provider) {
+    switch (provider.themeMode) {
+      case ThemeMode.light:
+        return '☀️ Light Mode';
+      case ThemeMode.dark:
+        return '🌙 Dark Mode';
+      case ThemeMode.system:
+        return '⚙️ System Default';
+    }
+  }
+
+  SliverToBoxAdapter _sectionHeader(BuildContext context, String title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+        child: Text(
+          title.toUpperCase(),
+          style: TextStyle(
+            color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.2,
+          ),
+        ),
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _sectionCard(List<Widget> children) {
+    return SliverToBoxAdapter(
+      child: Builder(
+        builder: (context) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Container(
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkCard : AppColors.card,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark ? AppColors.darkBorder : AppColors.border,
+                ),
+              ),
+              child: Column(children: children),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _settingsListTile({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    bool isDestructive = false,
+  }) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 4,
+          ),
+          leading: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: iconColor.withAlpha(28),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: iconColor, size: 20),
+          ),
+          title: Text(
+            title,
+            style: TextStyle(
+              color: isDestructive
+                  ? AppColors.error
+                  : (isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: TextStyle(
+              color: isDestructive
+                  ? AppColors.error.withAlpha(150)
+                  : (isDark
+                        ? AppColors.darkTextTertiary
+                        : AppColors.textTertiary),
+              fontSize: 12,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          trailing: Icon(
+            Icons.chevron_right_rounded,
+            color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+            size: 20,
+          ),
+          onTap: onTap,
+        );
+      },
+    );
+  }
+
+  Widget _premiumTile(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            HapticFeedback.lightImpact();
+            _showComingSoonSnackBar(context, 'Premium Subscription');
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            child: Row(
+              children: [
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withAlpha(30),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.workspace_premium_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Premium Subscription',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Coming soon — unlock all features',
+                        style: TextStyle(color: Colors.white70, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withAlpha(40),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'Soon',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showComingSoonSnackBar(BuildContext context, String feature) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$feature coming soon!'),
+        backgroundColor: AppColors.primary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  // ── Language Picker ───────────────────────────────────────────────
+
+  void _showLanguagePicker(BuildContext context, AppProvider provider) {
+    final languages = LanguageService.getAvailableLanguages();
+    final currentCode = provider.currentLocale.languageCode;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) {
+        String selected = currentCode;
+        return StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            final isDark = Theme.of(ctx).brightness == Brightness.dark;
+            return Container(
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkSurface : AppColors.surface,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(28),
+                ),
+              ),
+              padding: EdgeInsets.fromLTRB(
+                24,
+                24,
+                24,
+                MediaQuery.of(ctx).viewInsets.bottom +
+                    MediaQuery.of(ctx).padding.bottom +
+                    24,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? AppColors.darkCardLight
+                            : AppColors.cardLight,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    AppLocalizations.of(ctx)!.chooseLanguage,
+                    style: TextStyle(
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.textPrimary,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(ctx).size.height * 0.45,
+                    ),
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: languages.length,
+                      separatorBuilder: (_, _) => Divider(
+                        color: isDark
+                            ? AppColors.darkCardLight
+                            : AppColors.cardLight,
+                        height: 1,
+                      ),
+                      itemBuilder: (_, i) {
+                        final lang = languages[i];
+                        final code = lang['code']!;
+                        final isSelected = selected == code;
+                        return ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: Text(
+                            lang['flag']!,
+                            style: const TextStyle(fontSize: 24),
+                          ),
+                          title: Text(
+                            lang['name']!,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? AppColors.primary
+                                  : (isDark
+                                        ? AppColors.darkTextPrimary
+                                        : AppColors.textPrimary),
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                            ),
+                          ),
+                          subtitle: Text(
+                            lang['native']!,
+                            style: TextStyle(
+                              color: isDark
+                                  ? AppColors.darkTextTertiary
+                                  : AppColors.textTertiary,
+                              fontSize: 12,
+                            ),
+                          ),
+                          trailing: isSelected
+                              ? const Icon(
+                                  Icons.check_circle_rounded,
+                                  color: AppColors.primary,
+                                )
+                              : null,
+                          onTap: () => setSheetState(() => selected = code),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        HapticFeedback.mediumImpact();
+
+                        // Get localized strings for the NEW language before changing
+                        final newLocalizations = lookupAppLocalizations(
+                          Locale(selected),
+                        );
+
+                        await provider.setLocale(
+                          Locale(selected),
+                          notificationTitle:
+                              newLocalizations.waterReminderNotificationTitle,
+                          notificationBody:
+                              newLocalizations.waterReminderNotificationBody,
+                        );
+                        if (ctx.mounted) Navigator.pop(ctx);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: Text(AppLocalizations.of(ctx)!.applyLanguage),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // ── Theme Picker ──────────────────────────────────────────────────
+
+  void _showThemePicker(BuildContext context, AppProvider provider) {
+    final themes = [
+      {
+        'mode': ThemeMode.light,
+        'name': 'Light Mode',
+        'icon': '☀️',
+        'desc': 'Always use light theme',
+      },
+      {
+        'mode': ThemeMode.dark,
+        'name': 'Dark Mode',
+        'icon': '🌙',
+        'desc': 'Always use dark theme',
+      },
+      {
+        'mode': ThemeMode.system,
+        'name': 'System Default',
+        'icon': '⚙️',
+        'desc': 'Match device settings',
+      },
+    ];
+    final currentMode = provider.themeMode;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) {
+        ThemeMode selected = currentMode;
+        return StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            final isDark = Theme.of(ctx).brightness == Brightness.dark;
+            return Container(
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkSurface : AppColors.surface,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(28),
+                ),
+              ),
+              padding: EdgeInsets.fromLTRB(
+                24,
+                24,
+                24,
+                MediaQuery.of(ctx).viewInsets.bottom +
+                    MediaQuery.of(ctx).padding.bottom +
+                    24,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? AppColors.darkCardLight
+                            : AppColors.cardLight,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Choose Theme',
+                    style: TextStyle(
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.textPrimary,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: themes.length,
+                    separatorBuilder: (_, _) => Divider(
+                      color: isDark
+                          ? AppColors.darkCardLight
+                          : AppColors.cardLight,
+                      height: 1,
+                    ),
+                    itemBuilder: (_, i) {
+                      final theme = themes[i];
+                      final mode = theme['mode'] as ThemeMode;
+                      final isSelected = selected == mode;
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Text(
+                          theme['icon'] as String,
+                          style: const TextStyle(fontSize: 24),
+                        ),
+                        title: Text(
+                          theme['name'] as String,
+                          style: TextStyle(
+                            color: isSelected
+                                ? AppColors.primary
+                                : (isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.textPrimary),
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                        ),
+                        subtitle: Text(
+                          theme['desc'] as String,
+                          style: TextStyle(
+                            color: isDark
+                                ? AppColors.darkTextTertiary
+                                : AppColors.textTertiary,
+                            fontSize: 12,
+                          ),
+                        ),
+                        trailing: isSelected
+                            ? const Icon(
+                                Icons.check_circle_rounded,
+                                color: AppColors.primary,
+                              )
+                            : null,
+                        onTap: () => setSheetState(() => selected = mode),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        HapticFeedback.mediumImpact();
+                        await provider.setThemeMode(selected);
+                        if (ctx.mounted) Navigator.pop(ctx);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: const Text('Apply Theme'),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // ── Email Update ─────────────────────────────────────────────────
+
+  void _showEmailUpdateSheet(BuildContext context, AppProvider provider) {
+    final controller = TextEditingController(text: provider.userProfile.email);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) {
+        bool isSaving = false;
+        String? errorMsg;
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+
+        return StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(ctx).viewInsets.bottom,
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.darkSurface : AppColors.surface,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(28),
+                  ),
+                ),
+                padding: EdgeInsets.fromLTRB(
+                  24,
+                  24,
+                  24,
+                  MediaQuery.of(ctx).padding.bottom + 24,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? AppColors.darkCardLight
+                              : AppColors.cardLight,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Update Email',
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'A confirmation link will be sent to your new email address.',
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.textSecondary,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: controller,
+                      keyboardType: TextInputType.emailAddress,
+                      autofillHints: const [AutofillHints.email],
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
+                      ),
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(
+                          context,
+                        )!.newEmailAddress,
+                        prefixIcon: Icon(
+                          Icons.email_outlined,
+                          color: isDark
+                              ? AppColors.darkTextSecondary
+                              : AppColors.textSecondary,
+                        ),
+                        errorText: errorMsg,
+                        filled: true,
+                        fillColor: isDark
+                            ? AppColors.darkSurfaceMuted
+                            : AppColors.surfaceMuted,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide(
+                            color: isDark
+                                ? AppColors.darkBorder
+                                : AppColors.border,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: isSaving
+                            ? null
+                            : () async {
+                                final newEmail = controller.text.trim();
+                                if (newEmail.isEmpty ||
+                                    !newEmail.contains('@')) {
+                                  setSheetState(
+                                    () => errorMsg = AppLocalizations.of(
+                                      context,
+                                    )!.pleaseEnterValidEmail,
+                                  );
+                                  return;
+                                }
+                                setSheetState(() => isSaving = true);
+                                try {
+                                  await Supabase.instance.client.auth
+                                      .updateUser(
+                                        UserAttributes(email: newEmail),
+                                      );
+                                  if (ctx.mounted) {
+                                    Navigator.pop(ctx);
+                                    ScaffoldMessenger.of(ctx).showSnackBar(
+                                      SnackBar(
+                                        content: const Text(
+                                          'Confirmation email sent. Please check your inbox.',
+                                        ),
+                                        backgroundColor: AppColors.success,
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                } on AuthException catch (e) {
+                                  setSheetState(() {
+                                    isSaving = false;
+                                    errorMsg = e.message;
+                                  });
+                                } catch (_) {
+                                  setSheetState(() {
+                                    isSaving = false;
+                                    errorMsg =
+                                        'An error occurred. Please try again.';
+                                  });
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: isSaving
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: AdaptiveLoadingIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                  size: 20,
+                                ),
+                              )
+                            : Text(
+                                AppLocalizations.of(context)!.sendConfirmation,
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showAboutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        return AlertDialog(
+          backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          title: Row(
+            children: [
+              const Icon(
+                Icons.restaurant_menu_rounded,
+                color: AppColors.primary,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'LilyFit',
+                style: TextStyle(
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'A smart calorie and nutrition management app that helps you reach your health goals. Features global food database with strong support for African cuisines.',
+                style: TextStyle(
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Version 1.0.0',
+                style: TextStyle(
+                  color: isDark
+                      ? AppColors.darkTextTertiary
+                      : AppColors.textTertiary,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(AppLocalizations.of(context)!.close),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        return AlertDialog(
+          backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          title: Text(
+            AppLocalizations.of(context)!.logout,
+            style: TextStyle(
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          content: Text(
+            AppLocalizations.of(context)!.logoutConfirm,
+            style: TextStyle(
+              color: isDark
+                  ? AppColors.darkTextSecondary
+                  : AppColors.textSecondary,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: TextStyle(
+                  color: isDark
+                      ? AppColors.darkTextTertiary
+                      : AppColors.textTertiary,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                HapticFeedback.mediumImpact();
+                Navigator.pop(ctx);
+
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => const CenteredAdaptiveLoadingIndicator(
+                    color: AppColors.primary,
+                  ),
+                );
+
+                try {
+                  await SupabaseService().signOut();
+
+                  if (!context.mounted) return;
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const AuthScreen()),
+                    (route) => false,
+                  );
+                } catch (e) {
+                  if (!context.mounted) return;
+                  Navigator.of(context).pop();
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.logoutFailed(e.toString()),
+                      ),
+                      backgroundColor: AppColors.error,
+                    ),
+                  );
+                }
+              },
+              child: Text(AppLocalizations.of(context)!.logout),
+            ),
+          ],
+        );
+      },
     );
   }
 }

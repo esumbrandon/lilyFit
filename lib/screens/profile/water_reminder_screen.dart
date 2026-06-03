@@ -5,6 +5,7 @@ import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/app_provider.dart';
 import '../../services/notification_service.dart';
+import '../../widgets/adaptive_loading_indicator.dart';
 
 class WaterReminderScreen extends StatefulWidget {
   const WaterReminderScreen({super.key});
@@ -40,6 +41,17 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
   }
 
   // ─── Helpers ────────────────────────────────────────────────────
+
+  bool get _isDark => Theme.of(context).brightness == Brightness.dark;
+
+  Color get _backgroundColor => _isDark ? AppColors.darkBackground : AppColors.background;
+  Color get _surfaceColor => _isDark ? AppColors.darkSurface : AppColors.surface;
+  Color get _cardColor => _isDark ? AppColors.darkCard : AppColors.card;
+  Color get _cardLightColor => _isDark ? AppColors.darkCardLight : AppColors.cardLight;
+  Color get _borderColor => _isDark ? AppColors.darkBorder : AppColors.border;
+  Color get _textPrimaryColor => _isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+  Color get _textSecondaryColor => _isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+  Color get _textTertiaryColor => _isDark ? AppColors.darkTextTertiary : AppColors.textTertiary;
 
   String _formatInterval(int minutes) {
     if (minutes < 60) return 'Every $minutes min';
@@ -193,17 +205,17 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: _backgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: _surfaceColor,
         title: Text(
           AppLocalizations.of(context)!.waterRemindersTitle,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
+          style: TextStyle(
+            color: _textPrimaryColor,
             fontWeight: FontWeight.w700,
           ),
         ),
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        iconTheme: IconThemeData(color: _textPrimaryColor),
         elevation: 0,
       ),
       body: SafeArea(
@@ -260,9 +272,10 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
+                        child: AdaptiveLoadingIndicator(
                           color: Colors.white,
+                          strokeWidth: 2,
+                          size: 20,
                         ),
                       )
                     : const Text(
@@ -330,9 +343,9 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.card,
+        color: _cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: _borderColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -340,8 +353,8 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
           if (title != null) ...[
             Text(
               title,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
+              style: TextStyle(
+                color: _textSecondaryColor,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
@@ -364,24 +377,24 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (_enabled ? AppColors.primary : AppColors.textTertiary)
+                color: (_enabled ? AppColors.primary : _textTertiaryColor)
                     .withAlpha(30),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 Icons.notifications_active_rounded,
-                color: _enabled ? AppColors.primary : AppColors.textTertiary,
+                color: _enabled ? AppColors.primary : _textTertiaryColor,
                 size: 22,
               ),
             ),
             const SizedBox(width: 14),
-            const Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Enable Reminders',
                   style: TextStyle(
-                    color: AppColors.textPrimary,
+                    color: _textPrimaryColor,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -389,7 +402,7 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
                 Text(
                   'Get notified to drink water',
                   style: TextStyle(
-                    color: AppColors.textSecondary,
+                    color: _textSecondaryColor,
                     fontSize: 12,
                   ),
                 ),
@@ -422,16 +435,16 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
             duration: const Duration(milliseconds: 150),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
-              color: selected ? AppColors.primary : AppColors.cardLight,
+              color: selected ? AppColors.primary : _cardLightColor,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: selected ? AppColors.primary : AppColors.border,
+                color: selected ? AppColors.primary : _borderColor,
               ),
             ),
             child: Text(
               _formatInterval(minutes),
               style: TextStyle(
-                color: selected ? AppColors.onPrimary : AppColors.textSecondary,
+                color: selected ? AppColors.onPrimary : _textSecondaryColor,
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                 fontSize: 13,
               ),
@@ -447,9 +460,9 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
       children: [
         Expanded(child: _buildTimeTile('Start', _startTime, true)),
         const SizedBox(width: 12),
-        const Icon(
+        Icon(
           Icons.arrow_forward_rounded,
-          color: AppColors.textTertiary,
+          color: _textTertiaryColor,
           size: 20,
         ),
         const SizedBox(width: 12),
@@ -467,16 +480,16 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
         decoration: BoxDecoration(
-          color: AppColors.cardLight,
+          color: _cardLightColor,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: _borderColor),
         ),
         child: Column(
           children: [
             Text(
               label,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
+              style: TextStyle(
+                color: _textSecondaryColor,
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
               ),
@@ -484,8 +497,8 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
             const SizedBox(height: 4),
             Text(
               _formatTime(time),
-              style: const TextStyle(
-                color: AppColors.textPrimary,
+              style: TextStyle(
+                color: _textPrimaryColor,
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
               ),

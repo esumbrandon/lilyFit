@@ -5,6 +5,7 @@ import '../../services/language_service.dart';
 import '../../services/location_service.dart';
 import '../../providers/app_provider.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/adaptive_loading_indicator.dart';
 
 class LanguageSelectionScreen extends StatefulWidget {
   const LanguageSelectionScreen({super.key});
@@ -252,9 +253,10 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
               const SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(
+                child: AdaptiveLoadingIndicator(
+                  color: AppColors.primary,
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                  size: 20,
                 ),
               ),
               const SizedBox(width: 12),

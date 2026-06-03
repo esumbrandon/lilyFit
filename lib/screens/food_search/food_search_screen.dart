@@ -7,6 +7,7 @@ import '../../models/food_item.dart';
 import '../../models/meal_log.dart';
 import '../../data/food_database.dart';
 import '../../providers/app_provider.dart';
+import '../../widgets/adaptive_loading_indicator.dart';
 
 class FoodSearchScreen extends StatefulWidget {
   final MealType? mealType;
@@ -131,9 +132,10 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                 ? const SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
+                    child: AdaptiveLoadingIndicator(
                       color: AppColors.primary,
+                      strokeWidth: 2,
+                      size: 20,
                     ),
                   )
                 : const Icon(Icons.refresh_rounded),
@@ -148,8 +150,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
+          ? const CenteredAdaptiveLoadingIndicator(
+              color: AppColors.primary,
             )
           : Column(
               children: [

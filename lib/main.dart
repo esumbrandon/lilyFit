@@ -13,6 +13,7 @@ import 'screens/onboarding/onboarding_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/language_selection/language_selection_screen.dart';
 import 'l10n/app_localizations.dart';
+import 'widgets/adaptive_loading_indicator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -263,7 +264,7 @@ class _AppInitializerState extends State<AppInitializer> {
                   color: AppColors.primary,
                 ),
                 const SizedBox(height: 24),
-                const CircularProgressIndicator(color: AppColors.primary),
+                const AdaptiveLoadingIndicator(color: AppColors.primary),
                 const SizedBox(height: 16),
                 const Text(
                   'LilyFit',
@@ -446,8 +447,8 @@ class _AuthWrapperState extends State<AuthWrapper> {
       return Scaffold(
         body: Container(
           decoration: const BoxDecoration(gradient: AppColors.surfaceGradient),
-          child: const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
+          child: const CenteredAdaptiveLoadingIndicator(
+            color: AppColors.primary,
           ),
         ),
       );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/supabase_service.dart';
 import '../../models/user_profile.dart';
+import '../../widgets/adaptive_loading_indicator.dart';
 
 /// Example page showing how to use SupabaseService
 /// This is for reference - integrate these patterns into your existing screens
@@ -210,7 +211,7 @@ class _SupabaseExamplePageState extends State<SupabaseExamplePage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Supabase Examples')),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const CenteredAdaptiveLoadingIndicator()
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
