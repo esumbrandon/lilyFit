@@ -1496,13 +1496,13 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  gradient: AppColors.primaryGradient,
+                  color: AppColors.primary,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      spreadRadius: 1,
+                      color: AppColors.primary.withValues(alpha: 0.25),
+                      blurRadius: 6,
+                      spreadRadius: 0,
                     ),
                   ],
                 ),

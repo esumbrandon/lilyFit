@@ -45,33 +45,38 @@ class AppColors {
   static const Color warning = Color(0xFFF59E0B);
   static const Color error = Color(0xFFEF4444);
 
-  // Gradients
+  // Gradients - Professional and subtle
+  // Primary: Clean green gradient for a fresh, healthy look
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [Color(0xFF16A34A), Color(0xFFF97316)],
+    colors: [Color(0xFF16A34A), Color(0xFF15803D)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
+  // Accent: Warm orange gradient (use sparingly for highlights)
   static const LinearGradient accentGradient = LinearGradient(
-    colors: [Color(0xFFF97316), Color(0xFFF59E0B)],
+    colors: [Color(0xFFF97316), Color(0xFFEA580C)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
+  // Surface: Subtle white gradient for backgrounds
   static const LinearGradient surfaceGradient = LinearGradient(
     colors: [Color(0xFFFFFFFF), Color(0xFFF8FAFC)],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
 
-  static const LinearGradient warmGradient = LinearGradient(
-    colors: [Color(0xFFF97316), Color(0xFFFB923C)],
+  // Warm: Bright green gradient for success/positive actions
+  static const LinearGradient successGradient = LinearGradient(
+    colors: [Color(0xFF16A34A), Color(0xFF22C55E)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  static const LinearGradient coolGradient = LinearGradient(
-    colors: [Color(0xFF16A34A), Color(0xFF4ADE80)],
+  // Cool: Light green gradient for subtle highlights
+  static const LinearGradient lightGreenGradient = LinearGradient(
+    colors: [Color(0xFF22C55E), Color(0xFF4ADE80)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );

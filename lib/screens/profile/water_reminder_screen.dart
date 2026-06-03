@@ -300,7 +300,7 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: AppColors.coolGradient,
+        gradient: AppColors.lightGreenGradient,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Row(

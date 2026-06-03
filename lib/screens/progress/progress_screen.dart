@@ -635,12 +635,12 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
                       colors: isOverTarget
-                          ? [AppColors.accent, AppColors.carbs]
+                          ? [AppColors.carbs, AppColors.carbs.withAlpha(200)]
                           : isToday
-                          ? [AppColors.primary, AppColors.secondary]
+                          ? [AppColors.primary, AppColors.primary.withAlpha(200)]
                           : [
                               AppColors.primary.withAlpha(100),
-                              AppColors.secondary.withAlpha(100),
+                              AppColors.primary.withAlpha(150),
                             ],
                     ),
                   ),

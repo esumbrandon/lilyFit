@@ -548,12 +548,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        AppColors.secondary.withValues(alpha: 0.2),
-                        AppColors.secondary.withValues(alpha: 0.12),
-                      ],
-                    ),
+                    color: AppColors.secondary.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: AppColors.secondary.withValues(alpha: 0.5),
