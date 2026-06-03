@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
 import 'dart:math' as math;
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
@@ -351,6 +352,110 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    HapticFeedback.mediumImpact();
+
+    // Show loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const CenteredAdaptiveLoadingIndicator(
+        color: AppColors.primary,
+      ),
+    );
+
+    try {
+      final response = await _supabaseService.signInWithGoogle();
+
+      if (!mounted) return;
+      Navigator.of(context).pop(); // Close loading
+
+      if (response.user != null) {
+        // Check if user has completed onboarding
+        final profile = await _supabaseService.getUserProfile();
+
+        if (!mounted) return;
+        if (profile != null) {
+          // Returning user with profile - load into app state
+          final provider = context.read<AppProvider>();
+          await provider.completeOnboarding(profile);
+
+          // Navigate to home (replace entire navigation stack)
+          if (!mounted) return;
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const HomeScreen()),
+            (route) => false,
+          );
+        } else {
+          // User exists but no profile, complete onboarding (new user)
+          if (!mounted) return;
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+          );
+        }
+      }
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.of(context).pop(); // Close loading
+      _showErrorDialog(
+        'Google Sign-In Failed',
+        e.toString().replaceAll('Exception: ', ''),
+      );
+    }
+  }
+
+  Future<void> _handleAppleSignIn() async {
+    HapticFeedback.mediumImpact();
+
+    // Show loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const CenteredAdaptiveLoadingIndicator(
+        color: AppColors.primary,
+      ),
+    );
+
+    try {
+      final response = await _supabaseService.signInWithApple();
+
+      if (!mounted) return;
+      Navigator.of(context).pop(); // Close loading
+
+      if (response.user != null) {
+        // Check if user has completed onboarding
+        final profile = await _supabaseService.getUserProfile();
+
+        if (!mounted) return;
+        if (profile != null) {
+          // Returning user with profile - load into app state
+          final provider = context.read<AppProvider>();
+          await provider.completeOnboarding(profile);
+
+          // Navigate to home (replace entire navigation stack)
+          if (!mounted) return;
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const HomeScreen()),
+            (route) => false,
+          );
+        } else {
+          // User exists but no profile, complete onboarding (new user)
+          if (!mounted) return;
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+          );
+        }
+      }
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.of(context).pop(); // Close loading
+      _showErrorDialog(
+        'Apple Sign-In Failed',
+        e.toString().replaceAll('Exception: ', ''),
+      );
+    }
   }
 
   @override
@@ -753,6 +858,93 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 ),
               ),
             ),
+            SizedBox(height: isSmallScreen ? 20 : 24),
+
+            // Divider with "OR"
+            Row(
+              children: [
+                const Expanded(child: Divider(color: AppColors.border)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'OR',
+                    style: TextStyle(
+                      color: AppColors.textTertiary,
+                      fontSize: isSmallScreen ? 12 : 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const Expanded(child: Divider(color: AppColors.border)),
+              ],
+            ),
+            SizedBox(height: isSmallScreen ? 16 : 20),
+
+            // Google Sign-In Button
+            SizedBox(
+              height: isSmallScreen ? 48 : 52,
+              child: OutlinedButton.icon(
+                onPressed: _handleGoogleSignIn,
+                icon: Image.asset(
+                  'assets/branding/google_logo.png',
+                  height: 20,
+                  width: 20,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(
+                      Icons.g_mobiledata_rounded,
+                      color: AppColors.primary,
+                      size: 24,
+                    );
+                  },
+                ),
+                label: Text(
+                  'Continue with Google',
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 14 : 15,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: AppColors.border, width: 1.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  backgroundColor: AppColors.card,
+                ),
+              ),
+            ),
+
+            // Apple Sign-In Button (iOS only)
+            if (Platform.isIOS) ...[
+              SizedBox(height: isSmallScreen ? 12 : 14),
+              SizedBox(
+                height: isSmallScreen ? 48 : 52,
+                child: OutlinedButton.icon(
+                  onPressed: _handleAppleSignIn,
+                  icon: const Icon(
+                    Icons.apple_rounded,
+                    color: AppColors.textPrimary,
+                    size: 22,
+                  ),
+                  label: Text(
+                    'Continue with Apple',
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 14 : 15,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: AppColors.border, width: 1.5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    backgroundColor: AppColors.card,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -969,6 +1161,93 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 ),
               ),
             ),
+            SizedBox(height: isSmallScreen ? 20 : 24),
+
+            // Divider with "OR"
+            Row(
+              children: [
+                const Expanded(child: Divider(color: AppColors.border)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'OR',
+                    style: TextStyle(
+                      color: AppColors.textTertiary,
+                      fontSize: isSmallScreen ? 12 : 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const Expanded(child: Divider(color: AppColors.border)),
+              ],
+            ),
+            SizedBox(height: isSmallScreen ? 16 : 20),
+
+            // Google Sign-In Button
+            SizedBox(
+              height: isSmallScreen ? 48 : 52,
+              child: OutlinedButton.icon(
+                onPressed: _handleGoogleSignIn,
+                icon: Image.asset(
+                  'assets/branding/google_logo.png',
+                  height: 20,
+                  width: 20,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(
+                      Icons.g_mobiledata_rounded,
+                      color: AppColors.primary,
+                      size: 24,
+                    );
+                  },
+                ),
+                label: Text(
+                  'Continue with Google',
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 14 : 15,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: AppColors.border, width: 1.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  backgroundColor: AppColors.card,
+                ),
+              ),
+            ),
+
+            // Apple Sign-In Button (iOS only)
+            if (Platform.isIOS) ...[
+              SizedBox(height: isSmallScreen ? 12 : 14),
+              SizedBox(
+                height: isSmallScreen ? 48 : 52,
+                child: OutlinedButton.icon(
+                  onPressed: _handleAppleSignIn,
+                  icon: const Icon(
+                    Icons.apple_rounded,
+                    color: AppColors.textPrimary,
+                    size: 22,
+                  ),
+                  label: Text(
+                    'Continue with Apple',
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 14 : 15,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: AppColors.border, width: 1.5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    backgroundColor: AppColors.card,
+                  ),
+                ),
+              ),
+            ],
             SizedBox(height: isSmallScreen ? 8 : 12),
           ],
         ),

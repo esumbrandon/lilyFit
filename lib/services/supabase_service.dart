@@ -1,4 +1,10 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'dart:math';
+import 'package:crypto/crypto.dart';
 import '../models/user_profile.dart';
 
 /// Service to interact with Supabase backend
@@ -98,6 +104,116 @@ class SupabaseService {
   /// Send password reset email
   Future<void> resetPassword(String email) async {
     await _supabase.auth.resetPasswordForEmail(email);
+  }
+
+  /// Sign in with Google
+  /// Only available on iOS and Android
+  Future<AuthResponse> signInWithGoogle() async {
+    try {
+      const webClientId = 'YOUR_WEB_CLIENT_ID'; // Todo Replace with your web client ID
+      const iosClientId = 'YOUR_IOS_CLIENT_ID'; // Todo Replace with your iOS client ID
+
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        clientId: Platform.isIOS ? iosClientId : null,
+        serverClientId: webClientId,
+      );
+
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        throw Exception('Google sign-in was cancelled');
+      }
+
+      final googleAuth = await googleUser.authentication;
+      final accessToken = googleAuth.accessToken;
+      final idToken = googleAuth.idToken;
+
+      if (accessToken == null) {
+        throw Exception('No Access Token found');
+      }
+      if (idToken == null) {
+        throw Exception('No ID Token found');
+      }
+
+      final response = await _supabase.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: idToken,
+        accessToken: accessToken,
+      );
+
+      if (response.user == null) {
+        throw Exception('Google sign-in failed: No user returned');
+      }
+
+      return response;
+    } on AuthException catch (e) {
+      throw Exception('Google sign-in error: ${e.message}');
+    } catch (e) {
+      throw Exception('Google sign-in error: ${e.toString()}');
+    }
+  }
+
+  /// Sign in with Apple
+  /// Only available on iOS
+  Future<AuthResponse> signInWithApple() async {
+    if (!Platform.isIOS) {
+      throw Exception('Sign in with Apple is only available on iOS');
+    }
+
+    try {
+      // Generate nonce for security
+      final rawNonce = _generateNonce();
+      final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
+
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: hashedNonce,
+      );
+
+      final idToken = credential.identityToken;
+      if (idToken == null) {
+        throw Exception('No ID Token found from Apple sign-in');
+      }
+
+      final response = await _supabase.auth.signInWithIdToken(
+        provider: OAuthProvider.apple,
+        idToken: idToken,
+        nonce: rawNonce,
+      );
+
+      if (response.user == null) {
+        throw Exception('Apple sign-in failed: No user returned');
+      }
+
+      // If we have name from Apple, update user metadata
+      if (credential.givenName != null || credential.familyName != null) {
+        final fullName = '${credential.givenName ?? ''} ${credential.familyName ?? ''}'.trim();
+        if (fullName.isNotEmpty) {
+          await _supabase.auth.updateUser(
+            UserAttributes(
+              data: {'name': fullName},
+            ),
+          );
+        }
+      }
+
+      return response;
+    } on SignInWithAppleAuthorizationException catch (e) {
+      throw Exception('Apple sign-in cancelled: ${e.message}');
+    } on AuthException catch (e) {
+      throw Exception('Apple sign-in error: ${e.message}');
+    } catch (e) {
+      throw Exception('Apple sign-in error: ${e.toString()}');
+    }
+  }
+
+  /// Generate a random nonce for Apple Sign-In
+  String _generateNonce([int length = 32]) {
+    const charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+    final random = Random.secure();
+    return List.generate(length, (_) => charset[random.nextInt(charset.length)]).join();
   }
 
   // ============ USER PROFILE ============
