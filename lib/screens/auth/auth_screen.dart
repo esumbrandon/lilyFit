@@ -238,6 +238,13 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.email,
                 hintText: AppLocalizations.of(context)!.enterEmail,
+                hintStyle: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 15,
+                ),
+                labelStyle: const TextStyle(
+                  color: AppColors.textSecondary,
+                ),
                 prefixIcon: const Icon(Icons.email_outlined),
                 filled: true,
                 fillColor: AppColors.surfaceMuted,
@@ -731,6 +738,13 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.email,
                 hintText: AppLocalizations.of(context)!.enterEmail,
+                hintStyle: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 15,
+                ),
+                labelStyle: const TextStyle(
+                  color: AppColors.textSecondary,
+                ),
                 prefixIcon: const Icon(Icons.email_outlined, size: 20),
                 errorText: _loginEmailError,
                 filled: true,
@@ -761,6 +775,13 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.password,
                 hintText: AppLocalizations.of(context)!.enterPassword,
+                hintStyle: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 15,
+                ),
+                labelStyle: const TextStyle(
+                  color: AppColors.textSecondary,
+                ),
                 prefixIcon: const Icon(Icons.lock_outline, size: 20),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -985,6 +1006,13 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.fullName,
                 hintText: AppLocalizations.of(context)!.enterFullName,
+                hintStyle: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 15,
+                ),
+                labelStyle: const TextStyle(
+                  color: AppColors.textSecondary,
+                ),
                 prefixIcon: const Icon(Icons.person_outline, size: 20),
                 errorText: _signupNameError,
                 filled: true,
@@ -1014,6 +1042,13 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.email,
                 hintText: AppLocalizations.of(context)!.enterEmail,
+                hintStyle: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 15,
+                ),
+                labelStyle: const TextStyle(
+                  color: AppColors.textSecondary,
+                ),
                 prefixIcon: const Icon(Icons.email_outlined, size: 20),
                 errorText: _signupEmailError,
                 filled: true,
@@ -1043,6 +1078,13 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.password,
                 hintText: AppLocalizations.of(context)!.createPasswordHint,
+                hintStyle: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 15,
+                ),
+                labelStyle: const TextStyle(
+                  color: AppColors.textSecondary,
+                ),
                 prefixIcon: const Icon(Icons.lock_outline, size: 20),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -1088,6 +1130,13 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.confirmPassword,
                 hintText: AppLocalizations.of(context)!.reenterPassword,
+                hintStyle: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 15,
+                ),
+                labelStyle: const TextStyle(
+                  color: AppColors.textSecondary,
+                ),
                 prefixIcon: const Icon(Icons.lock_outline, size: 20),
                 suffixIcon: IconButton(
                   icon: Icon(

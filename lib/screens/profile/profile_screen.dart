@@ -8,7 +8,6 @@ import '../../models/user_profile.dart';
 import '../../providers/app_provider.dart';
 import '../../utils/unit_converter.dart';
 import '../../services/language_service.dart';
-import '../../services/supabase_service.dart';
 import '../../widgets/adaptive_loading_indicator.dart';
 import 'water_reminder_screen.dart';
 import '../auth/auth_screen.dart';
@@ -1970,7 +1969,10 @@ class ProfileScreen extends StatelessWidget {
                 );
 
                 try {
-                  await SupabaseService().signOut();
+                  final provider = context.read<AppProvider>();
+
+                  // Call provider.logout() which clears all data and signs out
+                  await provider.logout();
 
                   if (!context.mounted) return;
                   Navigator.of(context).pop();

@@ -528,9 +528,16 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
         }
       }
 
-      // Merge weight entries
+      // Merge weight entries - local data takes precedence over Supabase
+      // (local data is more recent if user just added weight)
       final allWeights = <String, WeightEntry>{};
-      for (var entry in [..._weightEntries, ...supabaseWeights]) {
+      // First add Supabase weights
+      for (var entry in supabaseWeights) {
+        final key = _formatDate(entry.date);
+        allWeights[key] = entry;
+      }
+      // Then add local weights (will overwrite Supabase if same date)
+      for (var entry in _weightEntries) {
         final key = _formatDate(entry.date);
         allWeights[key] = entry;
       }
@@ -874,8 +881,42 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   // ─── Reset ──────────────────────────────────────────────────────
+  /// Logout - Clear all user data and reset to initial state
+  Future<void> logout() async {
+    // Sign out from Supabase first
+    try {
+      await _supabaseService.signOut();
+    } catch (e) {
+      debugPrint('Error signing out from Supabase: $e');
+    }
+
+    // Clear all local data
+    await _prefs.clear();
+    await _offlineQueue.clearQueue();
+    
+    // Reset all state to initial values
+    _userProfile = UserProfile();
+    _isOnboarded = false;
+    _mealLogs = [];
+    _waterIntake = 0;
+    _waterGoal = 2500;
+    _weightEntries = [];
+    _selectedDate = DateTime.now();
+    _themeMode = ThemeMode.system;
+    _waterRemindersEnabled = false;
+    _waterReminderIntervalMinutes = 60;
+    _waterReminderStartHour = 8;
+    _waterReminderStartMinute = 0;
+    _waterReminderEndHour = 22;
+    _waterReminderEndMinute = 0;
+    
+    notifyListeners();
+    debugPrint('User logged out - all data cleared');
+  }
+
   Future<void> resetAllData() async {
     await _prefs.clear();
+    await _offlineQueue.clearQueue();
     _userProfile = UserProfile();
     _isOnboarded = false;
     _mealLogs = [];

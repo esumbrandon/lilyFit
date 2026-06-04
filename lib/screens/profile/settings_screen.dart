@@ -7,7 +7,6 @@ import '../../theme/app_theme.dart';
 import '../../providers/app_provider.dart';
 import '../../services/language_service.dart';
 import '../../services/notification_service.dart';
-import '../../services/supabase_service.dart';
 import 'water_reminder_screen.dart';
 import '../auth/auth_screen.dart';
 
@@ -1018,7 +1017,10 @@ class SettingsScreen extends StatelessWidget {
                 );
 
                 try {
-                  await SupabaseService().signOut();
+                  // Clear local data, cancel notifications, and sign out
+                  final provider = context.read<AppProvider>();
+                  await NotificationService.cancelWaterReminders();
+                  await provider.logout();
 
                   if (!context.mounted) return;
                   Navigator.of(context).pop();
