@@ -883,7 +883,15 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
   // ─── Reset ──────────────────────────────────────────────────────
   /// Logout - Clear all user data and reset to initial state
   Future<void> logout() async {
-    // Sign out from Supabase first
+    // Cancel all scheduled notifications first
+    try {
+      await NotificationService.cancelWaterReminders();
+      debugPrint('Water reminders cancelled on logout');
+    } catch (e) {
+      debugPrint('Error cancelling water reminders: $e');
+    }
+
+    // Sign out from Supabase
     try {
       await _supabaseService.signOut();
     } catch (e) {

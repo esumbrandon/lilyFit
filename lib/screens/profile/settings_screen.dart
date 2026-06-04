@@ -1017,9 +1017,8 @@ class SettingsScreen extends StatelessWidget {
                 );
 
                 try {
-                  // Clear local data, cancel notifications, and sign out
+                  // Logout (this will cancel notifications and clear all data)
                   final provider = context.read<AppProvider>();
-                  await NotificationService.cancelWaterReminders();
                   await provider.logout();
 
                   if (!context.mounted) return;
