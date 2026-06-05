@@ -12,6 +12,9 @@ Widget _buildCard({
   VoidCallback? onAdd,
   VoidCallback? onRemove,
 }) {
+  final currentMl = currentGlasses * 250.0;
+  final goalMl = goalGlasses * 250.0;
+
   return MaterialApp(
     theme: AppTheme.darkTheme,
     localizationsDelegates: const [
@@ -28,6 +31,8 @@ Widget _buildCard({
           currentGlasses: currentGlasses,
           goalGlasses: goalGlasses,
           progress: progress,
+          currentMl: currentMl,
+          goalMl: goalMl,
           onAdd: onAdd ?? () {},
           onRemove: onRemove ?? () {},
         ),

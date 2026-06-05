@@ -19,6 +19,8 @@ class _HomeScreenState extends State<HomeScreen>
   int _currentIndex = 0;
   late AnimationController _scaleController;
   late Animation<double> _scaleAnimation;
+  bool _isBottomNavVisible = true;
+  double _lastScrollOffset = 0;
 
   final _screens = const [
     DashboardScreen(),
@@ -39,6 +41,25 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  void _handleScrollNotification(ScrollNotification notification) {
+    if (notification is ScrollUpdateNotification) {
+      final currentOffset = notification.metrics.pixels;
+      final delta = currentOffset - _lastScrollOffset;
+
+      // Only hide/show if scrolled more than 5 pixels
+      if (delta.abs() > 5) {
+        if (delta > 0 && _isBottomNavVisible) {
+          // Scrolling down - hide nav bar
+          setState(() => _isBottomNavVisible = false);
+        } else if (delta < 0 && !_isBottomNavVisible) {
+          // Scrolling up - show nav bar
+          setState(() => _isBottomNavVisible = true);
+        }
+      }
+      _lastScrollOffset = currentOffset;
+    }
+  }
+
   @override
   void dispose() {
     _scaleController.dispose();
@@ -50,64 +71,75 @@ class _HomeScreenState extends State<HomeScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       extendBody: true,
-      body: IndexedStack(index: _currentIndex, children: _screens),
-      bottomNavigationBar: SafeArea(
-        minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-        child: Container(
-          decoration: BoxDecoration(
-            color: isDark ? AppColors.darkCard : AppColors.card,
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(
-              color: isDark ? AppColors.darkBorder : AppColors.border,
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          _handleScrollNotification(notification);
+          return false;
+        },
+        child: IndexedStack(index: _currentIndex, children: _screens),
+      ),
+      bottomNavigationBar: AnimatedSlide(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        offset: _isBottomNavVisible ? Offset.zero : const Offset(0, 1),
+        child: SafeArea(
+          minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.darkCard : AppColors.card,
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(
+                color: isDark ? AppColors.darkBorder : AppColors.border,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
+                  blurRadius: 24,
+                  offset: const Offset(0, 10),
+                ),
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.08),
+                  blurRadius: 18,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
-                blurRadius: 24,
-                offset: const Offset(0, 10),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: Builder(
+                builder: (context) {
+                  final l10n = AppLocalizations.of(context)!;
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _navItem(
+                        0,
+                        Icons.dashboard_rounded,
+                        Icons.dashboard_outlined,
+                        l10n.home,
+                      ),
+                      _navItem(
+                        1,
+                        Icons.search_rounded,
+                        Icons.search_rounded,
+                        l10n.food,
+                      ),
+                      _navItem(
+                        2,
+                        Icons.insights_rounded,
+                        Icons.insights_outlined,
+                        l10n.progress,
+                      ),
+                      _navItem(
+                        3,
+                        Icons.person_rounded,
+                        Icons.person_outline_rounded,
+                        l10n.profile,
+                      ),
+                    ],
+                  );
+                },
               ),
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.08),
-                blurRadius: 18,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Builder(
-              builder: (context) {
-                final l10n = AppLocalizations.of(context)!;
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _navItem(
-                      0,
-                      Icons.dashboard_rounded,
-                      Icons.dashboard_outlined,
-                      l10n.home,
-                    ),
-                    _navItem(
-                      1,
-                      Icons.search_rounded,
-                      Icons.search_rounded,
-                      l10n.food,
-                    ),
-                    _navItem(
-                      2,
-                      Icons.insights_rounded,
-                      Icons.insights_outlined,
-                      l10n.progress,
-                    ),
-                    _navItem(
-                      3,
-                      Icons.person_rounded,
-                      Icons.person_outline_rounded,
-                      l10n.profile,
-                    ),
-                  ],
-                );
-              },
             ),
           ),
         ),
@@ -161,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen>
                     : (isDark
                           ? AppColors.darkTextTertiary
                           : AppColors.textTertiary),
-                size: 24,
+                size: 22,
               ),
               const SizedBox(height: 4),
               Text(
@@ -172,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen>
                       : (isDark
                             ? AppColors.darkTextTertiary
                             : AppColors.textTertiary),
-                  fontSize: 11,
+                  fontSize: 10,
                   fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),

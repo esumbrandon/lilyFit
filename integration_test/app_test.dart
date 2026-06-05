@@ -211,6 +211,8 @@ void main() {
             currentGlasses: provider.waterGlasses,
             goalGlasses: provider.waterGoalGlasses,
             progress: provider.waterProgress,
+            currentMl: provider.waterIntake,
+            goalMl: provider.waterGoal,
             onAdd: () => provider.addWater(),
             onRemove: () => provider.removeWater(),
           ),

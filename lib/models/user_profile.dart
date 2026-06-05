@@ -15,6 +15,7 @@ class UserProfile {
   double targetFat;
   String weightUnit; // 'kg' or 'lbs'
   String heightUnit; // 'cm' or 'ft'
+  bool emailUpdated; // Track if email has been changed
 
   UserProfile({
     this.name = '',
@@ -31,6 +32,7 @@ class UserProfile {
     this.targetFat = 67,
     this.weightUnit = 'kg',
     this.heightUnit = 'cm',
+    this.emailUpdated = false,
   });
 
   void calculateTargets() {
@@ -104,6 +106,7 @@ class UserProfile {
     'targetFat': targetFat,
     'weightUnit': weightUnit,
     'heightUnit': heightUnit,
+    'emailUpdated': emailUpdated,
   };
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
@@ -121,6 +124,7 @@ class UserProfile {
     targetFat: (json['targetFat'] ?? 67).toDouble(),
     weightUnit: json['weightUnit'] ?? 'kg',
     heightUnit: json['heightUnit'] ?? 'cm',
+    emailUpdated: json['emailUpdated'] ?? false,
   );
 
   String encode() => jsonEncode(toJson());

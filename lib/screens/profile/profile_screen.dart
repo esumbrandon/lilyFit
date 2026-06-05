@@ -110,35 +110,6 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
-            // Quick Stats Row
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _statCard(
-                        context,
-                        Icons.speed_rounded,
-                        'BMI',
-                        profile.bmi.toStringAsFixed(1),
-                        profile.bmiCategory,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _statCard(
-                        context,
-                        Icons.local_fire_department_rounded,
-                        AppLocalizations.of(context)!.calories,
-                        profile.targetCalories.toInt().toString(),
-                        'kcal/day',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
 
             // Body Info - Redesigned
             SliverToBoxAdapter(
@@ -231,122 +202,6 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
-            // Daily Targets - Redesigned
-            SliverToBoxAdapter(
-              child: Builder(
-                builder: (context) {
-                  final isDark =
-                      Theme.of(context).brightness == Brightness.dark;
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                    child: Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: isDark ? AppColors.darkCard : AppColors.card,
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          color:
-                              (isDark
-                                      ? AppColors.darkCardLight
-                                      : AppColors.cardLight)
-                                  .withAlpha(50),
-                          width: 1,
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary.withAlpha(25),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Icon(
-                                  Icons.track_changes_rounded,
-                                  color: AppColors.primary,
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                AppLocalizations.of(context)!.dailyTargets,
-                                style: TextStyle(
-                                  color: isDark
-                                      ? AppColors.darkTextPrimary
-                                      : AppColors.textPrimary,
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                          _targetRow(
-                            AppLocalizations.of(context)!.calories,
-                            '${profile.targetCalories.toInt()} kcal',
-                            AppColors.primary,
-                          ),
-                          _targetRow(
-                            AppLocalizations.of(context)!.protein,
-                            '${profile.targetProtein.toInt()} g',
-                            AppColors.protein,
-                          ),
-                          _targetRow(
-                            AppLocalizations.of(context)!.carbs,
-                            '${profile.targetCarbs.toInt()} g',
-                            AppColors.carbs,
-                          ),
-                          _targetRow(
-                            AppLocalizations.of(context)!.fat,
-                            '${profile.targetFat.toInt()} g',
-                            AppColors.fat,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-
-            // Water Goal section
-            SliverToBoxAdapter(
-              child: Builder(
-                builder: (context) {
-                  final isDark =
-                      Theme.of(context).brightness == Brightness.dark;
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: isDark ? AppColors.darkCard : AppColors.card,
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          color:
-                              (isDark
-                                      ? AppColors.darkCardLight
-                                      : AppColors.cardLight)
-                                  .withAlpha(50),
-                          width: 1,
-                        ),
-                      ),
-                      child: _settingsTile(
-                        Icons.water_drop_outlined,
-                        AppLocalizations.of(context)!.waterGoal,
-                        '${provider.waterGoal.toInt()} ml/day',
-                        () {
-                          HapticFeedback.lightImpact();
-                          _showWaterGoalDialog(context, provider);
-                        },
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
 
             const SliverToBoxAdapter(child: SizedBox(height: 8)),
 
@@ -397,13 +252,17 @@ class ProfileScreen extends StatelessWidget {
                 icon: Icons.email_rounded,
                 iconColor: AppColors.secondary,
                 title: AppLocalizations.of(context)!.emailUpdate,
-                subtitle: provider.userProfile.email.isNotEmpty
-                    ? provider.userProfile.email
-                    : AppLocalizations.of(context)!.updateEmailAddress,
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  _showEmailUpdateSheet(context, provider);
-                },
+                subtitle: provider.userProfile.emailUpdated
+                    ? '${provider.userProfile.email} (Updated)'
+                    : (provider.userProfile.email.isNotEmpty
+                        ? provider.userProfile.email
+                        : AppLocalizations.of(context)!.updateEmailAddress),
+                onTap: provider.userProfile.emailUpdated
+                    ? null
+                    : () {
+                        HapticFeedback.lightImpact();
+                        _showEmailUpdateSheet(context, provider);
+                      },
               ),
             ]),
 
@@ -458,7 +317,7 @@ class ProfileScreen extends StatelessWidget {
                 icon: Icons.info_outline_rounded,
                 iconColor: const Color(0xFF818CF8),
                 title: AppLocalizations.of(context)!.about,
-                subtitle: 'Version 1.0.0',
+                subtitle: 'Version 1.0',
                 onTap: () {
                   HapticFeedback.lightImpact();
                   _showAboutDialog(context);
@@ -553,90 +412,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _statCard(
-    BuildContext context,
-    IconData icon,
-    String label,
-    String value,
-    String subtitle,
-  ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? [AppColors.darkCard, AppColors.darkCard.withAlpha(200)]
-              : [AppColors.card, AppColors.card.withAlpha(200)],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: (isDark ? AppColors.darkCardLight : AppColors.cardLight)
-              .withAlpha(50),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(25),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primary.withAlpha(40),
-                  AppColors.primary.withAlpha(15),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: AppColors.primary, size: 22),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            label,
-            style: TextStyle(
-              color: isDark
-                  ? AppColors.darkTextSecondary
-                  : AppColors.textSecondary,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            subtitle,
-            style: TextStyle(
-              color: isDark
-                  ? AppColors.darkTextTertiary
-                  : AppColors.textTertiary,
-              fontSize: 11,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _infoRow(IconData icon, String label, String value) {
     return Builder(
@@ -681,109 +456,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _targetRow(String label, String value, Color color) {
-    return Builder(
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            children: [
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
-              const SizedBox(width: 14),
-              Text(
-                label,
-                style: TextStyle(
-                  color: isDark
-                      ? AppColors.darkTextSecondary
-                      : AppColors.textSecondary,
-                  fontSize: 14,
-                ),
-              ),
-              const Spacer(),
-              Text(
-                value,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _settingsTile(
-    IconData icon,
-    String title,
-    String subtitle,
-    VoidCallback onTap, {
-    bool isDestructive = false,
-  }) {
-    return Builder(
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        return ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 4,
-          ),
-          leading: Icon(
-            icon,
-            color: isDestructive
-                ? AppColors.error
-                : (isDark
-                      ? AppColors.darkTextSecondary
-                      : AppColors.textSecondary),
-            size: 22,
-          ),
-          title: Text(
-            title,
-            style: TextStyle(
-              color: isDestructive
-                  ? AppColors.error
-                  : (isDark
-                        ? AppColors.darkTextPrimary
-                        : AppColors.textPrimary),
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          subtitle: Text(
-            subtitle,
-            style: TextStyle(
-              color: isDestructive
-                  ? AppColors.error.withAlpha(150)
-                  : (isDark
-                        ? AppColors.darkTextTertiary
-                        : AppColors.textTertiary),
-              fontSize: 12,
-            ),
-          ),
-          trailing: Icon(
-            Icons.chevron_right_rounded,
-            color: isDestructive
-                ? AppColors.error.withAlpha(100)
-                : (isDark
-                      ? AppColors.darkTextTertiary
-                      : AppColors.textTertiary),
-            size: 20,
-          ),
-          onTap: onTap,
-        );
-      },
-    );
-  }
 
   Widget _divider() {
     return Container(
@@ -1072,73 +744,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  void _showWaterGoalDialog(BuildContext context, AppProvider provider) {
-    final controller = TextEditingController(
-      text: provider.waterGoal.toInt().toString(),
-    );
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          'Water Goal',
-          style: TextStyle(
-            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        content: TextField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          style: TextStyle(
-            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-          ),
-          textAlign: TextAlign.center,
-          decoration: InputDecoration(
-            suffixText: 'ml',
-            filled: true,
-            fillColor: isDark
-                ? AppColors.darkSurfaceMuted
-                : AppColors.surfaceMuted,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(
-                color: isDark ? AppColors.darkBorder : AppColors.border,
-              ),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              'Cancel',
-              style: TextStyle(
-                color: isDark
-                    ? AppColors.darkTextTertiary
-                    : AppColors.textTertiary,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final ml = double.tryParse(controller.text);
-              if (ml != null && ml > 0) {
-                HapticFeedback.mediumImpact();
-                provider.setWaterGoal(ml);
-                Navigator.pop(ctx);
-              }
-            },
-            child: Text(AppLocalizations.of(context)!.save),
-          ),
-        ],
-      ),
-    );
-  }
 
   // ── Settings Helper Methods ───────────────────────────────────────
 
@@ -1209,7 +814,7 @@ class ProfileScreen extends StatelessWidget {
     required Color iconColor,
     required String title,
     required String subtitle,
-    required VoidCallback onTap,
+    VoidCallback? onTap,
     bool isDestructive = false,
   }) {
     return Builder(
@@ -1793,6 +1398,13 @@ class ProfileScreen extends StatelessWidget {
                                       .updateUser(
                                         UserAttributes(email: newEmail),
                                       );
+
+                                  // Mark email as updated
+                                  final updatedProfile = provider.userProfile;
+                                  updatedProfile.email = newEmail;
+                                  updatedProfile.emailUpdated = true;
+                                  await provider.updateProfile(updatedProfile);
+
                                   if (ctx.mounted) {
                                     Navigator.pop(ctx);
                                     ScaffoldMessenger.of(ctx).showSnackBar(

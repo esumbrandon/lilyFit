@@ -18,14 +18,6 @@ class ProgressScreen extends StatefulWidget {
 }
 
 class _ProgressScreenState extends State<ProgressScreen> {
-  final _weightController = TextEditingController();
-
-  @override
-  void dispose() {
-    _weightController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -161,26 +153,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
               ),
             ),
 
-            // Log weight button
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    _showLogWeightDialog(context);
-                  },
-                  icon: const Icon(Icons.add_rounded, size: 20),
-                  label: Text(AppLocalizations.of(context)!.logWeight),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                ),
-              ),
-            ),
 
             // Weekly Calories Chart
             SliverToBoxAdapter(
@@ -742,107 +714,4 @@ class _ProgressScreenState extends State<ProgressScreen> {
     return '$sign${displayChange.toStringAsFixed(1)} $unit';
   }
 
-  void _showLogWeightDialog(BuildContext context) {
-    final provider = context.read<AppProvider>();
-    final weightUnit = provider.userProfile.weightUnit;
-    final currentWeight = provider.userProfile.weight;
-
-    // Display in user's preferred unit
-    final displayWeight = weightUnit == 'lbs'
-        ? UnitConverter.kgToLbs(currentWeight)
-        : currentWeight;
-
-    _weightController.text = displayWeight.toStringAsFixed(1);
-
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          AppLocalizations.of(context)!.logWeight,
-          style: TextStyle(
-            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.enterCurrentWeight,
-              style: TextStyle(
-                color: isDark
-                    ? AppColors.darkTextSecondary
-                    : AppColors.textSecondary,
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _weightController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              style: TextStyle(
-                color: isDark
-                    ? AppColors.darkTextPrimary
-                    : AppColors.textPrimary,
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-              ),
-              textAlign: TextAlign.center,
-              decoration: InputDecoration(
-                suffixText: weightUnit,
-                suffixStyle: TextStyle(
-                  color: isDark
-                      ? AppColors.darkTextTertiary
-                      : AppColors.textTertiary,
-                  fontSize: 16,
-                ),
-                filled: true,
-                fillColor: isDark
-                    ? AppColors.darkSurfaceMuted
-                    : AppColors.surfaceMuted,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide(
-                    color: isDark ? AppColors.darkBorder : AppColors.border,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              AppLocalizations.of(context)!.cancel,
-              style: TextStyle(
-                color: isDark
-                    ? AppColors.darkTextTertiary
-                    : AppColors.textTertiary,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final inputWeight = double.tryParse(_weightController.text);
-              if (inputWeight != null && inputWeight > 0) {
-                HapticFeedback.mediumImpact();
-                // Convert to kg if needed before saving
-                final weightInKg = weightUnit == 'lbs'
-                    ? UnitConverter.lbsToKg(inputWeight)
-                    : inputWeight;
-                context.read<AppProvider>().addWeight(weightInKg);
-                Navigator.pop(ctx);
-              }
-            },
-            child: Text(AppLocalizations.of(context)!.save),
-          ),
-        ],
-      ),
-    );
-  }
 }

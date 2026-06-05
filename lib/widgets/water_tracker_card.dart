@@ -9,6 +9,8 @@ class WaterTrackerCard extends StatelessWidget {
   final double progress;
   final VoidCallback onAdd;
   final VoidCallback onRemove;
+  final double currentMl;
+  final double goalMl;
 
   const WaterTrackerCard({
     super.key,
@@ -17,6 +19,8 @@ class WaterTrackerCard extends StatelessWidget {
     required this.progress,
     required this.onAdd,
     required this.onRemove,
+    required this.currentMl,
+    required this.goalMl,
   });
 
   @override
@@ -50,14 +54,30 @@ class WaterTrackerCard extends StatelessWidget {
                   ),
                 ),
               ),
-              Text(
-                '${currentGlasses * 250} / ${goalGlasses * 250} ml',
-                style: TextStyle(
-                  color: isDark
-                      ? AppColors.darkTextSecondary
-                      : AppColors.textSecondary,
-                  fontSize: 13,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    '${(currentMl / 1000).toStringAsFixed(2)} / ${(goalMl / 1000).toStringAsFixed(2)} L',
+                    style: TextStyle(
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.textPrimary,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${currentMl.toInt()} / ${goalMl.toInt()} ml',
+                    style: TextStyle(
+                      color: isDark
+                          ? AppColors.darkTextSecondary
+                          : AppColors.textSecondary,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -139,18 +159,29 @@ class WaterTrackerCard extends StatelessWidget {
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    onRemove();
-                  },
+                  onPressed: currentGlasses > 0
+                      ? () {
+                          HapticFeedback.lightImpact();
+                          onRemove();
+                        }
+                      : null,
                   icon: const Icon(Icons.remove, size: 18),
                   label: Text(AppLocalizations.of(context)!.removeGlass),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: isDark
                         ? AppColors.darkTextSecondary
                         : AppColors.textSecondary,
+                    disabledForegroundColor: (isDark
+                            ? AppColors.darkTextTertiary
+                            : AppColors.textTertiary)
+                        .withAlpha(100),
                     side: BorderSide(
-                      color: isDark ? AppColors.darkBorder : AppColors.border,
+                      color: currentGlasses > 0
+                          ? (isDark ? AppColors.darkBorder : AppColors.border)
+                          : (isDark
+                                  ? AppColors.darkBorder
+                                  : AppColors.border)
+                              .withAlpha(50),
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(

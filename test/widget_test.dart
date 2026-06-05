@@ -55,6 +55,8 @@ void main() {
             currentGlasses: 4,
             goalGlasses: 8,
             progress: 0.5,
+            currentMl: 1000.0,
+            goalMl: 2000.0,
             onAdd: () {},
             onRemove: () {},
           ),
