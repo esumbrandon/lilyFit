@@ -421,6 +421,11 @@ class _DashboardScreenState extends State<DashboardScreen>
           ),
         ),
       ),
+
+      // Bottom padding for navbar
+      const SliverToBoxAdapter(
+        child: SizedBox(height: 80),
+      ),
     ];
   }
 
@@ -432,6 +437,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: Platform.isIOS
             ? CustomScrollView(
                 slivers: [

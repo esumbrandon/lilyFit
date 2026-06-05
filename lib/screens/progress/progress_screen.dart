@@ -28,6 +28,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: CustomScrollView(
           slivers: [
             // Header
@@ -340,7 +341,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+            // Bottom padding for navbar
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
       ),

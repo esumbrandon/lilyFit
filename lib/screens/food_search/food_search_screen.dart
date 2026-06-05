@@ -381,7 +381,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                         : ListView.builder(
                             key: ValueKey('list_$_selectedRegion'),
                             controller: _scrollController,
-                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
                             itemCount: _filteredFoods.length,
                             itemBuilder: (context, index) {
                               final food = _filteredFoods[index];

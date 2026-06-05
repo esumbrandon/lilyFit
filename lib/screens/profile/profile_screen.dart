@@ -22,6 +22,7 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: CustomScrollView(
           slivers: [
             // Header with Avatar & Name - Redesigned
@@ -328,7 +329,7 @@ class ProfileScreen extends StatelessWidget {
             // Edit Profile button - Moved to bottom
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 100),
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
@@ -640,6 +641,7 @@ class ProfileScreen extends StatelessWidget {
                             goal: goal,
                             weightUnit: profile.weightUnit,
                             heightUnit: profile.heightUnit,
+                            emailUpdated: profile.emailUpdated,
                           );
                           HapticFeedback.mediumImpact();
                           provider.updateProfile(updated);
