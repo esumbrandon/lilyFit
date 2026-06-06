@@ -11,6 +11,7 @@ import '../../services/language_service.dart';
 import '../../widgets/adaptive_loading_indicator.dart';
 import 'water_reminder_screen.dart';
 import '../auth/auth_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -284,9 +285,37 @@ class ProfileScreen extends StatelessWidget {
                 iconColor: const Color(0xFF818CF8),
                 title: AppLocalizations.of(context)!.helpAndSupport,
                 subtitle: AppLocalizations.of(context)!.faqsContactUs,
-                onTap: () {
+                onTap: () async {
                   HapticFeedback.lightImpact();
-                  _showComingSoonSnackBar(context, 'Help & Support');
+
+                  final Uri emailLaunchUri = Uri(
+                    scheme: 'mailto',
+                    path: 'esumbrandon074@gmail.com',
+                    queryParameters: {
+                      'subject': 'Lilyfit bug reports and help.',
+                    },
+                  );
+                  try {
+                    if (await canLaunchUrl(emailLaunchUri)) {
+                      await launchUrl(emailLaunchUri);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Could not open email client.'),
+                          backgroundColor: AppColors.error,
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'An error occurred while trying to open email client. $e',
+                        ),
+                        backgroundColor: AppColors.error,
+                      ),
+                    );
+                  }
                 },
               ),
               _divider(),
