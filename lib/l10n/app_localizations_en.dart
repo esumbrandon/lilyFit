@@ -373,6 +373,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bmi => 'BMI';
 
   @override
+  String get bmiUnderweight => 'Underweight';
+
+  @override
+  String get bmiNormal => 'Normal';
+
+  @override
+  String get bmiOverweight => 'Overweight';
+
+  @override
+  String get bmiObese => 'Obese';
+
+  @override
+  String get bmiStatus => 'BMI Status';
+
+  @override
+  String get bmiInfo =>
+      'Body Mass Index (BMI) is a measure of body fat based on height and weight.';
+
+  @override
+  String get bmiRanges =>
+      'BMI Ranges:\n• Underweight: < 18.5\n• Normal: 18.5 - 24.9\n• Overweight: 25.0 - 29.9\n• Obese: ≥ 30.0';
+
+  @override
+  String get tapForMoreInfo => 'Tap for more info';
+
+  @override
   String get language => 'Language';
 
   @override

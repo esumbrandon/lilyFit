@@ -7,6 +7,7 @@ import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/app_provider.dart';
 import '../../models/meal_log.dart';
+import '../../models/user_profile.dart';
 import '../../utils/unit_converter.dart';
 import '../../widgets/monthly_carbs_chart.dart';
 
@@ -67,13 +68,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       AppColors.primary,
                     ),
                     const SizedBox(width: 10),
-                    _statCard(
-                      context,
-                      AppLocalizations.of(context)!.bmi,
-                      provider.userProfile.bmi.toStringAsFixed(1),
-                      Icons.speed_rounded,
-                      AppColors.secondary,
-                    ),
+                    _bmiCard(context, provider.userProfile),
                     const SizedBox(width: 10),
                     _statCard(
                       context,
@@ -395,6 +390,336 @@ class _ProgressScreenState extends State<ProgressScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _bmiCard(BuildContext context, UserProfile profile) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bmi = profile.bmi;
+    final category = profile.bmiCategory;
+    final categoryColor = _getBmiColor(bmi);
+    final categoryText = _getLocalizedBmiCategory(context, category);
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => _showBmiInfo(context),
+        onLongPress: () => _showBmiInfo(context),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkCard : AppColors.card,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: categoryColor.withAlpha(100),
+              width: 1.5,
+            ),
+          ),
+          child: Column(
+            children: [
+              Icon(Icons.speed_rounded, color: categoryColor, size: 24),
+              const SizedBox(height: 10),
+              Text(
+                bmi.toStringAsFixed(1),
+                style: TextStyle(
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                AppLocalizations.of(context)!.bmi,
+                style: TextStyle(
+                  color: isDark
+                      ? AppColors.darkTextTertiary
+                      : AppColors.textTertiary,
+                  fontSize: 11,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 3,
+                ),
+                decoration: BoxDecoration(
+                  color: categoryColor.withAlpha(25),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  categoryText,
+                  style: TextStyle(
+                    color: categoryColor,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color _getBmiColor(double bmi) {
+    if (bmi < 18.5) return Colors.blue;
+    if (bmi < 25) return Colors.green;
+    if (bmi < 30) return Colors.orange;
+    return Colors.red;
+  }
+
+  String _getLocalizedBmiCategory(BuildContext context, String category) {
+    final localizations = AppLocalizations.of(context)!;
+    switch (category) {
+      case 'Underweight':
+        return localizations.bmiUnderweight;
+      case 'Normal':
+        return localizations.bmiNormal;
+      case 'Overweight':
+        return localizations.bmiOverweight;
+      case 'Obese':
+        return localizations.bmiObese;
+      default:
+        return category;
+    }
+  }
+
+  void _showBmiInfo(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final provider = context.read<AppProvider>();
+    final profile = provider.userProfile;
+    final bmi = profile.bmi;
+    final categoryColor = _getBmiColor(bmi);
+    final categoryText = _getLocalizedBmiCategory(context, profile.bmiCategory);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.darkSurface : AppColors.surface,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(28),
+          ),
+        ),
+        padding: EdgeInsets.fromLTRB(
+          24,
+          24,
+          24,
+          MediaQuery.of(ctx).padding.bottom + 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppColors.darkCardLight
+                      : AppColors.cardLight,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: categoryColor.withAlpha(25),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.speed_rounded,
+                    color: categoryColor,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.bmiStatus,
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      '${AppLocalizations.of(context)!.bmi}: ${bmi.toStringAsFixed(1)}',
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.textSecondary,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: categoryColor.withAlpha(25),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: categoryColor.withAlpha(50),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: categoryColor,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    '${AppLocalizations.of(context)!.bmiStatus}: ',
+                    style: TextStyle(
+                      color: isDark
+                          ? AppColors.darkTextSecondary
+                          : AppColors.textSecondary,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    categoryText,
+                    style: TextStyle(
+                      color: categoryColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              AppLocalizations.of(context)!.bmiInfo,
+              style: TextStyle(
+                color: isDark
+                    ? AppColors.darkTextSecondary
+                    : AppColors.textSecondary,
+                fontSize: 14,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkCard : AppColors.card,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isDark ? AppColors.darkBorder : AppColors.border,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _bmiRangeItem(
+                    context,
+                    AppLocalizations.of(context)!.bmiUnderweight,
+                    '< 18.5',
+                    Colors.blue,
+                    bmi < 18.5,
+                  ),
+                  const SizedBox(height: 12),
+                  _bmiRangeItem(
+                    context,
+                    AppLocalizations.of(context)!.bmiNormal,
+                    '18.5 - 24.9',
+                    Colors.green,
+                    bmi >= 18.5 && bmi < 25,
+                  ),
+                  const SizedBox(height: 12),
+                  _bmiRangeItem(
+                    context,
+                    AppLocalizations.of(context)!.bmiOverweight,
+                    '25.0 - 29.9',
+                    Colors.orange,
+                    bmi >= 25 && bmi < 30,
+                  ),
+                  const SizedBox(height: 12),
+                  _bmiRangeItem(
+                    context,
+                    AppLocalizations.of(context)!.bmiObese,
+                    '≥ 30.0',
+                    Colors.red,
+                    bmi >= 30,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _bmiRangeItem(
+    BuildContext context,
+    String label,
+    String range,
+    Color color,
+    bool isActive,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Row(
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: isActive ? color : color.withAlpha(50),
+            shape: BoxShape.circle,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isActive
+                  ? (isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary)
+                  : (isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.textSecondary),
+              fontSize: 14,
+              fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+            ),
+          ),
+        ),
+        Text(
+          range,
+          style: TextStyle(
+            color: isActive
+                ? color
+                : (isDark
+                    ? AppColors.darkTextTertiary
+                    : AppColors.textTertiary),
+            fontSize: 13,
+            fontWeight: isActive ? FontWeight.w700 : FontWeight.normal,
+          ),
+        ),
+      ],
     );
   }
 

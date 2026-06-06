@@ -368,10 +368,36 @@ class AppLocalizationsDe extends AppLocalizations {
   String get bodyInformation => 'Körperinformationen';
 
   @override
-  String get dailyTargets => 'Tägliche Ziele';
+  String get dailyTargets => 'Tagesziele';
 
   @override
   String get bmi => 'BMI';
+
+  @override
+  String get bmiUnderweight => 'Untergewicht';
+
+  @override
+  String get bmiNormal => 'Normal';
+
+  @override
+  String get bmiOverweight => 'Übergewicht';
+
+  @override
+  String get bmiObese => 'Adipös';
+
+  @override
+  String get bmiStatus => 'BMI-Status';
+
+  @override
+  String get bmiInfo =>
+      'Der Body-Mass-Index (BMI) ist ein Maß für das Körperfett basierend auf Größe und Gewicht.';
+
+  @override
+  String get bmiRanges =>
+      'BMI-Bereiche:\n• Untergewicht: < 18,5\n• Normal: 18,5 - 24,9\n• Übergewicht: 25,0 - 29,9\n• Adipös: ≥ 30,0';
+
+  @override
+  String get tapForMoreInfo => 'Tippen für mehr Info';
 
   @override
   String get language => 'Sprache';

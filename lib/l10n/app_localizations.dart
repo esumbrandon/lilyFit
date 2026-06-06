@@ -830,6 +830,54 @@ abstract class AppLocalizations {
   /// **'BMI'**
   String get bmi;
 
+  /// No description provided for @bmiUnderweight.
+  ///
+  /// In en, this message translates to:
+  /// **'Underweight'**
+  String get bmiUnderweight;
+
+  /// No description provided for @bmiNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get bmiNormal;
+
+  /// No description provided for @bmiOverweight.
+  ///
+  /// In en, this message translates to:
+  /// **'Overweight'**
+  String get bmiOverweight;
+
+  /// No description provided for @bmiObese.
+  ///
+  /// In en, this message translates to:
+  /// **'Obese'**
+  String get bmiObese;
+
+  /// No description provided for @bmiStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'BMI Status'**
+  String get bmiStatus;
+
+  /// No description provided for @bmiInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Body Mass Index (BMI) is a measure of body fat based on height and weight.'**
+  String get bmiInfo;
+
+  /// No description provided for @bmiRanges.
+  ///
+  /// In en, this message translates to:
+  /// **'BMI Ranges:\n• Underweight: < 18.5\n• Normal: 18.5 - 24.9\n• Overweight: 25.0 - 29.9\n• Obese: ≥ 30.0'**
+  String get bmiRanges;
+
+  /// No description provided for @tapForMoreInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap for more info'**
+  String get tapForMoreInfo;
+
   /// No description provided for @language.
   ///
   /// In en, this message translates to:

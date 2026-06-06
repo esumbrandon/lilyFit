@@ -373,6 +373,32 @@ class AppLocalizationsPt extends AppLocalizations {
   String get bmi => 'IMC';
 
   @override
+  String get bmiUnderweight => 'Abaixo do peso';
+
+  @override
+  String get bmiNormal => 'Normal';
+
+  @override
+  String get bmiOverweight => 'Sobrepeso';
+
+  @override
+  String get bmiObese => 'Obeso';
+
+  @override
+  String get bmiStatus => 'Status do IMC';
+
+  @override
+  String get bmiInfo =>
+      'O Índice de Massa Corporal (IMC) é uma medida de gordura corporal baseada na altura e peso.';
+
+  @override
+  String get bmiRanges =>
+      'Faixas de IMC:\n• Abaixo do peso: < 18,5\n• Normal: 18,5 - 24,9\n• Sobrepeso: 25,0 - 29,9\n• Obeso: ≥ 30,0';
+
+  @override
+  String get tapForMoreInfo => 'Toque para mais info';
+
+  @override
   String get language => 'Idioma';
 
   @override
