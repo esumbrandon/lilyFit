@@ -123,6 +123,92 @@ void main() {
         expect(provider.userProfile.goal, 'fatLoss');
         expect(provider.userProfile.targetCalories, greaterThan(0));
       });
+
+      test('adds weight entry when weight changes', () async {
+        final provider = await _buildProvider();
+        final profile = UserProfile(weight: 75.0, height: 170.0);
+        await provider.completeOnboarding(profile);
+
+        final initialEntries = provider.weightEntries.length;
+        expect(initialEntries, 1);
+        expect(provider.weightEntries.first.weight, 75.0);
+
+        // Update profile with different weight (on same day in test)
+        final updated = UserProfile(
+          name: profile.name,
+          email: profile.email,
+          gender: profile.gender,
+          age: profile.age,
+          weight: 72.0, // Changed weight
+          height: profile.height,
+          activityLevel: profile.activityLevel,
+          goal: profile.goal,
+          weightUnit: profile.weightUnit,
+          heightUnit: profile.heightUnit,
+        );
+        await provider.updateProfile(updated);
+
+        // Should replace today's entry (not add a new one)
+        expect(provider.weightEntries.length, 1);
+        expect(provider.weightEntries.last.weight, 72.0);
+        expect(provider.userProfile.weight, 72.0);
+      });
+
+      test('does not add weight entry when weight unchanged', () async {
+        final provider = await _buildProvider();
+        final profile = UserProfile(weight: 75.0, height: 170.0);
+        await provider.completeOnboarding(profile);
+
+        final initialEntries = provider.weightEntries.length;
+
+        // Update profile with same weight but different age
+        final updated = UserProfile(
+          name: profile.name,
+          email: profile.email,
+          gender: profile.gender,
+          age: 30, // Changed age
+          weight: 75.0, // Same weight
+          height: profile.height,
+          activityLevel: profile.activityLevel,
+          goal: profile.goal,
+          weightUnit: profile.weightUnit,
+          heightUnit: profile.heightUnit,
+        );
+        await provider.updateProfile(updated);
+
+        // Should NOT have added a new weight entry
+        expect(provider.weightEntries.length, initialEntries);
+        expect(provider.userProfile.age, 30);
+      });
+
+      test('replaces today\'s weight entry if one exists', () async {
+        final provider = await _buildProvider();
+        final profile = UserProfile(weight: 75.0, height: 170.0);
+        await provider.completeOnboarding(profile);
+
+        // Add a weight entry for today
+        await provider.addWeight(74.0);
+        final entriesAfterAdd = provider.weightEntries.length;
+
+        // Update profile with different weight on the same day
+        final updated = UserProfile(
+          name: profile.name,
+          email: profile.email,
+          gender: profile.gender,
+          age: profile.age,
+          weight: 73.0, // Different weight
+          height: profile.height,
+          activityLevel: profile.activityLevel,
+          goal: profile.goal,
+          weightUnit: profile.weightUnit,
+          heightUnit: profile.heightUnit,
+        );
+        await provider.updateProfile(updated);
+
+        // Should replace today's entry, not add a new one
+        expect(provider.weightEntries.length, entriesAfterAdd);
+        expect(provider.weightEntries.last.weight, 73.0);
+      });
     });
 
     group('meal logging', () {

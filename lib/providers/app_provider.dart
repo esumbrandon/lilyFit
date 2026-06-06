@@ -597,14 +597,41 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   Future<void> updateProfile(UserProfile profile) async {
     profile.calculateTargets();
+
+    // Check if weight changed
+    final weightChanged = _userProfile.weight != profile.weight;
+    final newWeight = profile.weight;
+
     _userProfile = profile;
     await _prefs.setString('userProfile', profile.encode());
+
+    // Add weight entry if weight changed
+    if (weightChanged && newWeight > 0) {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+
+      // Replace today's entry if exists
+      _weightEntries.removeWhere((e) => _isSameDay(e.date, today));
+      _weightEntries.add(WeightEntry(date: today, weight: newWeight));
+      _weightEntries.sort((a, b) => a.date.compareTo(b.date));
+      await _saveWeightEntries();
+    }
 
     // Sync to Supabase if user is logged in
     if (_supabaseService.isLoggedIn()) {
       if (_isOnline) {
         try {
           await _supabaseService.saveUserProfile(profile);
+
+          // Also log weight if it changed
+          if (weightChanged && newWeight > 0) {
+            final today = DateTime(
+              DateTime.now().year,
+              DateTime.now().month,
+              DateTime.now().day,
+            );
+            await _supabaseService.logWeight(weight: newWeight, date: today);
+          }
         } catch (e) {
           debugPrint('Failed to sync profile to Supabase: $e');
           // Queue operation for later sync
@@ -612,6 +639,22 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
             OfflineOperationType.updateProfile,
             {},
           );
+
+          // Queue weight log if weight changed
+          if (weightChanged && newWeight > 0) {
+            final today = DateTime(
+              DateTime.now().year,
+              DateTime.now().month,
+              DateTime.now().day,
+            );
+            await _offlineQueue.addOperation(
+              OfflineOperationType.addWeight,
+              {
+                'weight': newWeight,
+                'date': today.toIso8601String(),
+              },
+            );
+          }
         }
       } else {
         // Device is offline - queue operation
@@ -619,6 +662,23 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
           OfflineOperationType.updateProfile,
           {},
         );
+
+        // Queue weight log if weight changed
+        if (weightChanged && newWeight > 0) {
+          final today = DateTime(
+            DateTime.now().year,
+            DateTime.now().month,
+            DateTime.now().day,
+          );
+          await _offlineQueue.addOperation(
+            OfflineOperationType.addWeight,
+            {
+              'weight': newWeight,
+              'date': today.toIso8601String(),
+            },
+          );
+        }
+
         debugPrint('Device offline - profile update queued for sync');
       }
     }
