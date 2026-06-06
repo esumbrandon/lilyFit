@@ -90,9 +90,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const CenteredAdaptiveLoadingIndicator(
-        color: AppColors.primary,
-      ),
+      builder: (context) =>
+          const CenteredAdaptiveLoadingIndicator(color: AppColors.primary),
     );
 
     try {
@@ -165,9 +164,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const CenteredAdaptiveLoadingIndicator(
-        color: AppColors.primary,
-      ),
+      builder: (context) =>
+          const CenteredAdaptiveLoadingIndicator(color: AppColors.primary),
     );
 
     try {
@@ -242,9 +240,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   color: AppColors.textSecondary,
                   fontSize: 15,
                 ),
-                labelStyle: const TextStyle(
-                  color: AppColors.textSecondary,
-                ),
+                labelStyle: const TextStyle(color: AppColors.textSecondary),
                 prefixIcon: const Icon(Icons.email_outlined),
                 filled: true,
                 fillColor: AppColors.surfaceMuted,
@@ -286,9 +282,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const CenteredAdaptiveLoadingIndicator(
-        color: AppColors.primary,
-      ),
+      builder: (context) =>
+          const CenteredAdaptiveLoadingIndicator(color: AppColors.primary),
     );
 
     try {
@@ -368,9 +363,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const CenteredAdaptiveLoadingIndicator(
-        color: AppColors.primary,
-      ),
+      builder: (context) =>
+          const CenteredAdaptiveLoadingIndicator(color: AppColors.primary),
     );
 
     try {
@@ -420,9 +414,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const CenteredAdaptiveLoadingIndicator(
-        color: AppColors.primary,
-      ),
+      builder: (context) =>
+          const CenteredAdaptiveLoadingIndicator(color: AppColors.primary),
     );
 
     try {
@@ -742,9 +735,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   color: AppColors.textSecondary,
                   fontSize: 15,
                 ),
-                labelStyle: const TextStyle(
-                  color: AppColors.textSecondary,
-                ),
+                labelStyle: const TextStyle(color: AppColors.textSecondary),
                 prefixIcon: const Icon(Icons.email_outlined, size: 20),
                 errorText: _loginEmailError,
                 filled: true,
@@ -779,9 +770,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   color: AppColors.textSecondary,
                   fontSize: 15,
                 ),
-                labelStyle: const TextStyle(
-                  color: AppColors.textSecondary,
-                ),
+                labelStyle: const TextStyle(color: AppColors.textSecondary),
                 prefixIcon: const Icon(Icons.lock_outline, size: 20),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -1010,9 +999,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   color: AppColors.textSecondary,
                   fontSize: 15,
                 ),
-                labelStyle: const TextStyle(
-                  color: AppColors.textSecondary,
-                ),
+                labelStyle: const TextStyle(color: AppColors.textSecondary),
                 prefixIcon: const Icon(Icons.person_outline, size: 20),
                 errorText: _signupNameError,
                 filled: true,
@@ -1046,9 +1033,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   color: AppColors.textSecondary,
                   fontSize: 15,
                 ),
-                labelStyle: const TextStyle(
-                  color: AppColors.textSecondary,
-                ),
+                labelStyle: const TextStyle(color: AppColors.textSecondary),
                 prefixIcon: const Icon(Icons.email_outlined, size: 20),
                 errorText: _signupEmailError,
                 filled: true,
@@ -1082,9 +1067,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   color: AppColors.textSecondary,
                   fontSize: 15,
                 ),
-                labelStyle: const TextStyle(
-                  color: AppColors.textSecondary,
-                ),
+                labelStyle: const TextStyle(color: AppColors.textSecondary),
                 prefixIcon: const Icon(Icons.lock_outline, size: 20),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -1134,9 +1117,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                   color: AppColors.textSecondary,
                   fontSize: 15,
                 ),
-                labelStyle: const TextStyle(
-                  color: AppColors.textSecondary,
-                ),
+                labelStyle: const TextStyle(color: AppColors.textSecondary),
                 prefixIcon: const Icon(Icons.lock_outline, size: 20),
                 suffixIcon: IconButton(
                   icon: Icon(

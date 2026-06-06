@@ -117,9 +117,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const CenteredAdaptiveLoadingIndicator(
-        color: AppColors.primary,
-      ),
+      builder: (context) =>
+          const CenteredAdaptiveLoadingIndicator(color: AppColors.primary),
     );
 
     try {

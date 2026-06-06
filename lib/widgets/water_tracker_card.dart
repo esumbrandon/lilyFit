@@ -171,17 +171,16 @@ class WaterTrackerCard extends StatelessWidget {
                     foregroundColor: isDark
                         ? AppColors.darkTextSecondary
                         : AppColors.textSecondary,
-                    disabledForegroundColor: (isDark
-                            ? AppColors.darkTextTertiary
-                            : AppColors.textTertiary)
-                        .withAlpha(100),
+                    disabledForegroundColor:
+                        (isDark
+                                ? AppColors.darkTextTertiary
+                                : AppColors.textTertiary)
+                            .withAlpha(100),
                     side: BorderSide(
                       color: currentGlasses > 0
                           ? (isDark ? AppColors.darkBorder : AppColors.border)
-                          : (isDark
-                                  ? AppColors.darkBorder
-                                  : AppColors.border)
-                              .withAlpha(50),
+                          : (isDark ? AppColors.darkBorder : AppColors.border)
+                                .withAlpha(50),
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(

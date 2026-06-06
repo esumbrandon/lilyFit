@@ -48,8 +48,10 @@ class NotificationService {
     );
 
     if (Platform.isAndroid) {
-      final androidImpl = _plugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+      final androidImpl = _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
 
       if (androidImpl != null) {
         await androidImpl.createNotificationChannel(

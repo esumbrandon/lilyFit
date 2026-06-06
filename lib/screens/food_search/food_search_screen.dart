@@ -150,9 +150,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
         ],
       ),
       body: _isLoading
-          ? const CenteredAdaptiveLoadingIndicator(
-              color: AppColors.primary,
-            )
+          ? const CenteredAdaptiveLoadingIndicator(color: AppColors.primary)
           : Column(
               children: [
                 // Search bar
@@ -264,10 +262,11 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                FoodDatabase.regionEmoji(region),
-                                style: const TextStyle(fontSize: 18),
-                              ),
+                              // Todo, do add icons uncomment this lines.
+                              // Text(
+                              //   FoodDatabase.regionEmoji(region),
+                              //   style: const TextStyle(fontSize: 18),
+                              // ),
                               const SizedBox(width: 7),
                               AnimatedDefaultTextStyle(
                                 duration: const Duration(milliseconds: 200),

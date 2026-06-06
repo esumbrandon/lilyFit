@@ -44,14 +44,20 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
 
   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
 
-  Color get _backgroundColor => _isDark ? AppColors.darkBackground : AppColors.background;
-  Color get _surfaceColor => _isDark ? AppColors.darkSurface : AppColors.surface;
+  Color get _backgroundColor =>
+      _isDark ? AppColors.darkBackground : AppColors.background;
+  Color get _surfaceColor =>
+      _isDark ? AppColors.darkSurface : AppColors.surface;
   Color get _cardColor => _isDark ? AppColors.darkCard : AppColors.card;
-  Color get _cardLightColor => _isDark ? AppColors.darkCardLight : AppColors.cardLight;
+  Color get _cardLightColor =>
+      _isDark ? AppColors.darkCardLight : AppColors.cardLight;
   Color get _borderColor => _isDark ? AppColors.darkBorder : AppColors.border;
-  Color get _textPrimaryColor => _isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
-  Color get _textSecondaryColor => _isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
-  Color get _textTertiaryColor => _isDark ? AppColors.darkTextTertiary : AppColors.textTertiary;
+  Color get _textPrimaryColor =>
+      _isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+  Color get _textSecondaryColor =>
+      _isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+  Color get _textTertiaryColor =>
+      _isDark ? AppColors.darkTextTertiary : AppColors.textTertiary;
 
   String _formatInterval(int minutes) {
     if (minutes < 60) return 'Every $minutes min';
@@ -401,10 +407,7 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
                 ),
                 Text(
                   'Get notified to drink water',
-                  style: TextStyle(
-                    color: _textSecondaryColor,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: _textSecondaryColor, fontSize: 12),
                 ),
               ],
             ),
@@ -460,11 +463,7 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
       children: [
         Expanded(child: _buildTimeTile('Start', _startTime, true)),
         const SizedBox(width: 12),
-        Icon(
-          Icons.arrow_forward_rounded,
-          color: _textTertiaryColor,
-          size: 20,
-        ),
+        Icon(Icons.arrow_forward_rounded, color: _textTertiaryColor, size: 20),
         const SizedBox(width: 12),
         Expanded(child: _buildTimeTile('End', _endTime, false)),
       ],

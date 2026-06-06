@@ -110,8 +110,10 @@ class SupabaseService {
   /// Only available on iOS and Android
   Future<AuthResponse> signInWithGoogle() async {
     try {
-      const webClientId = 'YOUR_WEB_CLIENT_ID'; // Todo Replace with your web client ID
-      const iosClientId = 'YOUR_IOS_CLIENT_ID'; // Todo Replace with your iOS client ID
+      const webClientId =
+          'YOUR_WEB_CLIENT_ID'; // Todo Replace with your web client ID
+      const iosClientId =
+          'YOUR_IOS_CLIENT_ID'; // Todo Replace with your iOS client ID
 
       final GoogleSignIn googleSignIn = GoogleSignIn(
         clientId: Platform.isIOS ? iosClientId : null,
@@ -189,12 +191,12 @@ class SupabaseService {
 
       // If we have name from Apple, update user metadata
       if (credential.givenName != null || credential.familyName != null) {
-        final fullName = '${credential.givenName ?? ''} ${credential.familyName ?? ''}'.trim();
+        final fullName =
+            '${credential.givenName ?? ''} ${credential.familyName ?? ''}'
+                .trim();
         if (fullName.isNotEmpty) {
           await _supabase.auth.updateUser(
-            UserAttributes(
-              data: {'name': fullName},
-            ),
+            UserAttributes(data: {'name': fullName}),
           );
         }
       }
@@ -211,9 +213,13 @@ class SupabaseService {
 
   /// Generate a random nonce for Apple Sign-In
   String _generateNonce([int length = 32]) {
-    const charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+    const charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
     final random = Random.secure();
-    return List.generate(length, (_) => charset[random.nextInt(charset.length)]).join();
+    return List.generate(
+      length,
+      (_) => charset[random.nextInt(charset.length)],
+    ).join();
   }
 
   // ============ USER PROFILE ============

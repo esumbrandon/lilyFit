@@ -111,7 +111,6 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
-
             // Body Info - Redesigned
             SliverToBoxAdapter(
               child: Builder(
@@ -203,7 +202,6 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
-
             const SliverToBoxAdapter(child: SizedBox(height: 8)),
 
             // ── Preferences section ───────────────────────────────────
@@ -256,8 +254,8 @@ class ProfileScreen extends StatelessWidget {
                 subtitle: provider.userProfile.emailUpdated
                     ? '${provider.userProfile.email} (Updated)'
                     : (provider.userProfile.email.isNotEmpty
-                        ? provider.userProfile.email
-                        : AppLocalizations.of(context)!.updateEmailAddress),
+                          ? provider.userProfile.email
+                          : AppLocalizations.of(context)!.updateEmailAddress),
                 onTap: provider.userProfile.emailUpdated
                     ? null
                     : () {
@@ -413,7 +411,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-
   Widget _infoRow(IconData icon, String label, String value) {
     return Builder(
       builder: (context) {
@@ -456,7 +453,6 @@ class ProfileScreen extends StatelessWidget {
       },
     );
   }
-
 
   Widget _divider() {
     return Container(
@@ -745,7 +741,6 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
-
 
   // ── Settings Helper Methods ───────────────────────────────────────
 

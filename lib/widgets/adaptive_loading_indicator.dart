@@ -56,14 +56,9 @@ class CenteredAdaptiveLoadingIndicator extends StatelessWidget {
     );
 
     if (size != null && !Platform.isIOS) {
-      indicator = SizedBox(
-        width: size,
-        height: size,
-        child: indicator,
-      );
+      indicator = SizedBox(width: size, height: size, child: indicator);
     }
 
     return Center(child: indicator);
   }
 }
-

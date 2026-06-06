@@ -103,7 +103,10 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   /// Build the list of slivers for the scrollview (excluding refresh control)
-  List<Widget> _buildContentSlivers(BuildContext context, AppProvider provider) {
+  List<Widget> _buildContentSlivers(
+    BuildContext context,
+    AppProvider provider,
+  ) {
     final profile = provider.userProfile;
     final now = DateTime.now();
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -193,14 +196,10 @@ class _DashboardScreenState extends State<DashboardScreen>
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text(
-                              '🔥',
-                              style: TextStyle(fontSize: 18),
-                            ),
+                            const Text('🔥', style: TextStyle(fontSize: 18)),
                             const SizedBox(width: 8),
                             Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
@@ -216,9 +215,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                                 Text(
                                   'Streak',
                                   style: TextStyle(
-                                    color: AppColors.carbs.withAlpha(
-                                      180,
-                                    ),
+                                    color: AppColors.carbs.withAlpha(180),
                                     fontSize: 10,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.5,
@@ -299,9 +296,7 @@ class _DashboardScreenState extends State<DashboardScreen>
               children: [
                 Expanded(
                   child: MacroProgressBar(
-                    label: AppLocalizations.of(
-                      context,
-                    )!.protein.toUpperCase(),
+                    label: AppLocalizations.of(context)!.protein.toUpperCase(),
                     current: provider.consumedProtein,
                     target: profile.targetProtein,
                     color: AppColors.protein,
@@ -310,9 +305,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 const SizedBox(width: 10),
                 Expanded(
                   child: MacroProgressBar(
-                    label: AppLocalizations.of(
-                      context,
-                    )!.carbs.toUpperCase(),
+                    label: AppLocalizations.of(context)!.carbs.toUpperCase(),
                     current: provider.consumedCarbs,
                     target: profile.targetCarbs,
                     color: AppColors.carbs,
@@ -321,9 +314,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 const SizedBox(width: 10),
                 Expanded(
                   child: MacroProgressBar(
-                    label: AppLocalizations.of(
-                      context,
-                    )!.fat.toUpperCase(),
+                    label: AppLocalizations.of(context)!.fat.toUpperCase(),
                     current: provider.consumedFat,
                     target: profile.targetFat,
                     color: AppColors.fat,
@@ -370,8 +361,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       child: MealSectionCard(
                         mealType: type,
                         meals: provider.getMealsByType(type),
-                        onAddFood: () =>
-                            _navigateToFoodSearch(context, type),
+                        onAddFood: () => _navigateToFoodSearch(context, type),
                         onRemoveFood: (id) => provider.removeMeal(id),
                       ),
                     ),
@@ -423,9 +413,7 @@ class _DashboardScreenState extends State<DashboardScreen>
       ),
 
       // Bottom padding for navbar
-      const SliverToBoxAdapter(
-        child: SizedBox(height: 80),
-      ),
+      const SliverToBoxAdapter(child: SizedBox(height: 80)),
     ];
   }
 
@@ -451,10 +439,10 @@ class _DashboardScreenState extends State<DashboardScreen>
             : RefreshIndicator(
                 onRefresh: () => _refreshData(context),
                 color: AppColors.primary,
-                backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
-                child: CustomScrollView(
-                  slivers: contentSlivers,
-                ),
+                backgroundColor: isDark
+                    ? AppColors.darkSurface
+                    : AppColors.surface,
+                child: CustomScrollView(slivers: contentSlivers),
               ),
       ),
     );
@@ -602,4 +590,3 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 }
-

@@ -149,7 +149,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
               ),
             ),
 
-
             // Weekly Calories Chart
             SliverToBoxAdapter(
               child: Padding(
@@ -409,10 +408,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
           decoration: BoxDecoration(
             color: isDark ? AppColors.darkCard : AppColors.card,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: categoryColor.withAlpha(100),
-              width: 1.5,
-            ),
+            border: Border.all(color: categoryColor.withAlpha(100), width: 1.5),
           ),
           child: Column(
             children: [
@@ -441,10 +437,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               ),
               const SizedBox(height: 6),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 3,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: categoryColor.withAlpha(25),
                   borderRadius: BorderRadius.circular(8),
@@ -502,9 +495,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
       builder: (ctx) => Container(
         decoration: BoxDecoration(
           color: isDark ? AppColors.darkSurface : AppColors.surface,
-          borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(28),
-          ),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: EdgeInsets.fromLTRB(
           24,
@@ -521,9 +512,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? AppColors.darkCardLight
-                      : AppColors.cardLight,
+                  color: isDark ? AppColors.darkCardLight : AppColors.cardLight,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -576,17 +565,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
               decoration: BoxDecoration(
                 color: categoryColor.withAlpha(25),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: categoryColor.withAlpha(50),
-                ),
+                border: Border.all(color: categoryColor.withAlpha(50)),
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.info_outline,
-                    color: categoryColor,
-                    size: 20,
-                  ),
+                  Icon(Icons.info_outline, color: categoryColor, size: 20),
                   const SizedBox(width: 12),
                   Text(
                     '${AppLocalizations.of(context)!.bmiStatus}: ',
@@ -696,12 +679,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
             label,
             style: TextStyle(
               color: isActive
-                  ? (isDark
-                      ? AppColors.darkTextPrimary
-                      : AppColors.textPrimary)
+                  ? (isDark ? AppColors.darkTextPrimary : AppColors.textPrimary)
                   : (isDark
-                      ? AppColors.darkTextSecondary
-                      : AppColors.textSecondary),
+                        ? AppColors.darkTextSecondary
+                        : AppColors.textSecondary),
               fontSize: 14,
               fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
             ),
@@ -713,8 +694,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
             color: isActive
                 ? color
                 : (isDark
-                    ? AppColors.darkTextTertiary
-                    : AppColors.textTertiary),
+                      ? AppColors.darkTextTertiary
+                      : AppColors.textTertiary),
             fontSize: 13,
             fontWeight: isActive ? FontWeight.w700 : FontWeight.normal,
           ),
@@ -936,7 +917,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       colors: isOverTarget
                           ? [AppColors.carbs, AppColors.carbs.withAlpha(200)]
                           : isToday
-                          ? [AppColors.primary, AppColors.primary.withAlpha(200)]
+                          ? [
+                              AppColors.primary,
+                              AppColors.primary.withAlpha(200),
+                            ]
                           : [
                               AppColors.primary.withAlpha(100),
                               AppColors.primary.withAlpha(150),
@@ -1040,5 +1024,4 @@ class _ProgressScreenState extends State<ProgressScreen> {
     final unit = weightUnit == 'lbs' ? 'lbs' : 'kg';
     return '$sign${displayChange.toStringAsFixed(1)} $unit';
   }
-
 }

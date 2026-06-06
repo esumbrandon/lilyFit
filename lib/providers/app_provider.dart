@@ -647,13 +647,10 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
               DateTime.now().month,
               DateTime.now().day,
             );
-            await _offlineQueue.addOperation(
-              OfflineOperationType.addWeight,
-              {
-                'weight': newWeight,
-                'date': today.toIso8601String(),
-              },
-            );
+            await _offlineQueue.addOperation(OfflineOperationType.addWeight, {
+              'weight': newWeight,
+              'date': today.toIso8601String(),
+            });
           }
         }
       } else {
@@ -670,13 +667,10 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
             DateTime.now().month,
             DateTime.now().day,
           );
-          await _offlineQueue.addOperation(
-            OfflineOperationType.addWeight,
-            {
-              'weight': newWeight,
-              'date': today.toIso8601String(),
-            },
-          );
+          await _offlineQueue.addOperation(OfflineOperationType.addWeight, {
+            'weight': newWeight,
+            'date': today.toIso8601String(),
+          });
         }
 
         debugPrint('Device offline - profile update queued for sync');
@@ -961,7 +955,7 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
     // Clear all local data
     await _prefs.clear();
     await _offlineQueue.clearQueue();
-    
+
     // Reset all state to initial values
     _userProfile = UserProfile();
     _isOnboarded = false;
@@ -977,7 +971,7 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
     _waterReminderStartMinute = 0;
     _waterReminderEndHour = 22;
     _waterReminderEndMinute = 0;
-    
+
     notifyListeners();
     debugPrint('User logged out - all data cleared');
   }
