@@ -111,7 +111,7 @@ class SupabaseService {
   Future<AuthResponse> signInWithGoogle() async {
     try {
       const webClientId =
-          'YOUR_WEB_CLIENT_ID'; // Todo Replace with your web client ID
+          '570529075069-ui6c76cv8kajj7epmcoldnmt77uq31bv.apps.googleusercontent.com';
       const iosClientId =
           'YOUR_IOS_CLIENT_ID'; // Todo Replace with your iOS client ID
 
