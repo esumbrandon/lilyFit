@@ -119,11 +119,7 @@ class SupabaseService {
       final GoogleSignIn googleSignIn = GoogleSignIn(
         clientId: Platform.isIOS ? iosClientId : null,
         serverClientId: webClientId,
-        scopes: [
-          'email',
-          'profile',
-          'openid',
-        ],
+        scopes: ['email', 'profile', 'openid'],
       );
 
       // Sign out first to ensure clean state
@@ -167,7 +163,9 @@ class SupabaseService {
           'Error: ${e.message}',
         );
       } else if (e.code == 'network_error') {
-        throw Exception('Network error. Please check your internet connection.');
+        throw Exception(
+          'Network error. Please check your internet connection.',
+        );
       }
       throw Exception('Google sign-in error: ${e.message ?? e.code}');
     } on AuthException catch (e) {
