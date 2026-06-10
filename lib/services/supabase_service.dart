@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:flutter/services.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:math';
@@ -111,14 +112,22 @@ class SupabaseService {
   Future<AuthResponse> signInWithGoogle() async {
     try {
       const webClientId =
-          '570529075069-ui6c76cv8kajj7epmcoldnmt77uq31bv.apps.googleusercontent.com';
+          '570529075069-2o04k1seuql019nimobbqmcc1unrhcvh.apps.googleusercontent.com';
       const iosClientId =
-          'YOUR_IOS_CLIENT_ID'; // Todo Replace with your iOS client ID
+          '570529075069-rh3r7m6vlf0nbc6nkmep9sulv53djkt8.apps.googleusercontent.com';
 
       final GoogleSignIn googleSignIn = GoogleSignIn(
         clientId: Platform.isIOS ? iosClientId : null,
         serverClientId: webClientId,
+        scopes: [
+          'email',
+          'profile',
+          'openid',
+        ],
       );
+
+      // Sign out first to ensure clean state
+      await googleSignIn.signOut();
 
       final googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
@@ -147,6 +156,20 @@ class SupabaseService {
       }
 
       return response;
+    } on PlatformException catch (e) {
+      // Handle specific Google Sign-In errors
+      if (e.code == 'sign_in_failed') {
+        throw Exception(
+          'Google Sign-In configuration error. Please check:\n'
+          '1. SHA-1 certificates are added to Google Cloud Console\n'
+          '2. Package name matches: app.cypherwave.lilyfit\n'
+          '3. Wait 5-10 minutes after adding certificates\n'
+          'Error: ${e.message}',
+        );
+      } else if (e.code == 'network_error') {
+        throw Exception('Network error. Please check your internet connection.');
+      }
+      throw Exception('Google sign-in error: ${e.message ?? e.code}');
     } on AuthException catch (e) {
       throw Exception('Google sign-in error: ${e.message}');
     } catch (e) {
