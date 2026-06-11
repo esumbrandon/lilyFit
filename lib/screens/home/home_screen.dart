@@ -86,10 +86,14 @@ class _HomeScreenState extends State<HomeScreen>
           minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
           child: Container(
             decoration: BoxDecoration(
-              color: isDark ? AppColors.darkCard : AppColors.card,
+              color: isDark
+                  ? const Color(0xFF3A4556) // 10% lighter gray for dark theme
+                  : const Color(0xFFE2E8F0), // 10% darker for light theme
               borderRadius: BorderRadius.circular(32),
               border: Border.all(
-                color: isDark ? AppColors.darkBorder : AppColors.border,
+                color: isDark
+                    ? const Color(0xFF5A6576) // 10% lighter border for dark theme
+                    : const Color(0xFFB4BCC8), // 10% darker border for light theme
               ),
               boxShadow: [
                 BoxShadow(
