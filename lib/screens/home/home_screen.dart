@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen>
   int _currentIndex = 0;
   late AnimationController _scaleController;
   late Animation<double> _scaleAnimation;
-  double _navBarScale = 0.9; // Start at 90% (reduced by 10%)
+  double _navBarScale = 0.9;
   double _lastScrollOffset = 0;
 
   final _screens = const [
@@ -86,14 +86,12 @@ class _HomeScreenState extends State<HomeScreen>
           minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
           child: Container(
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF3A4556) // 10% lighter gray for dark theme
-                  : const Color(0xFFE2E8F0), // 10% darker for light theme
+              color: isDark ? const Color(0xFF3A4556) : const Color(0xFFE2E8F0),
               borderRadius: BorderRadius.circular(32),
               border: Border.all(
                 color: isDark
-                    ? const Color(0xFF5A6576) // 10% lighter border for dark theme
-                    : const Color(0xFFB4BCC8), // 10% darker border for light theme
+                    ? const Color(0xFF5A6576)
+                    : const Color(0xFFB4BCC8),
               ),
               boxShadow: [
                 BoxShadow(
