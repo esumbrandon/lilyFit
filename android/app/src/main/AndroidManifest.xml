@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="app.cypherwave.lilyfit">
+    package="app.cipherwave.lilyfit">
     <!-- Internet permission for Supabase database access -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- Location permissions -->
