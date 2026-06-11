@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen>
   int _currentIndex = 0;
   late AnimationController _scaleController;
   late Animation<double> _scaleAnimation;
-  bool _isBottomNavVisible = true;
+  double _navBarScale = 0.9; // Start at 90% (reduced by 10%)
   double _lastScrollOffset = 0;
 
   final _screens = const [
@@ -46,14 +46,14 @@ class _HomeScreenState extends State<HomeScreen>
       final currentOffset = notification.metrics.pixels;
       final delta = currentOffset - _lastScrollOffset;
 
-      // Only hide/show if scrolled more than 5 pixels
+      // Only scale if scrolled more than 5 pixels
       if (delta.abs() > 5) {
-        if (delta > 0 && _isBottomNavVisible) {
-          // Scrolling down - hide nav bar
-          setState(() => _isBottomNavVisible = false);
-        } else if (delta < 0 && !_isBottomNavVisible) {
-          // Scrolling up - show nav bar
-          setState(() => _isBottomNavVisible = true);
+        if (delta > 0 && _navBarScale != 0.81) {
+          // Scrolling down - reduce by another 10% (0.9 * 0.9 = 0.81)
+          setState(() => _navBarScale = 0.81);
+        } else if (delta < 0 && _navBarScale != 0.9) {
+          // Scrolling up - restore to 90%
+          setState(() => _navBarScale = 0.9);
         }
       }
       _lastScrollOffset = currentOffset;
@@ -78,10 +78,10 @@ class _HomeScreenState extends State<HomeScreen>
         },
         child: IndexedStack(index: _currentIndex, children: _screens),
       ),
-      bottomNavigationBar: AnimatedSlide(
+      bottomNavigationBar: AnimatedScale(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-        offset: _isBottomNavVisible ? Offset.zero : const Offset(0, 1),
+        scale: _navBarScale,
         child: SafeArea(
           minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
           child: Container(
