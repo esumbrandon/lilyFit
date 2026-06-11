@@ -53,11 +53,11 @@ Your personalized plan considers your age, gender, current weight, height, and a
 ### Multilingual Support
 
 Access LilyFit in your preferred language:
-- 🇺🇸 English
-- 🇪🇸 Spanish
-- 🇫🇷 French
-- 🇩🇪 German
-- 🇧🇷 Portuguese
+-  English
+-  Spanish
+-  French
+-  German
+-  Portuguese
 
 ### Customizable Experience
 
@@ -76,30 +76,30 @@ Access LilyFit in your preferred language:
 
 ## Why Choose LilyFit?
 
-✅ **Easy to Use** - Intuitive interface designed for daily use  
-✅ **Science-Based** - Calculations based on proven nutritional science  
-✅ **Comprehensive** - Track everything in one place  
-✅ **Private & Secure** - Your data is protected and belongs to you  
-✅ **No Ads** - Focus on your health without distractions  
-✅ **Offline Capable** - Access your data even without internet
+ **Easy to Use** - Intuitive interface designed for daily use  
+ **Science-Based** - Calculations based on proven nutritional science  
+ **Comprehensive** - Track everything in one place  
+ **Private & Secure** - Your data is protected and belongs to you  
+ **No Ads** - Focus on your health without distractions  
+ **Offline Capable** - Access your data even without internet
 
 ## Coming Soon
 
 We're constantly improving LilyFit with exciting new features:
 
-- 🏃‍♀️ **Workout Tracking** - Log exercises and track calories burned
-- 📸 **Barcode Scanner** - Quickly log packaged foods by scanning
-- 🥘 **Recipe Builder** - Create and save your favorite recipes
-- 👥 **Social Features** - Connect with friends and join challenges
-- ⌚ **Wearable Integration** - Sync with Apple Health and Google Fit
-- 🤖 **AI Recommendations** - Get personalized meal suggestions
-- 📅 **Meal Planning** - Plan your week ahead
+- **Workout Tracking** - Log exercises and track calories burned
+- **Barcode Scanner** - Quickly log packaged foods by scanning
+- **Recipe Builder** - Create and save your favorite recipes
+- **Social Features** - Connect with friends and join challenges
+- **Wearable Integration** - Sync with Apple Health and Google Fit
+- **AI Recommendations** - Get personalized meal suggestions
+- **Meal Planning** - Plan your week ahead
 
 ## Get LilyFit
 
 **Available on:**
-- 📱 iOS (Coming soon to App Store)
-- 🤖 Android (Coming soon to Google Play)
+- iOS (Coming soon to App Store)
+- Android (Coming soon to Google Play)
 
 [//]: # ()
 [//]: # (## Support)
@@ -115,6 +115,6 @@ We're constantly improving LilyFit with exciting new features:
 
 ---
 
-**Version 1.0** | Made with ❤️ for your health journey
+**Version 1.0** | Made with Love️ for your health journey
 
-*Start your transformation today with LilyFit - because every journey begins with a single step* 🌟
+*Start your transformation today with LilyFit - because every journey begins with a single step* 
