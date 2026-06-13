@@ -93,7 +93,7 @@ We're constantly improving LilyFit with exciting new features:
 - **Social Features** - Connect with friends and join challenges
 - **Wearable Integration** - Sync with Apple Health and Google Fit
 - **AI Recommendations** - Get personalized meal suggestions
-- **Meal Planning** - Plan your week ahead
+- **Meal Planning** - Plan your week ahead and many more.
 
 ## Get LilyFit
 
