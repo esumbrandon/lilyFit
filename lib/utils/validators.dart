@@ -1,5 +1,4 @@
 class Validators {
-  /// Validates if email is in proper format
   static String? validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Email is required';
@@ -16,7 +15,6 @@ class Validators {
     return null;
   }
 
-  /// Validates if name is not empty
   static String? validateName(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Name is required';
@@ -29,7 +27,6 @@ class Validators {
     return null;
   }
 
-  /// Validates password strength
   static String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Password is required';
@@ -42,7 +39,6 @@ class Validators {
     return null;
   }
 
-  /// Validates if a required field is not empty
   static String? validateRequired(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) {
       return '$fieldName is required';

@@ -3,28 +3,22 @@ import 'package:geolocator/geolocator.dart';
 import "app_logger.dart";
 import 'language_service.dart';
 
-/// Service to get user location and detect appropriate language
 class LocationService {
-  /// Check if location services are enabled
   static Future<bool> isLocationServiceEnabled() async {
     return Geolocator.isLocationServiceEnabled();
   }
 
-  /// Check location permission status
   static Future<LocationPermission> checkPermission() async {
     return Geolocator.checkPermission();
   }
 
-  /// Request location permission
   static Future<LocationPermission> requestPermission() async {
     await LanguageService.setLocationPermissionRequested();
     return Geolocator.requestPermission();
   }
 
-  /// Get current position
   static Future<Position?> getCurrentPosition() async {
     try {
-      // Check if location services are enabled
       final bool serviceEnabled = await isLocationServiceEnabled();
 
       if (!serviceEnabled) {
@@ -32,7 +26,6 @@ class LocationService {
         return null;
       }
 
-      // Check permission
       LocationPermission permission = await checkPermission();
 
       if (permission == LocationPermission.denied) {
@@ -65,7 +58,6 @@ class LocationService {
     }
   }
 
-  /// Get country code from position
   static Future<String?> getCountryCodeFromPosition(Position position) async {
     try {
       final List<Placemark> placemarks = await placemarkFromCoordinates(
@@ -85,7 +77,6 @@ class LocationService {
     }
   }
 
-  /// Detect language based on user's location
   static Future<String> detectLanguageFromLocation() async {
     try {
       final Position? position = await getCurrentPosition();
@@ -108,7 +99,6 @@ class LocationService {
     }
   }
 
-  /// Get suggested language with location info
   static Future<Map<String, dynamic>> getSuggestedLanguage() async {
     try {
       final Position? position = await getCurrentPosition();

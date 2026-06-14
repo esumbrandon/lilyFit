@@ -8,20 +8,15 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import '../models/user_profile.dart';
 
-/// Service to interact with Supabase backend
+// Service to interact with Supabase backend
 class SupabaseService {
-  /// Lazily access the client so construction doesn't throw when Supabase
-  /// hasn't been initialized (e.g. in unit tests).
   SupabaseClient get _supabase => Supabase.instance.client;
 
-  /// Helper method to format DateTime to YYYY-MM-DD string
-  /// This ensures consistent date formatting across iOS and Android
   String _formatDateString(DateTime date) {
     final normalized = DateTime(date.year, date.month, date.day);
     return '${normalized.year}-${normalized.month.toString().padLeft(2, '0')}-${normalized.day.toString().padLeft(2, '0')}';
   }
 
-  /// Sign up a new user with email and password
   Future<AuthResponse> signUp({
     required String email,
     required String password,
@@ -44,7 +39,6 @@ class SupabaseService {
     }
   }
 
-  /// Sign in existing user
   Future<AuthResponse> signIn({
     required String email,
     required String password,
@@ -75,22 +69,18 @@ class SupabaseService {
     }
   }
 
-  /// Sign out current user
   Future<void> signOut() async {
     await _supabase.auth.signOut();
   }
 
-  /// Get current user ID
   String? getCurrentUserId() {
     return _supabase.auth.currentUser?.id;
   }
 
-  /// Get current user
   User? getCurrentUser() {
     return _supabase.auth.currentUser;
   }
 
-  /// Check if user is logged in
   bool isLoggedIn() {
     try {
       return _supabase.auth.currentUser != null;
@@ -99,16 +89,12 @@ class SupabaseService {
     }
   }
 
-  /// Listen to auth state changes
   Stream<AuthState> get authStateChanges => _supabase.auth.onAuthStateChange;
 
-  /// Send password reset email
   Future<void> resetPassword(String email) async {
     await _supabase.auth.resetPasswordForEmail(email);
   }
 
-  /// Sign in with Google
-  /// Only available on iOS and Android
   Future<AuthResponse> signInWithGoogle() async {
     try {
       const webClientId =
@@ -175,8 +161,6 @@ class SupabaseService {
     }
   }
 
-  /// Sign in with Apple
-  /// Only available on iOS
   Future<AuthResponse> signInWithApple() async {
     if (!Platform.isIOS) {
       throw Exception('Sign in with Apple is only available on iOS');
@@ -232,7 +216,6 @@ class SupabaseService {
     }
   }
 
-  /// Generate a random nonce for Apple Sign-In
   String _generateNonce([int length = 32]) {
     const charset =
         '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
@@ -245,8 +228,6 @@ class SupabaseService {
 
   // ============ USER PROFILE ============
 
-  /// Save or update user profile
-  /// Note: email is auto-synced from auth.users by database trigger
   Future<void> saveUserProfile(UserProfile profile) async {
     final userId = getCurrentUserId();
     if (userId == null) {
@@ -259,7 +240,6 @@ class SupabaseService {
       await _supabase.from('user_profiles').upsert({
         'id': userId,
         'name': profile.name,
-        // email is auto-synced by database trigger - do not set manually
         'gender': profile.gender,
         'age': profile.age,
         'weight': profile.weight,
@@ -279,7 +259,6 @@ class SupabaseService {
     }
   }
 
-  /// Get user profile
   Future<UserProfile?> getUserProfile() async {
     final userId = getCurrentUserId();
     if (userId == null) return null;
@@ -310,7 +289,6 @@ class SupabaseService {
     );
   }
 
-  /// Check if user has a profile
   Future<bool> hasProfile() async {
     final profile = await getUserProfile();
     return profile != null;
@@ -318,7 +296,6 @@ class SupabaseService {
 
   // ============ WEIGHT TRACKING ============
 
-  /// Log weight entry
   Future<void> logWeight({
     required double weight,
     required DateTime date,
@@ -333,7 +310,6 @@ class SupabaseService {
     });
   }
 
-  /// Get weight history
   Future<List<Map<String, dynamic>>> getWeightHistory({
     int? limit,
     DateTime? startDate,
@@ -365,15 +341,12 @@ class SupabaseService {
     return List<Map<String, dynamic>>.from(response);
   }
 
-  /// Delete weight entry
   Future<void> deleteWeightEntry(String id) async {
     await _supabase.from('weight_logs').delete().eq('id', id);
   }
 
   // ============ MEAL TRACKING ============
 
-  /// Log a meal
-  /// Returns the ID of the created meal log
   Future<String?> logMeal({
     required String mealType,
     required String foodName,
@@ -406,7 +379,6 @@ class SupabaseService {
     return response['id']?.toString();
   }
 
-  /// Get meal logs for a specific date
   Future<List<Map<String, dynamic>>> getMealLogs(DateTime date) async {
     final userId = getCurrentUserId();
     if (userId == null) return [];
@@ -421,7 +393,6 @@ class SupabaseService {
     return List<Map<String, dynamic>>.from(response);
   }
 
-  /// Get meal logs within date range
   Future<List<Map<String, dynamic>>> getMealLogsInRange({
     required DateTime startDate,
     required DateTime endDate,
@@ -440,14 +411,13 @@ class SupabaseService {
     return List<Map<String, dynamic>>.from(response);
   }
 
-  /// Delete a meal log
   Future<void> deleteMealLog(String id) async {
     await _supabase.from('meal_logs').delete().eq('id', id);
   }
 
   // ============ WORKOUT TRACKING ============
 
-  /// Log a workout
+  //Coming in the next release.
   Future<void> logWorkout({
     required String workoutName,
     required int duration,
@@ -500,14 +470,13 @@ class SupabaseService {
     return List<Map<String, dynamic>>.from(response);
   }
 
-  /// Delete a workout log
   Future<void> deleteWorkoutLog(String id) async {
     await _supabase.from('workout_logs').delete().eq('id', id);
   }
 
   // ============ PAYMENT TRANSACTIONS ============
 
-  /// Create a payment transaction record
+  //next release feature: payment transactions and subscription management
   Future<String> createPaymentTransaction({
     required double amount,
     required String currency,
@@ -536,7 +505,6 @@ class SupabaseService {
     return response['id'];
   }
 
-  /// Update payment transaction status
   Future<void> updatePaymentStatus({
     required String transactionId,
     required String status,
@@ -552,7 +520,6 @@ class SupabaseService {
         .eq('id', transactionId);
   }
 
-  /// Get user's payment transactions
   Future<List<Map<String, dynamic>>> getPaymentTransactions({
     int? limit,
   }) async {
@@ -575,7 +542,6 @@ class SupabaseService {
 
   // ============ WATER INTAKE ============
 
-  /// Log water intake
   Future<void> logWaterIntake({
     required double amount,
     required DateTime date,
@@ -590,7 +556,6 @@ class SupabaseService {
     });
   }
 
-  /// Get water intake for a date
   Future<double> getWaterIntake(DateTime date) async {
     final userId = getCurrentUserId();
     if (userId == null) return 0.0;
@@ -612,7 +577,7 @@ class SupabaseService {
 
   // ============ REAL-TIME SUBSCRIPTIONS ============
 
-  /// Subscribe to profile changes
+  //in next release
   RealtimeChannel subscribeToProfile(Function(Map<String, dynamic>) onUpdate) {
     final userId = getCurrentUserId();
     if (userId == null) throw Exception('No user logged in');
@@ -633,14 +598,12 @@ class SupabaseService {
         .subscribe();
   }
 
-  /// Unsubscribe from channel
   Future<void> unsubscribe(RealtimeChannel channel) async {
     await _supabase.removeChannel(channel);
   }
 
   // ============ FOOD DATABASE ============
 
-  /// Fetch all foods from database
   Future<List<Map<String, dynamic>>> getAllFoods() async {
     try {
       final response = await _supabase
@@ -655,7 +618,6 @@ class SupabaseService {
     }
   }
 
-  /// Fetch foods by region
   Future<List<Map<String, dynamic>>> getFoodsByRegion(String region) async {
     try {
       final response = await _supabase
@@ -671,7 +633,6 @@ class SupabaseService {
     }
   }
 
-  /// Search foods by name
   Future<List<Map<String, dynamic>>> searchFoods(String query) async {
     try {
       if (query.isEmpty) {
@@ -691,7 +652,6 @@ class SupabaseService {
     }
   }
 
-  /// Get last update timestamp from foods table
   Future<DateTime?> getFoodsLastUpdated() async {
     try {
       final response = await _supabase

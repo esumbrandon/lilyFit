@@ -45,43 +45,36 @@ class AppColors {
   static const Color warning = Color(0xFFF59E0B);
   static const Color error = Color(0xFFEF4444);
 
-  // Gradients - Professional and subtle
-  // Primary: Clean green gradient for a fresh, healthy look
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [Color(0xFF16A34A), Color(0xFF15803D)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  // Accent: Warm orange gradient (use sparingly for highlights)
   static const LinearGradient accentGradient = LinearGradient(
     colors: [Color(0xFFF97316), Color(0xFFEA580C)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  // Surface: Subtle white gradient for backgrounds
   static const LinearGradient surfaceGradient = LinearGradient(
     colors: [Color(0xFFFFFFFF), Color(0xFFF8FAFC)],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
 
-  // Warm: Bright green gradient for success/positive actions
   static const LinearGradient successGradient = LinearGradient(
     colors: [Color(0xFF16A34A), Color(0xFF22C55E)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  // Cool: Light green gradient for subtle highlights
   static const LinearGradient lightGreenGradient = LinearGradient(
     colors: [Color(0xFF22C55E), Color(0xFF4ADE80)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  // Card shadow for depth
   static List<BoxShadow> get cardShadow => [
     BoxShadow(
       color: Colors.black.withValues(alpha: 0.08),
@@ -95,7 +88,6 @@ class AppColors {
     ),
   ];
 
-  // Glassmorphism effect
   static BoxDecoration get glassMorphism => BoxDecoration(
     color: card,
     borderRadius: BorderRadius.circular(20),

@@ -1,48 +1,40 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Service to manage language preferences and first-time app launch
 class LanguageService {
   static const String _languageKey = 'selected_language';
   static const String _firstLaunchKey = 'is_first_launch';
   static const String _locationPermissionKey = 'location_permission_requested';
 
-  /// Check if this is the first time the app is launched
   static Future<bool> isFirstLaunch() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_firstLaunchKey) ?? true;
   }
 
-  /// Mark that the app has been launched (not first time anymore)
   static Future<void> setNotFirstLaunch() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_firstLaunchKey, false);
   }
 
-  /// Get saved language code
   static Future<String?> getSavedLanguage() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_languageKey);
   }
 
-  /// Save selected language code
   static Future<void> saveLanguage(String languageCode) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_languageKey, languageCode);
   }
 
-  /// Check if location permission has been requested
   static Future<bool> hasRequestedLocationPermission() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_locationPermissionKey) ?? false;
   }
 
-  /// Mark that location permission has been requested
   static Future<void> setLocationPermissionRequested() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_locationPermissionKey, true);
   }
 
-  /// Get language based on country code
   static String getLanguageFromCountryCode(String countryCode) {
     final languageMap = {
       // English speaking countries
@@ -87,7 +79,6 @@ class LanguageService {
     return languageMap[countryCode.toUpperCase()] ?? 'en';
   }
 
-  /// Available languages with their display names and flags
   static List<Map<String, String>> getAvailableLanguages() {
     return [
       {'code': 'en', 'name': 'English', 'flag': '🇬🇧', 'native': 'English'},

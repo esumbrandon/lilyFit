@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Types of operations that can be queued
 enum OfflineOperationType {
   addMeal,
   removeMeal,
@@ -12,7 +11,6 @@ enum OfflineOperationType {
   updateProfile,
 }
 
-/// Represents a pending operation to sync when back online
 class PendingOperation {
   final String id;
   final OfflineOperationType type;
@@ -45,7 +43,6 @@ class PendingOperation {
   }
 }
 
-/// Service to manage offline operations queue
 class OfflineQueueService {
   static final OfflineQueueService _instance = OfflineQueueService._internal();
   factory OfflineQueueService() => _instance;
@@ -55,7 +52,6 @@ class OfflineQueueService {
   List<PendingOperation> _queue = [];
   bool _isSyncing = false;
 
-  /// Load queue from storage
   Future<void> loadQueue() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -71,7 +67,6 @@ class OfflineQueueService {
     }
   }
 
-  /// Save queue to storage
   Future<void> _saveQueue() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -82,7 +77,6 @@ class OfflineQueueService {
     }
   }
 
-  /// Add operation to queue
   Future<void> addOperation(
     OfflineOperationType type,
     Map<String, dynamic> data,
@@ -98,29 +92,22 @@ class OfflineQueueService {
     debugPrint('Added operation to queue: ${type.name}');
   }
 
-  /// Get number of pending operations
   int get pendingCount => _queue.length;
 
-  /// Check if there are pending operations
   bool get hasPendingOperations => _queue.isNotEmpty;
 
-  /// Remove operation from queue
   Future<void> _removeOperation(String id) async {
     _queue.removeWhere((op) => op.id == id);
     await _saveQueue();
   }
 
-  /// Clear all operations
   Future<void> clearQueue() async {
     _queue.clear();
     await _saveQueue();
   }
 
-  /// Get all pending operations
   List<PendingOperation> get pendingOperations => List.unmodifiable(_queue);
 
-  /// Sync pending operations
-  /// Returns true if all operations synced successfully
   Future<bool> syncPendingOperations(
     Future<void> Function(PendingOperation) syncFunction,
   ) async {

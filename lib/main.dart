@@ -52,7 +52,6 @@ void main() async {
   );
 }
 
-// Global Supabase client instance
 final supabase = Supabase.instance.client;
 
 class LilyFitApp extends StatelessWidget {
@@ -66,7 +65,6 @@ class LilyFitApp extends StatelessWidget {
         (themeMode == ThemeMode.system &&
             MediaQuery.platformBrightnessOf(context) == Brightness.dark);
 
-    // Update system UI overlay style based on theme
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -89,10 +87,8 @@ class LilyFitApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
-      // Localization configuration
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      // Use locale from AppProvider
       locale: context.watch<AppProvider>().currentLocale,
       home: const AppInitializer(),
       routes: {
@@ -103,11 +99,6 @@ class LilyFitApp extends StatelessWidget {
   }
 }
 
-/// Handles app initialization and navigation to language selection or auth
-/// Flow:
-/// - First time users: Language Selection → Auth Screen → Signup → Onboarding
-/// - Returning users (logged in): Skip to Home with their progress
-/// - Returning users (not logged in): Auth Screen → Login → Home/Onboarding
 class AppInitializer extends StatefulWidget {
   const AppInitializer({super.key});
 
@@ -126,14 +117,11 @@ class _AppInitializerState extends State<AppInitializer> {
   }
 
   Future<void> _determineInitialRoute() async {
-    // Capture provider reference before async operations
     final provider = context.read<AppProvider>();
 
-    // Check if this is the first launch (new user)
     final isFirstLaunch = await LanguageService.isFirstLaunch();
 
     if (isFirstLaunch) {
-      // First time user - must select language before anything else
       setState(() {
         _initialScreen = const LanguageSelectionScreen();
         _isChecking = false;
@@ -146,17 +134,13 @@ class _AppInitializerState extends State<AppInitializer> {
     final user = supabaseService.getCurrentUser();
 
     if (user == null) {
-      // Returning user but not logged in
-      // Check if they have local data (previously used the app)
       if (provider.isOnboarded) {
-        // User has local data - allow offline access
         debugPrint('User has local data - proceeding offline');
         setState(() {
           _initialScreen = const HomeScreen();
           _isChecking = false;
         });
       } else {
-        // No local data - must authenticate
         setState(() {
           _initialScreen = const AuthWrapper();
           _isChecking = false;
@@ -165,15 +149,12 @@ class _AppInitializerState extends State<AppInitializer> {
       return;
     }
 
-    // User is logged in - check if they have local profile first
     if (provider.isOnboarded) {
-      // User has local data - proceed immediately, sync in background
       setState(() {
         _initialScreen = const HomeScreen();
         _isChecking = false;
       });
 
-      // Background sync (non-blocking) - only if online
       if (provider.isOnline) {
         provider.syncFromSupabase().catchError((e) {
           debugPrint('Background sync failed on startup: $e');
@@ -182,10 +163,7 @@ class _AppInitializerState extends State<AppInitializer> {
       return;
     }
 
-    // User is logged in but no local profile - need to fetch from network
-    // Check connectivity first
     if (!provider.isOnline) {
-      // Offline and no local data - can't proceed, need network for first-time profile
       debugPrint('Offline with no local data - showing auth screen');
       setState(() {
         _initialScreen = const AuthWrapper();
@@ -194,25 +172,21 @@ class _AppInitializerState extends State<AppInitializer> {
       return;
     }
 
-    // Online - attempt to fetch profile
     try {
       final profile = await supabaseService.getUserProfile();
 
       if (!mounted) return;
 
       if (profile == null) {
-        // Logged in but no profile - complete onboarding
         setState(() {
           _initialScreen = const OnboardingScreen();
           _isChecking = false;
         });
       } else {
-        // Logged in with profile - load data and go to home
         if (!provider.isOnboarded) {
           await provider.completeOnboarding(profile);
         }
 
-        // Sync data from Supabase (non-blocking)
         provider.syncFromSupabase().catchError((e) {
           debugPrint('Sync failed during first load: $e');
         });
@@ -223,19 +197,16 @@ class _AppInitializerState extends State<AppInitializer> {
         });
       }
     } catch (e) {
-      // Network error loading profile
       debugPrint('Error loading profile during init: $e');
 
       if (!mounted) return;
 
-      // If we have local data, allow offline access despite the error
       if (provider.isOnboarded) {
         setState(() {
           _initialScreen = const HomeScreen();
           _isChecking = false;
         });
       } else {
-        // No local data and network error - show auth screen
         setState(() {
           _initialScreen = const AuthWrapper();
           _isChecking = false;
@@ -308,8 +279,6 @@ class _AppInitializerState extends State<AppInitializer> {
   }
 }
 
-/// Handles authentication state and navigation for unauthenticated users
-/// This wrapper is shown when user needs to login/signup
 class AuthWrapper extends StatefulWidget {
   const AuthWrapper({super.key});
 
@@ -340,14 +309,12 @@ class _AuthWrapperState extends State<AuthWrapper> {
   Future<void> _checkAuthState() async {
     setState(() => _isLoading = true);
 
-    // Capture provider reference before async operations
     final provider = context.read<AppProvider>();
 
     try {
       final user = _supabaseService.getCurrentUser();
 
       if (user == null) {
-        // Not logged in -> show auth screen for login/signup
         setState(() {
           _currentScreen = const AuthScreen();
           _isLoading = false;
@@ -355,10 +322,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
         return;
       }
 
-      // User just logged in/signed up - check if they have a profile
-      // First check local data
       if (provider.isOnboarded) {
-        // Has local profile - proceed immediately, sync in background
         if (!mounted) return;
 
         Navigator.of(context).pushAndRemoveUntil(
@@ -366,7 +330,6 @@ class _AuthWrapperState extends State<AuthWrapper> {
           (route) => false,
         );
 
-        // Background sync (non-blocking) - only if online
         if (provider.isOnline) {
           provider.syncFromSupabase().catchError((e) {
             debugPrint('Background sync failed after auth: $e');
@@ -375,10 +338,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
         return;
       }
 
-      // No local profile - need to fetch from network
-      // Check connectivity first
       if (!provider.isOnline) {
-        // Offline with no local data - show onboarding (they'll save data locally first)
         debugPrint(
           'Offline after auth with no local data - showing onboarding',
         );
@@ -389,29 +349,24 @@ class _AuthWrapperState extends State<AuthWrapper> {
         return;
       }
 
-      // Online - attempt to fetch profile
       final profile = await _supabaseService.getUserProfile();
 
       if (!mounted) return;
 
       if (profile == null) {
-        // Just signed up, no profile yet -> show onboarding to create profile
         setState(() {
           _currentScreen = const OnboardingScreen();
           _isLoading = false;
         });
       } else {
-        // Just logged in with existing profile -> load data and go to home
         if (!provider.isOnboarded) {
           await provider.completeOnboarding(profile);
         }
 
-        // Sync data from Supabase (non-blocking)
         provider.syncFromSupabase().catchError((e) {
           debugPrint('Sync failed after login: $e');
         });
 
-        // Navigate to home (replace entire stack)
         if (!mounted) return;
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -420,19 +375,16 @@ class _AuthWrapperState extends State<AuthWrapper> {
         return;
       }
     } catch (e) {
-      // Error checking state
       debugPrint('Error in auth state check: $e');
 
       if (!mounted) return;
 
-      // If user has local data, let them proceed despite network error
       if (provider.isOnboarded && _supabaseService.getCurrentUser() != null) {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => const HomeScreen()),
           (route) => false,
         );
       } else {
-        // No local data and network error - show auth screen
         setState(() {
           _currentScreen = const AuthScreen();
           _isLoading = false;
