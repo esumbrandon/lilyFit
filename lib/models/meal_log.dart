@@ -10,12 +10,12 @@ extension MealTypeExtension on MealType {
     MealType.snack => 'Snack',
   };
 
-  String get emoji => switch (this) {
-    MealType.breakfast => '🌅',
-    MealType.lunch => '☀️',
-    MealType.dinner => '🌙',
-    MealType.snack => '🍎',
-  };
+  // String get emoji => switch (this) {
+  //   MealType.breakfast => '🌅',
+  //   MealType.lunch => '☀️',
+  //   MealType.dinner => '🌙',
+  //   MealType.snack => '🍎',
+  // };
 }
 
 class MealLog {

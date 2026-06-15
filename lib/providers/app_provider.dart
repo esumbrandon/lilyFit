@@ -19,23 +19,22 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
   final ConnectivityService _connectivityService = ConnectivityService();
   final OfflineQueueService _offlineQueue = OfflineQueueService();
   StreamSubscription<bool>? _connectivitySubscription;
-  Timer?
-  _syncCompleteTimer; // Track timer so we can cancel it on lifecycle changes
+  Timer? _syncCompleteTimer;
 
   UserProfile _userProfile = UserProfile();
   bool _isOnboarded = false;
   List<MealLog> _mealLogs = [];
-  double _waterIntake = 0; // mL for today
-  double _waterGoal = 2500; // mL
+  double _waterIntake = 0;
+  double _waterGoal = 2500;
   List<WeightEntry> _weightEntries = [];
   DateTime _selectedDate = DateTime.now();
-  Locale _currentLocale = const Locale('en'); // Default locale
+  Locale _currentLocale = const Locale('en');
   bool _isOnline = true;
   SyncStatus _syncStatus = SyncStatus.idle;
-  bool _isSyncingFromSupabase = false; // guard for syncFromSupabase concurrency
-  ThemeMode _themeMode = ThemeMode.system; // Default to system theme
+  bool _isSyncingFromSupabase = false;
+  ThemeMode _themeMode = ThemeMode.system;
 
-  // ─── Water Reminder Settings ────────────────────────────────────
+  // Water Reminder Settings
   bool _waterRemindersEnabled = false;
   int _waterReminderIntervalMinutes = 60;
   int _waterReminderStartHour = 8;
@@ -43,7 +42,7 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
   int _waterReminderEndHour = 22;
   int _waterReminderEndMinute = 0;
 
-  // ─── Getters ────────────────────────────────────────────────────
+  // Getters
   UserProfile get userProfile => _userProfile;
   bool get isOnboarded => _isOnboarded;
   double get waterIntake => _waterIntake;
@@ -120,22 +119,17 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
     return streak;
   }
 
-  // ─── Initialization ─────────────────────────────────────────────
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
     _loadData();
 
-    // Register as app lifecycle observer (critical for iOS background/resume)
     WidgetsBinding.instance.addObserver(this);
 
-    // Initialize connectivity service
     await _connectivityService.initialize();
     _isOnline = _connectivityService.isOnline;
 
-    // Initialize offline queue
     await _offlineQueue.loadQueue();
 
-    // Listen for connectivity changes
     _connectivitySubscription = _connectivityService.connectivityStream.listen((
       isOnline,
     ) {
@@ -143,11 +137,9 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
       notifyListeners();
 
       if (isOnline) {
-        // Coming back online — sync any queued operations.
         debugPrint('Device is back online - syncing pending operations...');
         _syncWhenOnline();
       } else {
-        // Reset any in-progress sync status so the offline banner shows cleanly.
         if (_syncStatus == SyncStatus.syncing) {
           _syncStatus = SyncStatus.idle;
         }
@@ -155,13 +147,10 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
       }
     });
 
-    // On startup: only run the full sync+banner flow when there are queued
-    // operations. Otherwise do a silent background pull from Supabase.
     if (_isOnline) {
       if (_offlineQueue.pendingCount > 0) {
         _syncWhenOnline();
       } else {
-        // Silent initial data pull — no banner, no status change.
         syncFromSupabase();
       }
     }

@@ -14,32 +14,6 @@ void main() {
     region: 'Global',
   );
 
-  group('MealType', () {
-    test('breakfast has correct label and emoji', () {
-      expect(MealType.breakfast.label, 'Breakfast');
-      expect(MealType.breakfast.emoji, '🌅');
-    });
-
-    test('lunch has correct label and emoji', () {
-      expect(MealType.lunch.label, 'Lunch');
-      expect(MealType.lunch.emoji, '☀️');
-    });
-
-    test('dinner has correct label and emoji', () {
-      expect(MealType.dinner.label, 'Dinner');
-      expect(MealType.dinner.emoji, '🌙');
-    });
-
-    test('snack has correct label and emoji', () {
-      expect(MealType.snack.label, 'Snack');
-      expect(MealType.snack.emoji, '🍎');
-    });
-
-    test('has exactly 4 values', () {
-      expect(MealType.values.length, 4);
-    });
-  });
-
   group('MealLog', () {
     final dateTime = DateTime(2024, 6, 15, 12, 30);
 

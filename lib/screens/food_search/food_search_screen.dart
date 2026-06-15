@@ -789,10 +789,6 @@ class _FoodDetailSheetState extends State<_FoodDetailSheet> {
                       ),
                       child: Column(
                         children: [
-                          Text(
-                            type.emoji,
-                            style: const TextStyle(fontSize: 18),
-                          ),
                           const SizedBox(height: 2),
                           Text(
                             type.label,
