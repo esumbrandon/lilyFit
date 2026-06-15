@@ -40,8 +40,6 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
     );
   }
 
-  // ─── Helpers ────────────────────────────────────────────────────
-
   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
 
   Color get _backgroundColor =>
@@ -81,24 +79,18 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
     return ((endMin - startMin) ~/ _intervalMinutes) + 1;
   }
 
-  // ─── Actions ────────────────────────────────────────────────────
-
   Future<void> _handleToggleChange(bool value) async {
     HapticFeedback.selectionClick();
 
-    // If turning on, check and request permissions first
     if (value) {
-      // Check if permissions are already granted
       final alreadyGranted = await NotificationService.arePermissionsGranted();
 
       if (!alreadyGranted) {
-        // Request permissions
         final granted = await NotificationService.requestPermissions();
 
         if (!mounted) return;
 
         if (!granted) {
-          // Permission denied - show error and keep toggle off
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text(
@@ -108,12 +100,11 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
               backgroundColor: AppColors.error,
             ),
           );
-          return; // Don't change the toggle state
+          return;
         }
       }
     }
 
-    // Permission granted or turning off - update state
     setState(() => _enabled = value);
   }
 
@@ -122,7 +113,6 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
     final picked = await showTimePicker(context: context, initialTime: initial);
     if (picked == null) return;
 
-    // Validate: end must be after start
     if (isStart) {
       final endMin = _endTime.hour * 60 + _endTime.minute;
       final newMin = picked.hour * 60 + picked.minute;
@@ -156,7 +146,6 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
     HapticFeedback.mediumImpact();
     setState(() => _saving = true);
 
-    // Get localized strings before async operations
     final notificationTitle = AppLocalizations.of(
       context,
     )!.waterReminderNotificationTitle;
@@ -205,8 +194,6 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
       );
     }
   }
-
-  // ─── Build ───────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +249,6 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
 
             const SizedBox(height: 32),
 
-            // Save button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -299,8 +285,6 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
       ),
     );
   }
-
-  // ─── Sub-widgets ─────────────────────────────────────────────────
 
   Widget _buildHeroCard() {
     return Container(

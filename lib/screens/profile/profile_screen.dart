@@ -786,9 +786,9 @@ class ProfileScreen extends StatelessWidget {
   String _currentThemeName(AppProvider provider) {
     switch (provider.themeMode) {
       case ThemeMode.light:
-        return '☀️ Light Mode';
+        return '☀️ Light';
       case ThemeMode.dark:
-        return '🌙 Dark Mode';
+        return '⚫️ Dark';
       case ThemeMode.system:
         return '⚙️ System Default';
     }
@@ -1108,7 +1108,6 @@ class ProfileScreen extends StatelessWidget {
                       onPressed: () async {
                         HapticFeedback.mediumImpact();
 
-                        // Get localized strings for the NEW language before changing
                         final newLocalizations = lookupAppLocalizations(
                           Locale(selected),
                         );
@@ -1140,8 +1139,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  // ── Theme Picker ──────────────────────────────────────────────────
-
   void _showThemePicker(BuildContext context, AppProvider provider) {
     final themes = [
       {
@@ -1153,7 +1150,7 @@ class ProfileScreen extends StatelessWidget {
       {
         'mode': ThemeMode.dark,
         'name': 'Dark Mode',
-        'icon': '🌙',
+        'icon': '⚫️',
         'desc': 'Always use dark theme',
       },
       {
@@ -1295,8 +1292,6 @@ class ProfileScreen extends StatelessWidget {
       },
     );
   }
-
-  // ── Email Update ─────────────────────────────────────────────────
 
   void _showEmailUpdateSheet(BuildContext context, AppProvider provider) {
     final controller = TextEditingController(text: provider.userProfile.email);
@@ -1535,7 +1530,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Version 1.0.0',
+                'Version 1.0',
                 style: TextStyle(
                   color: isDark
                       ? AppColors.darkTextTertiary

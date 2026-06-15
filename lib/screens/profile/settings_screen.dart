@@ -23,7 +23,6 @@ class SettingsScreen extends StatelessWidget {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            // ── Header ───────────────────────────────────────────────
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
@@ -43,7 +42,6 @@ class SettingsScreen extends StatelessWidget {
 
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
-            // ── Preferences section ───────────────────────────────────
             _sectionHeader(context, AppLocalizations.of(context)!.preferences),
             _sectionCard([
               _settingsTile(
@@ -102,13 +100,11 @@ class SettingsScreen extends StatelessWidget {
 
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
-            // ── Subscription section ──────────────────────────────────
             _sectionHeader(context, AppLocalizations.of(context)!.membership),
             _sectionCard([_premiumTile(context)]),
 
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
-            // ── Support & About section ───────────────────────────────
             _sectionHeader(
               context,
               '${AppLocalizations.of(context)!.support} & ${AppLocalizations.of(context)!.about}',
@@ -175,8 +171,6 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
   }
-
-  // ── Helpers ───────────────────────────────────────────────────────
 
   String _currentLanguageName(AppProvider provider) {
     final code = provider.currentLocale.languageCode;
@@ -405,8 +399,6 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  // ── Language Picker ───────────────────────────────────────────────
-
   void _showLanguagePicker(BuildContext context, AppProvider provider) {
     final languages = LanguageService.getAvailableLanguages();
     final currentCode = provider.currentLocale.languageCode;
@@ -557,8 +549,6 @@ class SettingsScreen extends StatelessWidget {
       },
     );
   }
-
-  // ── Theme Picker ──────────────────────────────────────────────────
 
   void _showThemePicker(BuildContext context, AppProvider provider) {
     final themes = [
@@ -713,8 +703,6 @@ class SettingsScreen extends StatelessWidget {
       },
     );
   }
-
-  // ── Email Update ─────────────────────────────────────────────────
 
   void _showEmailUpdateSheet(BuildContext context, AppProvider provider) {
     final controller = TextEditingController(text: provider.userProfile.email);
@@ -1017,7 +1005,6 @@ class SettingsScreen extends StatelessWidget {
                 );
 
                 try {
-                  // Logout (this will cancel notifications and clear all data)
                   final provider = context.read<AppProvider>();
                   await provider.logout();
 
@@ -1051,10 +1038,6 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Notification Settings Screen
-// ─────────────────────────────────────────────────────────────────────────────
 
 class _NotificationSettingsScreen extends StatelessWidget {
   const _NotificationSettingsScreen();
@@ -1291,10 +1274,6 @@ class _NotificationSettingsScreen extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Help & Support Screen
-// ─────────────────────────────────────────────────────────────────────────────
 
 class _HelpSupportScreen extends StatelessWidget {
   const _HelpSupportScreen();
@@ -1599,10 +1578,6 @@ class _FaqTileState extends State<_FaqTile> {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Privacy & Security Screen
-// ─────────────────────────────────────────────────────────────────────────────
 
 class _PrivacySecurityScreen extends StatelessWidget {
   const _PrivacySecurityScreen();

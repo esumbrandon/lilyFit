@@ -42,7 +42,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
-    // Get user's name from auth metadata
     final user = SupabaseService().getCurrentUser();
     if (user != null && user.userMetadata?['name'] != null) {
       _name = user.userMetadata!['name'] as String;
@@ -65,7 +64,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _nextPage() {
-    // Validate page 1 (name) before proceeding
     if (_currentPage == 1) {
       final nameValidation = Validators.validateName(_name);
 
@@ -101,7 +99,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _completeOnboarding() async {
     HapticFeedback.mediumImpact();
-    // Final validation
     final nameValidation = Validators.validateName(_name);
 
     if (nameValidation != null) {
@@ -112,7 +109,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       return;
     }
 
-    // Show loading dialog
     if (!mounted) return;
     showDialog(
       context: context,
@@ -129,7 +125,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         throw Exception(AppLocalizations.of(context)!.noUserLoggedIn);
       }
 
-      // Create user profile with calculated targets
       final profile = UserProfile(
         name: _name.trim(),
         email: user.email ?? '',
@@ -144,30 +139,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       );
       profile.calculateTargets();
 
-      // Save profile to Supabase database
       await supabaseService.saveUserProfile(profile);
 
-      // Save locally and complete onboarding
       if (!mounted) return;
       await context.read<AppProvider>().completeOnboarding(profile);
       if (!mounted) return;
       await context.read<AppProvider>().setWaterGoal(_waterGoalMl);
 
-      // Close loading dialog
       if (!mounted) return;
       Navigator.of(context).pop();
 
-      // Navigate to home
       if (!mounted) return;
       Navigator.of(
         context,
       ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
     } catch (e) {
-      // Close loading dialog
       if (!mounted) return;
       Navigator.of(context).pop();
 
-      // Show error message
       if (!mounted) return;
       showDialog(
         context: context,
@@ -201,12 +190,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Progress indicator
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
               child: Row(
                 children: List.generate(_totalPages, (i) {
-                  // Fill fraction: 0.0 (empty) → 1.0 (full) based on live scroll
                   final fill = (((_pageScrollPosition + 1) - i)).clamp(
                     0.0,
                     1.0,
@@ -248,7 +235,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     setState(() => _currentPage = page);
                     return;
                   }
-                  // Validate forward swipe from name page (page 1)
                   if (page > _currentPage && _currentPage == 1) {
                     final err = Validators.validateName(_name);
                     if (err != null) {
@@ -315,8 +301,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // ─── Page 1: Welcome ───────────────────────────────────────────
-  // ─── Page 2: Name & Gender ─────────────────────────────────────
   Widget _buildNameGenderPage() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -453,7 +437,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // ─── Page 3: Body Metrics ──────────────────────────────────────
   Widget _buildBodyMetricsPage() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -505,7 +488,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     _unitToggle('kg', _weightUnit == 'kg', () {
                       setState(() {
                         if (_weightUnit == 'lbs') {
-                          // Keep same weight, just change display unit
                           _weightUnit = 'kg';
                         }
                       });
@@ -514,7 +496,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     _unitToggle('lbs', _weightUnit == 'lbs', () {
                       setState(() {
                         if (_weightUnit == 'kg') {
-                          // Keep same weight, just change display unit
                           _weightUnit = 'lbs';
                         }
                       });
@@ -544,7 +525,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     _unitToggle('cm', _heightUnit == 'cm', () {
                       setState(() {
                         if (_heightUnit == 'ft') {
-                          // Keep same height, just change display unit
                           _heightUnit = 'cm';
                         }
                       });
@@ -553,7 +533,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     _unitToggle('ft', _heightUnit == 'ft', () {
                       setState(() {
                         if (_heightUnit == 'cm') {
-                          // Keep same height, just change display unit
                           _heightUnit = 'ft';
                         }
                       });
@@ -650,7 +629,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             onChanged: (v) {
               setState(() {
                 if (_weightUnit == 'lbs') {
-                  // Convert back to kg for storage
                   _weight = UnitConverter.lbsToKg(v);
                 } else {
                   _weight = v;
@@ -792,7 +770,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // ─── Page 4: Activity Level ────────────────────────────────────
   Widget _buildActivityPage() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -917,7 +894,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // ─── Page 5: Goal ──────────────────────────────────────────────
   Widget _buildGoalPage() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -1034,7 +1010,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // ─── Page 5: Results ───────────────────────────────────────────
   Widget _buildResultsPage() {
     final user = SupabaseService().getCurrentUser();
     final profile = UserProfile(
@@ -1154,7 +1129,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
           const SizedBox(height: 24),
 
-          // BMI
+          // BMI (Body Mass Index)
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(18),
@@ -1260,7 +1235,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _ => AppLocalizations.of(context)!.maintainWeight,
   };
 
-  // ─── Page 0: Welcome ──────────────────────────────────────────
   Widget _buildWelcomePage() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -1405,7 +1379,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // ─── Page 6: Diet Preferences ─────────────────────────────────
   Widget _buildDietPage() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -1536,7 +1509,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  // ─── Page 7: Water Goal ───────────────────────────────────────
   Widget _buildWaterGoalPage() {
     final litres = _waterGoalMl / 1000;
     final glasses = (_waterGoalMl / 250).round();

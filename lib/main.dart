@@ -18,22 +18,16 @@ import 'widgets/adaptive_loading_indicator.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Supabase
   await Supabase.initialize(
     url: SupabaseConfig.supabaseUrl,
     anonKey: SupabaseConfig.supabaseAnonKey,
   );
 
-  // Initialize notification service (must come after ensureInitialized).
   await NotificationService.initialize();
-
-  // System UI overlay style will be set dynamically based on theme
-  // in the MaterialApp widget
 
   final appProvider = AppProvider();
   await appProvider.initialize();
 
-  // Re-schedule water reminders if the user had them enabled before.
   if (appProvider.waterRemindersEnabled) {
     final localizations = lookupAppLocalizations(appProvider.currentLocale);
     await NotificationService.scheduleWaterReminders(
@@ -129,7 +123,6 @@ class _AppInitializerState extends State<AppInitializer> {
       return;
     }
 
-    // Not first launch - check authentication state
     final supabaseService = SupabaseService();
     final user = supabaseService.getCurrentUser();
 

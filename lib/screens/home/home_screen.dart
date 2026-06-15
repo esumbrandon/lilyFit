@@ -46,13 +46,11 @@ class _HomeScreenState extends State<HomeScreen>
       final currentOffset = notification.metrics.pixels;
       final delta = currentOffset - _lastScrollOffset;
 
-      // Only scale if scrolled more than 5 pixels
+      // Adjust the bottom nav bar scale based on scroll direction and amount.
       if (delta.abs() > 5) {
         if (delta > 0 && _navBarScale != 0.81) {
-          // Scrolling down - reduce by another 10% (0.9 * 0.9 = 0.81)
           setState(() => _navBarScale = 0.81);
         } else if (delta < 0 && _navBarScale != 0.9) {
-          // Scrolling up - restore to 90%
           setState(() => _navBarScale = 0.9);
         }
       }

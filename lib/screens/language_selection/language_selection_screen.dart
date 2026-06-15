@@ -65,7 +65,6 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
         _suggestedLanguageCode = result['languageCode'] as String;
         _countryName = result['countryName'] as String?;
 
-        // Auto-select suggested language if location was detected
         if (_locationDetected) {
           _selectedLanguage = _suggestedLanguageCode;
         }
@@ -94,7 +93,6 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
       return;
     }
 
-    // Mark as no longer first launch, then update locale via provider (persists automatically)
     await LanguageService.setNotFirstLaunch();
 
     if (mounted) {
@@ -148,7 +146,6 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         children: [
-          // Logo or Icon
           TweenAnimationBuilder<double>(
             duration: const Duration(milliseconds: 600),
             tween: Tween(begin: 0.0, end: 1.0),
