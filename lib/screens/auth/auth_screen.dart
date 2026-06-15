@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:io';
 import 'dart:math' as math;
 import '../../l10n/app_localizations.dart';
@@ -11,6 +12,8 @@ import '../../providers/app_provider.dart';
 import '../../widgets/adaptive_loading_indicator.dart';
 import '../onboarding/onboarding_screen.dart';
 import '../home/home_screen.dart';
+import 'google_sign_in_service.dart';
+import 'apple_sign_in_service.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -24,6 +27,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   late AnimationController _floatingController;
   late AnimationController _fadeController;
   final _supabaseService = SupabaseService();
+  final _googleSignInService = GoogleSignInService();
+  final _appleSignInService = AppleSignInService();
 
   // Login form
   final _loginEmailController = TextEditingController();
@@ -86,13 +91,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
 
     if (emailError != null || passwordError != null) return;
 
-    // Show loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) =>
-          const CenteredAdaptiveLoadingIndicator(color: AppColors.primary),
-    );
+    _showLoadingDialog();
 
     try {
       final response = await _supabaseService.signIn(
@@ -101,35 +100,14 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       );
 
       if (!mounted) return;
-      Navigator.of(context).pop(); // Close loading
+      _closeLoadingDialog();
 
       if (response.user != null) {
-        // Check if user has completed onboarding
-        final profile = await _supabaseService.getUserProfile();
-
-        if (!mounted) return;
-        if (profile != null) {
-          // Returning user with profile - load into app state
-          final provider = context.read<AppProvider>();
-          await provider.completeOnboarding(profile);
-
-          // Navigate to home (replace entire navigation stack)
-          if (!mounted) return;
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const HomeScreen()),
-            (route) => false,
-          );
-        } else {
-          // User exists but no profile, complete onboarding (new user)
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-          );
-        }
+        await _handleSuccessfulAuth();
       }
     } catch (e) {
       if (!mounted) return;
-      Navigator.of(context).pop(); // Close loading
-
+      _closeLoadingDialog();
       _showErrorDialog(AppLocalizations.of(context)!.loginFailed, e.toString());
     }
   }
@@ -160,13 +138,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       return;
     }
 
-    // Show loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) =>
-          const CenteredAdaptiveLoadingIndicator(color: AppColors.primary),
-    );
+    _showLoadingDialog();
 
     try {
       final response = await _supabaseService.signUp(
@@ -176,7 +148,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       );
 
       if (!mounted) return;
-      Navigator.of(context).pop(); // Close loading
+      _closeLoadingDialog();
 
       if (response.user == null) {
         throw Exception(AppLocalizations.of(context)!.failedToCreateAccount);
@@ -198,8 +170,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       );
     } catch (e) {
       if (!mounted) return;
-      Navigator.of(context).pop(); // Close loading
-
+      _closeLoadingDialog();
       _showErrorDialog(
         AppLocalizations.of(context)!.signUpFailed,
         e.toString(),
@@ -278,19 +249,13 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       return;
     }
 
-    // Show loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) =>
-          const CenteredAdaptiveLoadingIndicator(color: AppColors.primary),
-    );
+    _showLoadingDialog();
 
     try {
       await _supabaseService.resetPassword(result.trim());
 
       if (!mounted) return;
-      Navigator.of(context).pop(); // Close loading
+      _closeLoadingDialog();
 
       _showInfoDialog(
         AppLocalizations.of(context)!.resetLinkSent,
@@ -298,8 +263,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       );
     } catch (e) {
       if (!mounted) return;
-      Navigator.of(context).pop(); // Close loading
-
+      _closeLoadingDialog();
       _showErrorDialog(AppLocalizations.of(context)!.resetFailed, e.toString());
     }
   }
@@ -356,106 +320,82 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> _handleGoogleSignIn() async {
+  /// Handle OAuth sign-in flow (Google or Apple)
+  ///
+  /// This is a common handler for both OAuth providers to reduce code duplication.
+  Future<void> _handleOAuthSignIn(
+    Future<AuthResponse> Function() signInMethod,
+    String providerName,
+  ) async {
     HapticFeedback.mediumImpact();
-
-    // Show loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) =>
-          const CenteredAdaptiveLoadingIndicator(color: AppColors.primary),
-    );
+    _showLoadingDialog();
 
     try {
-      final response = await _supabaseService.signInWithGoogle();
+      final response = await signInMethod();
 
       if (!mounted) return;
-      Navigator.of(context).pop(); // Close loading
+      _closeLoadingDialog();
 
       if (response.user != null) {
-        // Check if user has completed onboarding
-        final profile = await _supabaseService.getUserProfile();
-
-        if (!mounted) return;
-        if (profile != null) {
-          // Returning user with profile - load into app state
-          final provider = context.read<AppProvider>();
-          await provider.completeOnboarding(profile);
-
-          // Navigate to home (replace entire navigation stack)
-          if (!mounted) return;
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const HomeScreen()),
-            (route) => false,
-          );
-        } else {
-          // User exists but no profile, complete onboarding (new user)
-          if (!mounted) return;
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-          );
-        }
+        await _handleSuccessfulAuth();
       }
     } catch (e) {
       if (!mounted) return;
-      Navigator.of(context).pop(); // Close loading
+      _closeLoadingDialog();
       _showErrorDialog(
-        'Google Sign-In Failed',
+        '$providerName Sign-In Failed',
         e.toString().replaceAll('Exception: ', ''),
       );
     }
   }
 
-  Future<void> _handleAppleSignIn() async {
-    HapticFeedback.mediumImpact();
+  Future<void> _handleGoogleSignIn() async {
+    await _handleOAuthSignIn(() => _googleSignInService.signIn(), 'Google');
+  }
 
-    // Show loading
+  Future<void> _handleAppleSignIn() async {
+    await _handleOAuthSignIn(() => _appleSignInService.signIn(), 'Apple');
+  }
+
+  /// Handle successful authentication and navigation
+  Future<void> _handleSuccessfulAuth() async {
+    // Check if user has completed onboarding
+    final profile = await _supabaseService.getUserProfile();
+
+    if (!mounted) return;
+
+    if (profile != null) {
+      // Returning user with profile - load into app state
+      final provider = context.read<AppProvider>();
+      await provider.completeOnboarding(profile);
+
+      // Navigate to home (replace entire navigation stack)
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        (route) => false,
+      );
+    } else {
+      // User exists but no profile, complete onboarding (new user)
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+      );
+    }
+  }
+
+  /// Show loading dialog
+  void _showLoadingDialog() {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) =>
           const CenteredAdaptiveLoadingIndicator(color: AppColors.primary),
     );
+  }
 
-    try {
-      final response = await _supabaseService.signInWithApple();
-
-      if (!mounted) return;
-      Navigator.of(context).pop(); // Close loading
-
-      if (response.user != null) {
-        // Check if user has completed onboarding
-        final profile = await _supabaseService.getUserProfile();
-
-        if (!mounted) return;
-        if (profile != null) {
-          // Returning user with profile - load into app state
-          final provider = context.read<AppProvider>();
-          await provider.completeOnboarding(profile);
-
-          // Navigate to home (replace entire navigation stack)
-          if (!mounted) return;
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const HomeScreen()),
-            (route) => false,
-          );
-        } else {
-          // User exists but no profile, complete onboarding (new user)
-          if (!mounted) return;
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-          );
-        }
-      }
-    } catch (e) {
-      if (!mounted) return;
-      Navigator.of(context).pop(); // Close loading
-      _showErrorDialog(
-        'Apple Sign-In Failed',
-        e.toString().replaceAll('Exception: ', ''),
-      );
-    }
+  /// Close loading dialog
+  void _closeLoadingDialog() {
+    Navigator.of(context).pop();
   }
 
   @override

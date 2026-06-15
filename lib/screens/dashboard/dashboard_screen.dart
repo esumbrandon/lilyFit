@@ -36,7 +36,6 @@ class _DashboardScreenState extends State<DashboardScreen>
       vsync: this,
     );
 
-    // Create staggered animations for 5 sections
     _fadeAnimations = List.generate(5, (index) {
       final start = index * 0.1;
       final end = start + 0.4;
@@ -82,11 +81,8 @@ class _DashboardScreenState extends State<DashboardScreen>
   Future<void> _refreshData(BuildContext context) async {
     final provider = context.read<AppProvider>();
     try {
-      // Sync data from Supabase
       await provider.syncFromSupabase();
-      // Success - no message shown to avoid clutter
     } catch (e) {
-      // Show error message only if refresh fails
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -102,7 +98,6 @@ class _DashboardScreenState extends State<DashboardScreen>
     }
   }
 
-  /// Build the list of slivers for the scrollview (excluding refresh control)
   List<Widget> _buildContentSlivers(
     BuildContext context,
     AppProvider provider,
@@ -112,7 +107,6 @@ class _DashboardScreenState extends State<DashboardScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return [
-      // Offline / Syncing / Sync-Done Banner
       if (!provider.isOnline ||
           provider.syncStatus == SyncStatus.syncing ||
           provider.syncStatus == SyncStatus.done)
@@ -286,7 +280,6 @@ class _DashboardScreenState extends State<DashboardScreen>
         ),
       ),
 
-      // Macro bars
       SliverToBoxAdapter(
         child: _buildAnimatedSection(
           2,
@@ -326,7 +319,6 @@ class _DashboardScreenState extends State<DashboardScreen>
         ),
       ),
 
-      // Section title: Today's Meals
       SliverToBoxAdapter(
         child: _buildAnimatedSection(
           3,
@@ -476,7 +468,6 @@ class _DashboardScreenState extends State<DashboardScreen>
           ? 'Syncing $count ${count == 1 ? "item" : "items"}...'
           : 'Syncing...';
     } else if (isOffline && hasPendingItems) {
-      // Offline with pending items
       bgColor = AppColors.accent.withAlpha(15);
       borderColor = AppColors.accent.withAlpha(45);
       iconColor = AppColors.accent;
@@ -491,8 +482,6 @@ class _DashboardScreenState extends State<DashboardScreen>
       icon = Icons.cloud_off_rounded;
       message = 'Offline mode';
     } else {
-      // This shouldn't happen but handle it gracefully
-      // Online with pending items but not syncing (shouldn't display)
       return const SizedBox.shrink();
     }
 

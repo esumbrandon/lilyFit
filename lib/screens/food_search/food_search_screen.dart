@@ -262,7 +262,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // Todo, do add icons uncomment this lines.
+                              // Todo, to add icons uncomment this lines.
                               // Text(
                               //   FoodDatabase.regionEmoji(region),
                               //   style: const TextStyle(fontSize: 18),

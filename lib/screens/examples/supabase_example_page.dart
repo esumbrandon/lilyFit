@@ -29,7 +29,6 @@ class _SupabaseExamplePageState extends State<SupabaseExamplePage> {
     super.dispose();
   }
 
-  // Example: Sign up a new user
   Future<void> _signUp() async {
     setState(() {
       _isLoading = true;
@@ -53,7 +52,6 @@ class _SupabaseExamplePageState extends State<SupabaseExamplePage> {
     }
   }
 
-  // Example: Sign in existing user
   Future<void> _signIn() async {
     setState(() {
       _isLoading = true;
@@ -76,7 +74,6 @@ class _SupabaseExamplePageState extends State<SupabaseExamplePage> {
     }
   }
 
-  // Example: Save user profile
   Future<void> _saveProfile() async {
     setState(() {
       _isLoading = true;
@@ -106,7 +103,6 @@ class _SupabaseExamplePageState extends State<SupabaseExamplePage> {
     }
   }
 
-  // Example: Get user profile
   Future<void> _getProfile() async {
     setState(() {
       _isLoading = true;
@@ -130,7 +126,6 @@ class _SupabaseExamplePageState extends State<SupabaseExamplePage> {
     }
   }
 
-  // Example: Log weight
   Future<void> _logWeight() async {
     setState(() {
       _isLoading = true;
@@ -164,7 +159,6 @@ class _SupabaseExamplePageState extends State<SupabaseExamplePage> {
     }
   }
 
-  // Example: Log a meal
   Future<void> _logMeal() async {
     setState(() {
       _isLoading = true;
@@ -189,7 +183,6 @@ class _SupabaseExamplePageState extends State<SupabaseExamplePage> {
     }
   }
 
-  // Example: Sign out
   Future<void> _signOut() async {
     setState(() {
       _isLoading = true;
