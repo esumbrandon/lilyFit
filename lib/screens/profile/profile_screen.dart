@@ -2,25 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../l10n/app_localizations.dart';
-import '../../theme/app_theme.dart';
 import '../../models/user_profile.dart';
 import '../../providers/app_provider.dart';
-import '../../utils/unit_converter.dart';
 import '../../services/language_service.dart';
+import '../../theme/app_theme.dart';
+import '../../utils/unit_converter.dart';
 import '../../widgets/adaptive_loading_indicator.dart';
-import 'water_reminder_screen.dart';
 import '../auth/auth_screen.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'water_reminder_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<AppProvider>();
-    final profile = provider.userProfile;
-
     return Scaffold(
       body: SafeArea(
         bottom: false,
@@ -28,94 +26,100 @@ class ProfileScreen extends StatelessWidget {
           slivers: [
             // Header with Avatar & Name - Redesigned
             SliverToBoxAdapter(
-              child: Container(
-                margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                padding: const EdgeInsets.all(28),
-                decoration: BoxDecoration(
-                  gradient: AppColors.primaryGradient,
-                  borderRadius: BorderRadius.circular(28),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withAlpha(40),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    // Avatar
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withAlpha(50),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white.withAlpha(80),
-                          width: 3,
-                        ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          profile.name.isNotEmpty
-                              ? profile.name[0].toUpperCase()
-                              : 'U',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 36,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Name
-                    Text(
-                      profile.name.isNotEmpty
-                          ? profile.name
-                          : AppLocalizations.of(context)!.user,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    if (profile.email.isNotEmpty) ...[
-                      const SizedBox(height: 6),
-                      Text(
-                        profile.email,
-                        style: TextStyle(
-                          color: Colors.white.withAlpha(200),
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 12),
-                    // Goal & Activity chips
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _infoChip(
-                          _goalLabel(context, profile.goal),
-                          Icons.flag_rounded,
-                        ),
-                        const SizedBox(width: 8),
-                        _infoChip(
-                          _activityLabel(context, profile.activityLevel),
-                          Icons.directions_run_rounded,
+              child: Consumer<AppProvider>(
+                builder: (context, provider, child) {
+                  final profile = provider.userProfile;
+                  return Container(
+                    margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                    padding: const EdgeInsets.all(28),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.primaryGradient,
+                      borderRadius: BorderRadius.circular(28),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withAlpha(40),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
                         ),
                       ],
                     ),
-                  ],
-                ),
+                    child: Column(
+                      children: [
+                        // Avatar
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withAlpha(50),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white.withAlpha(80),
+                              width: 3,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              profile.name.isNotEmpty
+                                  ? profile.name[0].toUpperCase()
+                                  : 'U',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 36,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Name
+                        Text(
+                          profile.name.isNotEmpty
+                              ? profile.name
+                              : AppLocalizations.of(context)!.user,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        if (profile.email.isNotEmpty) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            profile.email,
+                            style: TextStyle(
+                              color: Colors.white.withAlpha(200),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 12),
+                        // Goal & Activity chips
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _infoChip(
+                              _goalLabel(context, profile.goal),
+                              Icons.flag_rounded,
+                            ),
+                            const SizedBox(width: 8),
+                            _infoChip(
+                              _activityLabel(context, profile.activityLevel),
+                              Icons.directions_run_rounded,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
 
             // Body Info - Redesigned
             SliverToBoxAdapter(
-              child: Builder(
-                builder: (context) {
+              child: Consumer<AppProvider>(
+                builder: (context, provider, child) {
+                  final profile = provider.userProfile;
                   final isDark =
                       Theme.of(context).brightness == Brightness.dark;
                   return Padding(
@@ -208,61 +212,71 @@ class ProfileScreen extends StatelessWidget {
             // ── Preferences section ───────────────────────────────────
             _sectionHeader(context, AppLocalizations.of(context)!.preferences),
             _sectionCard([
-              _settingsListTile(
-                icon: Icons.language_rounded,
-                iconColor: AppColors.primary,
-                title: AppLocalizations.of(context)!.language,
-                subtitle: _currentLanguageName(provider),
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  _showLanguagePicker(context, provider);
-                },
-              ),
-              _divider(),
-              _settingsListTile(
-                icon: Icons.palette_rounded,
-                iconColor: const Color(0xFF8B5CF6),
-                title: 'Theme',
-                subtitle: _currentThemeName(provider),
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  _showThemePicker(context, provider);
-                },
-              ),
-              _divider(),
-              _settingsListTile(
-                icon: Icons.notifications_rounded,
-                iconColor: const Color(0xFFFBBF24),
-                title: AppLocalizations.of(context)!.notifications,
-                subtitle: provider.waterRemindersEnabled
-                    ? AppLocalizations.of(context)!.waterRemindersActive
-                    : AppLocalizations.of(context)!.configureReminders,
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const WaterReminderScreen(),
-                    ),
+              Consumer<AppProvider>(
+                builder: (context, provider, child) {
+                  return Column(
+                    children: [
+                      _settingsListTile(
+                        icon: Icons.language_rounded,
+                        iconColor: AppColors.primary,
+                        title: AppLocalizations.of(context)!.language,
+                        subtitle: _currentLanguageName(provider),
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _showLanguagePicker(context, provider);
+                        },
+                      ),
+                      _divider(),
+                      _settingsListTile(
+                        icon: Icons.palette_rounded,
+                        iconColor: const Color(0xFF8B5CF6),
+                        title: 'Theme',
+                        subtitle: _currentThemeName(provider),
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _showThemePicker(context, provider);
+                        },
+                      ),
+                      _divider(),
+                      _settingsListTile(
+                        icon: Icons.notifications_rounded,
+                        iconColor: const Color(0xFFFBBF24),
+                        title: AppLocalizations.of(context)!.notifications,
+                        subtitle: provider.waterRemindersEnabled
+                            ? AppLocalizations.of(context)!.waterRemindersActive
+                            : AppLocalizations.of(context)!.configureReminders,
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const WaterReminderScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _divider(),
+                      _settingsListTile(
+                        icon: Icons.email_rounded,
+                        iconColor: AppColors.secondary,
+                        title: AppLocalizations.of(context)!.emailUpdate,
+                        subtitle: provider.userProfile.emailUpdated
+                            ? '${provider.userProfile.email} (Updated)'
+                            : (provider.userProfile.email.isNotEmpty
+                                  ? provider.userProfile.email
+                                  : AppLocalizations.of(
+                                      context,
+                                    )!.updateEmailAddress),
+                        onTap: provider.userProfile.emailUpdated
+                            ? null
+                            : () {
+                                HapticFeedback.lightImpact();
+                                _showEmailUpdateSheet(context, provider);
+                              },
+                      ),
+                    ],
                   );
                 },
-              ),
-              _divider(),
-              _settingsListTile(
-                icon: Icons.email_rounded,
-                iconColor: AppColors.secondary,
-                title: AppLocalizations.of(context)!.emailUpdate,
-                subtitle: provider.userProfile.emailUpdated
-                    ? '${provider.userProfile.email} (Updated)'
-                    : (provider.userProfile.email.isNotEmpty
-                          ? provider.userProfile.email
-                          : AppLocalizations.of(context)!.updateEmailAddress),
-                onTap: provider.userProfile.emailUpdated
-                    ? null
-                    : () {
-                        HapticFeedback.lightImpact();
-                        _showEmailUpdateSheet(context, provider);
-                      },
               ),
             ]),
 
@@ -296,25 +310,27 @@ class ProfileScreen extends StatelessWidget {
                     },
                   );
                   try {
-                    if (await canLaunchUrl(emailLaunchUri)) {
-                      await launchUrl(emailLaunchUri);
-                    } else {
+                    if (!await launchUrl(emailLaunchUri)) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Could not open email client.'),
+                            backgroundColor: AppColors.error,
+                          ),
+                        );
+                      }
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Could not open email client.'),
+                        SnackBar(
+                          content: Text(
+                            'An error occurred while trying to open email client. $e',
+                          ),
                           backgroundColor: AppColors.error,
                         ),
                       );
                     }
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'An error occurred while trying to open email client. $e',
-                        ),
-                        backgroundColor: AppColors.error,
-                      ),
-                    );
                   }
                 },
               ),
@@ -372,6 +388,7 @@ class ProfileScreen extends StatelessWidget {
                   child: ElevatedButton.icon(
                     onPressed: () {
                       HapticFeedback.lightImpact();
+                      final provider = context.read<AppProvider>();
                       _showEditProfileDialog(context, provider);
                     },
                     icon: const Icon(Icons.edit_rounded, size: 20),
