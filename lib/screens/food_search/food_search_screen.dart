@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/gemini_service.dart';
+import '../../services/image_service.dart';
 import '../../theme/app_theme.dart';
 import '../../models/food_item.dart';
 import '../../models/meal_log.dart';
@@ -22,12 +25,15 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
   final _foodDatabase = FoodDatabase();
+  final _imageService = ImageService();
+  final _geminiService = GeminiService();
   String _selectedRegion = 'all';
   bool _isForwardSwitch = true;
   String _searchQuery = '';
   List<FoodItem> _allFoods = [];
   bool _isLoading = true;
   bool _isRefreshing = false;
+  bool _isAnalyzing = false;
 
   @override
   void initState() {
@@ -82,6 +88,35 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
           SnackBar(
             content: Text(
               AppLocalizations.of(context)!.failedToUpdate(e.toString()),
+            ),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _analyzeWithAi(ImageSource source) async {
+    setState(() => _isAnalyzing = true);
+    try {
+      final image = await _imageService.pickImage(source);
+      if (image == null) {
+        setState(() => _isAnalyzing = false);
+        return;
+      }
+      final result = await _geminiService.analyzeImage(image);
+      setState(() => _isAnalyzing = false);
+      _showFoodDetail(
+        context,
+        FoodItem.fromJson(result),
+      );
+    } catch (e) {
+      setState(() => _isAnalyzing = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Error analyzing image: $e',
             ),
             backgroundColor: AppColors.error,
           ),
@@ -156,38 +191,65 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                 // Search bar
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-                  child: TextField(
-                    controller: _searchController,
-                    style: TextStyle(
-                      color: isDark
-                          ? AppColors.darkTextPrimary
-                          : AppColors.textPrimary,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context)!.searchHint,
-                      prefixIcon: Icon(
-                        Icons.search_rounded,
-                        color: isDark
-                            ? AppColors.darkTextTertiary
-                            : AppColors.textTertiary,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          style: TextStyle(
+                            color: isDark
+                                ? AppColors.darkTextPrimary
+                                : AppColors.textPrimary,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.searchHint,
+                            prefixIcon: Icon(
+                              Icons.search_rounded,
+                              color: isDark
+                                  ? AppColors.darkTextTertiary
+                                  : AppColors.textTertiary,
+                            ),
+                            suffixIcon: _searchQuery.isNotEmpty
+                                ? IconButton(
+                                    icon: Icon(
+                                      Icons.clear_rounded,
+                                      color: isDark
+                                          ? AppColors.darkTextTertiary
+                                          : AppColors.textTertiary,
+                                    ),
+                                    onPressed: () {
+                                      HapticFeedback.lightImpact();
+                                      _searchController.clear();
+                                      setState(() => _searchQuery = '');
+                                    },
+                                  )
+                                : null,
+                          ),
+                          onChanged: (v) => setState(() => _searchQuery = v),
+                        ),
                       ),
-                      suffixIcon: _searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(
-                                Icons.clear_rounded,
-                                color: isDark
-                                    ? AppColors.darkTextTertiary
-                                    : AppColors.textTertiary,
-                              ),
-                              onPressed: () {
+                      const SizedBox(width: 10),
+                      IconButton(
+                        icon: _isAnalyzing
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: AdaptiveLoadingIndicator(
+                                  color: AppColors.primary,
+                                  strokeWidth: 2,
+                                  size: 20,
+                                ),
+                              )
+                            : const Icon(Icons.camera_alt_rounded),
+                        onPressed: _isAnalyzing
+                            ? null
+                            : () {
                                 HapticFeedback.lightImpact();
-                                _searchController.clear();
-                                setState(() => _searchQuery = '');
+                                _showImageSourceDialog();
                               },
-                            )
-                          : null,
-                    ),
-                    onChanged: (v) => setState(() => _searchQuery = v),
+                        tooltip: 'Analyze with AI',
+                      ),
+                    ],
                   ),
                 ),
 
@@ -396,6 +458,116 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                 ),
               ],
             ),
+    );
+  }
+
+  void _showImageSourceDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.darkSurface : AppColors.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkCardLight : AppColors.cardLight,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Analyze with AI',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Choose an image source',
+              style: TextStyle(
+                fontSize: 14,
+                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildSourceButton(
+                  context,
+                  icon: Icons.camera_alt_rounded,
+                  label: 'Camera',
+                  source: ImageSource.camera,
+                  isDark: isDark,
+                ),
+                _buildSourceButton(
+                  context,
+                  icon: Icons.photo_library_rounded,
+                  label: 'Gallery',
+                  source: ImageSource.gallery,
+                  isDark: isDark,
+                ),
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSourceButton(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required ImageSource source,
+    required bool isDark,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pop(context);
+        _analyzeWithAi(source);
+      },
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.darkCard : AppColors.card,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isDark ? AppColors.darkBorder : AppColors.border,
+                width: 1.5,
+              ),
+            ),
+            child: Icon(
+              icon,
+              size: 40,
+              color: AppColors.primary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
