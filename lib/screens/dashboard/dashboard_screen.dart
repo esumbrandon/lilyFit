@@ -11,8 +11,10 @@ import '../../widgets/calorie_ring_painter.dart';
 import '../../widgets/macro_progress_bar.dart';
 import '../../widgets/meal_section_card.dart';
 import '../../widgets/water_tracker_card.dart';
-import '../../widgets/adaptive_loading_indicator.dart';
 import '../food_search/food_search_screen.dart';
+import 'quick_stat_card.dart';
+import 'streak_card.dart';
+import 'sync_banner.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -123,7 +125,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 child: child,
               ),
             ),
-            child: _buildSyncBanner(provider),
+            child: const SyncBanner(),
           ),
         ),
 
@@ -146,80 +148,22 @@ class _DashboardScreenState extends State<DashboardScreen>
                       children: [
                         Text(
                           DateFormat('EEEE').format(now),
-                          style: TextStyle(
-                            color: isDark
-                                ? AppColors.darkTextPrimary
-                                : AppColors.textPrimary,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: -0.5,
-                          ),
+                          style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         const SizedBox(height: 2),
                         Text(
                           DateFormat('MMMM d, y').format(now),
-                          style: TextStyle(
-                            color: isDark
-                                ? AppColors.darkTextTertiary
-                                : AppColors.textTertiary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: isDark
+                                    ? AppColors.darkTextTertiary
+                                    : AppColors.textTertiary,
+                              ),
                         ),
                       ],
                     ),
                     if (provider.currentStreak > 0)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.carbs.withAlpha(25),
-                              AppColors.carbs.withAlpha(15),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: AppColors.carbs.withAlpha(60),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text('🔥', style: TextStyle(fontSize: 18)),
-                            const SizedBox(width: 8),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  '${provider.currentStreak} ${provider.currentStreak == 1 ? "Day" : "Days"}',
-                                  style: const TextStyle(
-                                    color: AppColors.carbs,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w800,
-                                    height: 1,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  'Streak',
-                                  style: TextStyle(
-                                    color: AppColors.carbs.withAlpha(180),
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      StreakCard(currentStreak: provider.currentStreak),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -227,32 +171,29 @@ class _DashboardScreenState extends State<DashboardScreen>
                 Row(
                   children: [
                     Expanded(
-                      child: _buildQuickStat(
-                        context,
-                        Icons.local_fire_department_rounded,
-                        '${provider.consumedCalories.toInt()}',
-                        'Consumed',
-                        AppColors.carbs,
+                      child: QuickStatCard(
+                        icon: Icons.local_fire_department_rounded,
+                        value: '${provider.consumedCalories.toInt()}',
+                        label: 'Consumed',
+                        color: AppColors.carbs,
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: _buildQuickStat(
-                        context,
-                        Icons.flag_rounded,
-                        '${profile.targetCalories.toInt()}',
-                        'Target',
-                        AppColors.primary,
+                      child: QuickStatCard(
+                        icon: Icons.flag_rounded,
+                        value: '${profile.targetCalories.toInt()}',
+                        label: 'Target',
+                        color: AppColors.primary,
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: _buildQuickStat(
-                        context,
-                        Icons.restaurant_rounded,
-                        '${provider.allMealLogs.length}',
-                        'Meals',
-                        AppColors.secondary,
+                      child: QuickStatCard(
+                        icon: Icons.restaurant_rounded,
+                        value: '${provider.allMealLogs.length}',
+                        label: 'Meals',
+                        color: AppColors.secondary,
                       ),
                     ),
                   ],
@@ -326,13 +267,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             padding: const EdgeInsets.fromLTRB(24, 28, 24, 12),
             child: Text(
               AppLocalizations.of(context)!.todaysMeals,
-              style: TextStyle(
-                color: isDark
-                    ? AppColors.darkTextPrimary
-                    : AppColors.textPrimary,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-              ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
         ),
@@ -373,13 +308,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
             child: Text(
               AppLocalizations.of(context)!.hydration,
-              style: TextStyle(
-                color: isDark
-                    ? AppColors.darkTextPrimary
-                    : AppColors.textPrimary,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-              ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
         ),
@@ -436,139 +365,6 @@ class _DashboardScreenState extends State<DashboardScreen>
                     : AppColors.surface,
                 child: CustomScrollView(slivers: contentSlivers),
               ),
-      ),
-    );
-  }
-
-  Widget _buildSyncBanner(AppProvider provider) {
-    final isDone = provider.syncStatus == SyncStatus.done;
-    final isSyncing = provider.syncStatus == SyncStatus.syncing;
-    final hasPendingItems = provider.pendingOperationsCount > 0;
-    final isOffline = !provider.isOnline;
-
-    late Color bgColor;
-    late Color borderColor;
-    late Color iconColor;
-    late IconData icon;
-    late String message;
-
-    if (isDone) {
-      bgColor = Colors.green.withAlpha(20);
-      borderColor = Colors.green.withAlpha(50);
-      iconColor = Colors.green;
-      icon = Icons.check_circle_rounded;
-      message = 'All changes synced';
-    } else if (isSyncing) {
-      bgColor = AppColors.primary.withAlpha(20);
-      borderColor = AppColors.primary.withAlpha(40);
-      iconColor = AppColors.primary;
-      icon = Icons.sync_rounded;
-      final count = provider.pendingOperationsCount;
-      message = count > 0
-          ? 'Syncing $count ${count == 1 ? "item" : "items"}...'
-          : 'Syncing...';
-    } else if (isOffline && hasPendingItems) {
-      bgColor = AppColors.accent.withAlpha(15);
-      borderColor = AppColors.accent.withAlpha(45);
-      iconColor = AppColors.accent;
-      icon = Icons.cloud_off_rounded;
-      final count = provider.pendingOperationsCount;
-      message = 'Offline – $count ${count == 1 ? "change" : "changes"} pending';
-    } else if (isOffline) {
-      // Just offline, no pending items
-      bgColor = AppColors.accent.withAlpha(15);
-      borderColor = AppColors.accent.withAlpha(45);
-      iconColor = AppColors.accent;
-      icon = Icons.cloud_off_rounded;
-      message = 'Offline mode';
-    } else {
-      return const SizedBox.shrink();
-    }
-
-    return Container(
-      key: ValueKey(
-        isDone
-            ? 'done'
-            : isSyncing
-            ? 'syncing'
-            : 'offline',
-      ),
-      margin: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: borderColor, width: 1),
-      ),
-      child: Row(
-        children: [
-          isSyncing && !isDone
-              ? SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: AdaptiveLoadingIndicator(
-                    color: iconColor,
-                    strokeWidth: 2,
-                    size: 18,
-                  ),
-                )
-              : Icon(icon, size: 18, color: iconColor),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              message,
-              style: TextStyle(
-                color: iconColor,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQuickStat(
-    BuildContext context,
-    IconData icon,
-    String value,
-    String label,
-    Color color,
-  ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.darkCard : AppColors.card,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withAlpha(30), width: 1),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(height: 6),
-          Text(
-            value,
-            style: TextStyle(
-              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-              fontSize: 16,
-              fontWeight: FontWeight.w800,
-              height: 1,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: TextStyle(
-              color: isDark
-                  ? AppColors.darkTextTertiary
-                  : AppColors.textTertiary,
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
       ),
     );
   }

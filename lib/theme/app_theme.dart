@@ -18,6 +18,12 @@ class AppColors {
   static const Color darkSurfaceMuted = Color(0xFF334155);
   static const Color darkBorder = Color(0xFF334155);
 
+  // Nav Bar
+  static const Color navBarBackground = Color(0xFFE2E8F0);
+  static const Color navBarBorder = Color(0xFFB4BCC8);
+  static const Color darkNavBarBackground = Color(0xFF3A4556);
+  static const Color darkNavBarBorder = Color(0xFF5A6576);
+
   // Brand palette
   static const Color primary = Color(0xFF16A34A);
   static const Color primaryDark = Color(0xFF15803D);
@@ -100,6 +106,32 @@ class AppColors {
       ),
     ],
   );
+
+  static List<BoxShadow> get navBarShadow => [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.08),
+      blurRadius: 24,
+      offset: const Offset(0, 10),
+    ),
+    BoxShadow(
+      color: primary.withValues(alpha: 0.08),
+      blurRadius: 18,
+      offset: const Offset(0, 4),
+    ),
+  ];
+
+  static List<BoxShadow> get darkNavBarShadow => [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.4),
+      blurRadius: 24,
+      offset: const Offset(0, 10),
+    ),
+    BoxShadow(
+      color: primary.withValues(alpha: 0.08),
+      blurRadius: 18,
+      offset: const Offset(0, 4),
+    ),
+  ];
 }
 
 class AppTheme {
