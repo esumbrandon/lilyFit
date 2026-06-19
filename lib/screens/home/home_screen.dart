@@ -6,6 +6,7 @@ import '../dashboard/dashboard_screen.dart';
 import '../food_search/food_search_screen.dart';
 import '../progress/progress_screen.dart';
 import '../profile/profile_screen.dart';
+import 'nav_item.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -84,25 +85,18 @@ class _HomeScreenState extends State<HomeScreen>
           minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
           child: Container(
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF3A4556) : const Color(0xFFE2E8F0),
+              color: isDark
+                  ? AppColors.darkNavBarBackground
+                  : AppColors.navBarBackground,
               borderRadius: BorderRadius.circular(32),
               border: Border.all(
                 color: isDark
-                    ? const Color(0xFF5A6576)
-                    : const Color(0xFFB4BCC8),
+                    ? AppColors.darkNavBarBorder
+                    : AppColors.navBarBorder,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
-                  blurRadius: 24,
-                  offset: const Offset(0, 10),
-                ),
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.08),
-                  blurRadius: 18,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+              boxShadow: isDark
+                  ? AppColors.darkNavBarShadow
+                  : AppColors.navBarShadow,
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -112,103 +106,51 @@ class _HomeScreenState extends State<HomeScreen>
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _navItem(
-                        0,
-                        Icons.dashboard_rounded,
-                        Icons.dashboard_outlined,
-                        l10n.home,
+                      NavItem(
+                        index: 0,
+                        currentIndex: _currentIndex,
+                        activeIcon: Icons.dashboard_rounded,
+                        inactiveIcon: Icons.dashboard_outlined,
+                        label: l10n.home,
+                        scaleController: _scaleController,
+                        scaleAnimation: _scaleAnimation,
+                        onTap: () => setState(() => _currentIndex = 0),
                       ),
-                      _navItem(
-                        1,
-                        Icons.search_rounded,
-                        Icons.search_rounded,
-                        l10n.food,
+                      NavItem(
+                        index: 1,
+                        currentIndex: _currentIndex,
+                        activeIcon: Icons.search_rounded,
+                        inactiveIcon: Icons.search_rounded,
+                        label: l10n.food,
+                        scaleController: _scaleController,
+                        scaleAnimation: _scaleAnimation,
+                        onTap: () => setState(() => _currentIndex = 1),
                       ),
-                      _navItem(
-                        2,
-                        Icons.insights_rounded,
-                        Icons.insights_outlined,
-                        l10n.progress,
+                      NavItem(
+                        index: 2,
+                        currentIndex: _currentIndex,
+                        activeIcon: Icons.insights_rounded,
+                        inactiveIcon: Icons.insights_outlined,
+                        label: l10n.progress,
+                        scaleController: _scaleController,
+                        scaleAnimation: _scaleAnimation,
+                        onTap: () => setState(() => _currentIndex = 2),
                       ),
-                      _navItem(
-                        3,
-                        Icons.person_rounded,
-                        Icons.person_outline_rounded,
-                        l10n.profile,
+                      NavItem(
+                        index: 3,
+                        currentIndex: _currentIndex,
+                        activeIcon: Icons.person_rounded,
+                        inactiveIcon: Icons.person_outline_rounded,
+                        label: l10n.profile,
+                        scaleController: _scaleController,
+                        scaleAnimation: _scaleAnimation,
+                        onTap: () => setState(() => _currentIndex = 3),
                       ),
                     ],
                   );
                 },
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _navItem(
-    int index,
-    IconData activeIcon,
-    IconData inactiveIcon,
-    String label,
-  ) {
-    final isActive = _currentIndex == index;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return GestureDetector(
-      onTapDown: (_) {
-        _scaleController.forward();
-      },
-      onTapUp: (_) {
-        _scaleController.reverse();
-      },
-      onTapCancel: () {
-        _scaleController.reverse();
-      },
-      onTap: () {
-        if (_currentIndex != index) {
-          HapticFeedback.selectionClick();
-          setState(() => _currentIndex = index);
-        }
-      },
-      behavior: HitTestBehavior.opaque,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: isActive
-                ? AppColors.primary.withAlpha(20)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                isActive ? activeIcon : inactiveIcon,
-                color: isActive
-                    ? AppColors.primary
-                    : (isDark
-                          ? AppColors.darkTextTertiary
-                          : AppColors.textTertiary),
-                size: 22,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  color: isActive
-                      ? AppColors.primary
-                      : (isDark
-                            ? AppColors.darkTextTertiary
-                            : AppColors.textTertiary),
-                  fontSize: 10,
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                ),
-              ),
-            ],
           ),
         ),
       ),
