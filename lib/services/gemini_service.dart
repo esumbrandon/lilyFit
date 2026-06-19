@@ -7,10 +7,10 @@ class GeminiService {
   final GenerativeModel _model;
 
   GeminiService()
-      : _model = GenerativeModel(
-          model: 'gemini-2.0-flash',
-          apiKey: const String.fromEnvironment('GEMINI_API_KEY'),
-        );
+    : _model = GenerativeModel(
+        model: 'gemini-2.0-flash',
+        apiKey: const String.fromEnvironment('GEMINI_API_KEY'),
+      );
 
   Future<Map<String, dynamic>> analyzeImage(XFile image) async {
     final prompt = [
