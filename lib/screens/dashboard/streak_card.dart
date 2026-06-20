@@ -41,7 +41,7 @@ class StreakCard extends StatelessWidget {
               Text(
                 'Streak',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppColors.carbs.withOpacity(0.8),
+                  color: AppColors.carbs.withValues(alpha: 0.8),
                   letterSpacing: 0.5,
                 ),
               ),

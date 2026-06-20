@@ -25,9 +25,9 @@ class MacroProgressBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkCard : AppColors.card,
+        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: color.withAlpha(30), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,7 +71,7 @@ class MacroProgressBar extends StatelessWidget {
                   Container(
                     height: 6,
                     decoration: BoxDecoration(
-                      color: color.withAlpha(30),
+                      color: color.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -81,12 +81,12 @@ class MacroProgressBar extends StatelessWidget {
                       height: 6,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [color, color.withAlpha(180)],
+                          colors: [color, color.withValues(alpha: 0.7)],
                         ),
                         borderRadius: BorderRadius.circular(4),
                         boxShadow: [
                           BoxShadow(
-                            color: color.withAlpha(80),
+                            color: color.withValues(alpha: 0.2),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),

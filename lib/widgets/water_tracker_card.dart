@@ -29,11 +29,19 @@ class WaterTrackerCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkCard : AppColors.card,
+        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? AppColors.darkBorder : AppColors.border,
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+          width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,28 +104,36 @@ class WaterTrackerCard extends StatelessWidget {
                       duration: const Duration(milliseconds: 300),
                       width: 28,
                       height: 36,
-                      decoration: BoxDecoration(
-                        color: isFilled
-                            ? AppColors.secondary.withAlpha(200)
-                            : (isDark
-                                  ? AppColors.darkCardLight
-                                  : AppColors.cardLight),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: isFilled
-                              ? AppColors.secondary.withAlpha(100)
-                              : Colors.transparent,
-                        ),
-                        boxShadow: isFilled
-                            ? [
+                      decoration: isFilled
+                          ? BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [AppColors.secondary, AppColors.secondaryDark],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.25),
+                                width: 1,
+                              ),
+                              boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.secondary.withAlpha(40),
-                                  blurRadius: 8,
+                                  color: AppColors.secondary.withValues(alpha: 0.3),
+                                  blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),
-                              ]
-                            : null,
-                      ),
+                              ],
+                            )
+                          : BoxDecoration(
+                              color: (isDark
+                                  ? AppColors.darkCardLight
+                                  : AppColors.cardLight).withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                                width: 1,
+                              ),
+                            ),
                       child: isFilled
                           ? const Icon(
                               Icons.water_drop,
@@ -144,8 +160,8 @@ class WaterTrackerCard extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: value,
                   backgroundColor: isDark
-                      ? AppColors.darkCardLight
-                      : AppColors.cardLight,
+                      ? AppColors.darkCardLight.withValues(alpha: 0.5)
+                      : AppColors.cardLight.withValues(alpha: 0.5),
                   valueColor: const AlwaysStoppedAnimation(AppColors.secondary),
                   minHeight: 6,
                 ),

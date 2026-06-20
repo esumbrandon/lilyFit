@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
@@ -28,317 +27,413 @@ class _ProgressScreenState extends State<ProgressScreen> {
     final monthlyCarbs = provider.monthlyCarbs;
 
     return Scaffold(
-      body: SafeArea(
-        bottom: false,
-        child: CustomScrollView(
-          slivers: [
-            // Header
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                child: Text(
-                  AppLocalizations.of(context)!.progress,
-                  style: TextStyle(
-                    color: isDark
-                        ? AppColors.darkTextPrimary
-                        : AppColors.textPrimary,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
+      body: Stack(
+        children: [
+          // Background Color
+          Positioned.fill(
+            child: Container(
+              color: isDark ? AppColors.darkBackground : AppColors.background,
             ),
-
-            // Stats Cards
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                child: Row(
-                  children: [
-                    _statCard(
-                      context,
-                      AppLocalizations.of(context)!.current,
-                      weightEntries.isNotEmpty
-                          ? UnitConverter.formatWeight(
-                              weightEntries.last.weight,
-                              provider.userProfile.weightUnit,
-                            )
-                          : '--',
-                      Icons.monitor_weight_outlined,
-                      AppColors.primary,
-                    ),
-                    const SizedBox(width: 10),
-                    _bmiCard(context, provider.userProfile),
-                    const SizedBox(width: 10),
-                    _statCard(
-                      context,
-                      AppLocalizations.of(context)!.streak,
-                      '${provider.currentStreak} ${AppLocalizations.of(context)!.days}',
-                      Icons.local_fire_department_rounded,
-                      AppColors.carbs,
-                    ),
+          ),
+          // Glowing top gradient aura
+          Positioned(
+            top: -100,
+            right: -100,
+            width: 320,
+            height: 320,
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.2),
+                    AppColors.primary.withValues(alpha: 0.0),
                   ],
                 ),
               ),
             ),
-
-            // Weight Chart
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkCard : AppColors.card,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: isDark ? AppColors.darkBorder : AppColors.border,
+          ),
+          // Glowing bottom gradient aura
+          Positioned(
+            bottom: -50,
+            left: -50,
+            width: 250,
+            height: 250,
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.secondary.withValues(alpha: isDark ? 0.08 : 0.10),
+                    AppColors.secondary.withValues(alpha: 0.0),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // Main Scrollable Area
+          SafeArea(
+            bottom: false,
+            child: CustomScrollView(
+              slivers: [
+                // Header
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!.progress,
+                          style: TextStyle(
+                            color: isDark
+                                ? AppColors.darkTextPrimary
+                                : AppColors.textPrimary,
+                            fontSize: 28,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Your body metrics and nutrition stats',
+                          style: TextStyle(
+                            color: isDark
+                                ? AppColors.darkTextTertiary
+                                : AppColors.textTertiary,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.show_chart_rounded,
-                            color: AppColors.primary,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            AppLocalizations.of(context)!.weightHistory,
-                            style: TextStyle(
-                              color: isDark
-                                  ? AppColors.darkTextPrimary
-                                  : AppColors.textPrimary,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
+                ),
+
+                // Stats Cards - Frosted Glass Row
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                    child: Row(
+                      children: [
+                        _statCard(
+                          context,
+                          AppLocalizations.of(context)!.current,
+                          weightEntries.isNotEmpty
+                              ? UnitConverter.formatWeight(
+                                  weightEntries.last.weight,
+                                  provider.userProfile.weightUnit,
+                                )
+                              : '--',
+                          Icons.monitor_weight_outlined,
+                          AppColors.primary,
+                          isDark,
+                        ),
+                        const SizedBox(width: 12),
+                        _bmiCard(context, provider.userProfile, isDark),
+                        const SizedBox(width: 12),
+                        _statCard(
+                          context,
+                          AppLocalizations.of(context)!.streak,
+                          '${provider.currentStreak} ${AppLocalizations.of(context)!.days}',
+                          Icons.local_fire_department_rounded,
+                          AppColors.carbs,
+                          isDark,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Weight Chart - Frosted Card Panel
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+                            blurRadius: 12,
+                            offset: const Offset(0, 6),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        height: 200,
-                        child: weightEntries.length < 2
-                            ? Center(
-                                child: Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  )!.logAtLeast2Weights,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color:
-                                        (isDark
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.show_chart_rounded,
+                                color: AppColors.primary,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                AppLocalizations.of(context)!.weightHistory,
+                                style: TextStyle(
+                                  color: isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.textPrimary,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          SizedBox(
+                            height: 200,
+                            child: weightEntries.length < 2
+                                ? Center(
+                                    child: Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.logAtLeast2Weights,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: (isDark
                                                 ? AppColors.darkTextTertiary
                                                 : AppColors.textTertiary)
-                                            .withAlpha(150),
-                                    fontSize: 14,
+                                            .withValues(alpha: 0.6),
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  )
+                                : _buildWeightChart(
+                                    weightEntries,
+                                    provider.userProfile.weightUnit,
+                                  ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Weekly Calories Chart - Frosted Card Panel
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+                            blurRadius: 12,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.bar_chart_rounded,
+                                color: AppColors.secondary,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                AppLocalizations.of(context)!.weeklyCalories,
+                                style: TextStyle(
+                                  color: isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.textPrimary,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          SizedBox(
+                            height: 180,
+                            child: _buildWeeklyBarChart(
+                              weeklyCalories,
+                              provider.userProfile.targetCalories,
+                              AppLocalizations.of(context)!.target,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Monthly Carbs Chart - Frosted Card Panel
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+                            blurRadius: 12,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.analytics_rounded,
+                                color: AppColors.carbs,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Monthly Carbs Tracking',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.textPrimary,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const Spacer(),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.carbs.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Text(
+                                  'Last 30 Days',
+                                  style: TextStyle(
+                                    color: AppColors.carbs,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                              )
-                            : _buildWeightChart(
-                                weightEntries,
-                                provider.userProfile.weightUnit,
                               ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          MonthlyCarbsChart(
+                            data: monthlyCarbs,
+                            targetCarbs: provider.userProfile.targetCarbs,
+                            isDarkMode: isDark,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // Weekly Calories Chart
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkCard : AppColors.card,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: isDark ? AppColors.darkBorder : AppColors.border,
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.bar_chart_rounded,
-                            color: AppColors.secondary,
-                            size: 20,
+                ),
+
+                // Summary stats - Frosted Card Panel
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+                            blurRadius: 12,
+                            offset: const Offset(0, 6),
                           ),
-                          const SizedBox(width: 8),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Text(
-                            AppLocalizations.of(context)!.weeklyCalories,
+                            AppLocalizations.of(context)!.weeklySummary,
                             style: TextStyle(
                               color: isDark
                                   ? AppColors.darkTextPrimary
                                   : AppColors.textPrimary,
                               fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w700,
                             ),
+                          ),
+                          const SizedBox(height: 16),
+                          _summaryRow(
+                            AppLocalizations.of(context)!.avgDailyCalories,
+                            '${_weeklyAverage(weeklyCalories).toInt()} kcal',
+                            AppColors.primary,
+                          ),
+                          Divider(
+                            color: isDark
+                                ? AppColors.darkBorder.withValues(alpha: 0.3)
+                                : AppColors.border.withValues(alpha: 0.4),
+                            height: 24,
+                          ),
+                          _summaryRow(
+                            AppLocalizations.of(context)!.totalMealsLogged,
+                            '${provider.allMealLogs.length}',
+                            AppColors.secondary,
+                          ),
+                          Divider(
+                            color: isDark
+                                ? AppColors.darkBorder.withValues(alpha: 0.3)
+                                : AppColors.border.withValues(alpha: 0.4),
+                            height: 24,
+                          ),
+                          _summaryRow(
+                            AppLocalizations.of(context)!.weightChange,
+                            _weightChange(
+                              weightEntries,
+                              provider.userProfile.weightUnit,
+                            ),
+                            weightEntries.length >= 2
+                                ? (weightEntries.last.weight <=
+                                          weightEntries.first.weight
+                                      ? AppColors.success
+                                      : AppColors.error)
+                                : AppColors.textTertiary,
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        height: 180,
-                        child: _buildWeeklyBarChart(
-                          weeklyCalories,
-                          provider.userProfile.targetCalories,
-                          AppLocalizations.of(context)!.target,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // Monthly Carbs Chart
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkCard : AppColors.card,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: isDark ? AppColors.darkBorder : AppColors.border,
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.analytics_rounded,
-                            color: AppColors.carbs,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Monthly Carbs Tracking',
-                            style: TextStyle(
-                              color: isDark
-                                  ? AppColors.darkTextPrimary
-                                  : AppColors.textPrimary,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const Spacer(),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.carbs.withAlpha(20),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              'Last 30 Days',
-                              style: TextStyle(
-                                color: AppColors.carbs,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      MonthlyCarbsChart(
-                        data: monthlyCarbs,
-                        targetCarbs: provider.userProfile.targetCarbs,
-                        isDarkMode: isDark,
-                      ),
-                    ],
-                  ),
                 ),
-              ),
-            ),
 
-            // Summary stats
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkCard : AppColors.card,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: isDark ? AppColors.darkBorder : AppColors.border,
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.weeklySummary,
-                        style: TextStyle(
-                          color: isDark
-                              ? AppColors.darkTextPrimary
-                              : AppColors.textPrimary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      _summaryRow(
-                        AppLocalizations.of(context)!.avgDailyCalories,
-                        '${_weeklyAverage(weeklyCalories).toInt()} kcal',
-                        AppColors.primary,
-                      ),
-                      Divider(
-                        color: isDark
-                            ? AppColors.darkCardLight
-                            : AppColors.cardLight,
-                        height: 24,
-                      ),
-                      _summaryRow(
-                        AppLocalizations.of(context)!.totalMealsLogged,
-                        '${provider.allMealLogs.length}',
-                        AppColors.secondary,
-                      ),
-                      Divider(
-                        color: isDark
-                            ? AppColors.darkCardLight
-                            : AppColors.cardLight,
-                        height: 24,
-                      ),
-                      _summaryRow(
-                        AppLocalizations.of(context)!.weightChange,
-                        _weightChange(
-                          weightEntries,
-                          provider.userProfile.weightUnit,
-                        ),
-                        weightEntries.length >= 2
-                            ? (weightEntries.last.weight <=
-                                      weightEntries.first.weight
-                                  ? AppColors.success
-                                  : AppColors.error)
-                            : AppColors.textTertiary,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                // Bottom padding for navbar
+                const SliverToBoxAdapter(child: SizedBox(height: 120)),
+              ],
             ),
-
-            // Bottom padding for navbar
-            const SliverToBoxAdapter(child: SizedBox(height: 100)),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -349,17 +444,24 @@ class _ProgressScreenState extends State<ProgressScreen> {
     String value,
     IconData icon,
     Color color,
+    bool isDark,
   ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? AppColors.darkCard : AppColors.card,
+          color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: isDark ? AppColors.darkBorder : AppColors.border,
+            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           children: [
@@ -368,9 +470,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             Text(
               value,
               style: TextStyle(
-                color: isDark
-                    ? AppColors.darkTextPrimary
-                    : AppColors.textPrimary,
+                color: isDark ? Colors.white : AppColors.textPrimary,
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
               ),
@@ -380,9 +480,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             Text(
               label,
               style: TextStyle(
-                color: isDark
-                    ? AppColors.darkTextTertiary
-                    : AppColors.textTertiary,
+                color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
                 fontSize: 11,
               ),
             ),
@@ -392,8 +490,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
     );
   }
 
-  Widget _bmiCard(BuildContext context, UserProfile profile) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  Widget _bmiCard(BuildContext context, UserProfile profile, bool isDark) {
     final bmi = profile.bmi;
     final category = profile.bmiCategory;
     final categoryColor = _getBmiColor(bmi);
@@ -406,9 +503,16 @@ class _ProgressScreenState extends State<ProgressScreen> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? AppColors.darkCard : AppColors.card,
+            color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: categoryColor.withAlpha(100), width: 1.5),
+            border: Border.all(color: categoryColor.withValues(alpha: 0.35), width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Column(
             children: [
@@ -417,9 +521,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               Text(
                 bmi.toStringAsFixed(1),
                 style: TextStyle(
-                  color: isDark
-                      ? AppColors.darkTextPrimary
-                      : AppColors.textPrimary,
+                  color: isDark ? Colors.white : AppColors.textPrimary,
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                 ),
@@ -429,9 +531,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               Text(
                 AppLocalizations.of(context)!.bmi,
                 style: TextStyle(
-                  color: isDark
-                      ? AppColors.darkTextTertiary
-                      : AppColors.textTertiary,
+                  color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
                   fontSize: 11,
                 ),
               ),
@@ -439,7 +539,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: categoryColor.withAlpha(25),
+                  color: categoryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -523,7 +623,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: categoryColor.withAlpha(25),
+                    color: categoryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -563,9 +663,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: categoryColor.withAlpha(25),
+                color: categoryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: categoryColor.withAlpha(50)),
+                border: Border.all(color: categoryColor.withValues(alpha: 0.2)),
               ),
               child: Row(
                 children: [
@@ -669,7 +769,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
           width: 8,
           height: 8,
           decoration: BoxDecoration(
-            color: isActive ? color : color.withAlpha(50),
+            color: isActive ? color : color.withValues(alpha: 0.2),
             shape: BoxShape.circle,
           ),
         ),
@@ -724,7 +824,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
               drawVerticalLine: false,
               horizontalInterval: (maxY - minY) / 4,
               getDrawingHorizontalLine: (value) => FlLine(
-                color: isDark ? AppColors.darkCardLight : AppColors.cardLight,
+                color: isDark
+                    ? AppColors.darkBorder.withValues(alpha: 0.3)
+                    : AppColors.border.withValues(alpha: 0.4),
                 strokeWidth: 1,
               ),
             ),
@@ -788,7 +890,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 spots: spots,
                 isCurved: true,
                 color: AppColors.primary,
-                barWidth: 3,
+                barWidth: 3.5,
                 isStrokeCapRound: true,
                 dotData: FlDotData(
                   show: true,
@@ -805,8 +907,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      AppColors.primary.withAlpha(60),
-                      AppColors.primary.withAlpha(5),
+                      AppColors.primary.withValues(alpha: 0.25),
+                      AppColors.primary.withValues(alpha: 0.02),
                     ],
                   ),
                 ),
@@ -858,7 +960,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
               drawVerticalLine: false,
               horizontalInterval: maxCal / 4,
               getDrawingHorizontalLine: (value) => FlLine(
-                color: isDark ? AppColors.darkCardLight : AppColors.cardLight,
+                color: isDark
+                    ? AppColors.darkBorder.withValues(alpha: 0.3)
+                    : AppColors.border.withValues(alpha: 0.4),
                 strokeWidth: 1,
               ),
             ),
@@ -915,15 +1019,15 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
                       colors: isOverTarget
-                          ? [AppColors.carbs, AppColors.carbs.withAlpha(200)]
+                          ? [AppColors.carbs, AppColors.carbs.withValues(alpha: 0.75)]
                           : isToday
                           ? [
                               AppColors.primary,
-                              AppColors.primary.withAlpha(200),
+                              AppColors.primary.withValues(alpha: 0.75),
                             ]
                           : [
-                              AppColors.primary.withAlpha(100),
-                              AppColors.primary.withAlpha(150),
+                              AppColors.primary.withValues(alpha: 0.4),
+                              AppColors.primary.withValues(alpha: 0.6),
                             ],
                     ),
                   ),
@@ -934,7 +1038,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               horizontalLines: [
                 HorizontalLine(
                   y: target,
-                  color: AppColors.carbs.withAlpha(100),
+                  color: AppColors.carbs.withValues(alpha: 0.4),
                   strokeWidth: 1,
                   dashArray: [8, 4],
                   label: HorizontalLineLabel(
