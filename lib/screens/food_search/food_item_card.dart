@@ -68,11 +68,22 @@ class _FoodItemCardState extends State<FoodItemCard>
           curve: Curves.easeOut,
           child: Container(
             margin: const EdgeInsets.only(bottom: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.12 : 0.02),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
             child: Material(
-              color: isDark ? AppColors.darkCard : AppColors.card,
+              color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.6),
               shape: RoundedRectangleBorder(
                 side: BorderSide(
-                  color: isDark ? AppColors.darkBorder : AppColors.border,
+                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                  width: 1,
                 ),
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -97,9 +108,9 @@ class _FoodItemCardState extends State<FoodItemCard>
                         width: 46,
                         height: 46,
                         decoration: BoxDecoration(
-                          color: isDark
+                          color: (isDark
                               ? AppColors.darkCardLight
-                              : AppColors.cardLight,
+                              : AppColors.cardLight).withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         alignment: Alignment.center,
@@ -133,7 +144,7 @@ class _FoodItemCardState extends State<FoodItemCard>
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.2),
+                          color: AppColors.primary.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(

@@ -47,20 +47,18 @@ class RegionFilterWidget extends StatelessWidget {
                 gradient: selected ? AppColors.primaryGradient : null,
                 color: selected
                     ? null
-                    : (isDark ? AppColors.darkCard : AppColors.card),
+                    : (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.6),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: selected
-                      ? Colors.transparent
-                      : (isDark
-                            ? AppColors.darkCardLight
-                            : AppColors.cardLight),
-                  width: 1.5,
+                      ? Colors.white.withValues(alpha: 0.2)
+                      : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                  width: 1.0,
                 ),
                 boxShadow: selected
                     ? [
                         BoxShadow(
-                          color: AppColors.primary.withAlpha(60),
+                          color: AppColors.primary.withValues(alpha: 0.25),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -70,12 +68,11 @@ class RegionFilterWidget extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Todo, to add icons uncomment this lines.
-                  // Text(
-                  //   FoodDatabase.regionEmoji(region),
-                  //   style: const TextStyle(fontSize: 18),
-                  // ),
-                  const SizedBox(width: 7),
+                  Text(
+                    FoodDatabase.regionEmoji(region),
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(width: 6),
                   AnimatedDefaultTextStyle(
                     duration: const Duration(milliseconds: 200),
                     curve: Curves.easeOutCubic,

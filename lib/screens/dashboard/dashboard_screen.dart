@@ -345,26 +345,73 @@ class _DashboardScreenState extends State<DashboardScreen>
     final contentSlivers = _buildContentSlivers(context, provider);
 
     return Scaffold(
-      body: SafeArea(
-        bottom: false,
-        child: Platform.isIOS
-            ? CustomScrollView(
-                slivers: [
-                  // iOS native refresh control
-                  CupertinoSliverRefreshControl(
-                    onRefresh: () => _refreshData(context),
-                  ),
-                  ...contentSlivers,
-                ],
-              )
-            : RefreshIndicator(
-                onRefresh: () => _refreshData(context),
-                color: AppColors.primary,
-                backgroundColor: isDark
-                    ? AppColors.darkSurface
-                    : AppColors.surface,
-                child: CustomScrollView(slivers: contentSlivers),
+      body: Stack(
+        children: [
+          // Background Color
+          Positioned.fill(
+            child: Container(
+              color: isDark ? AppColors.darkBackground : AppColors.background,
+            ),
+          ),
+          // Glowing top gradient aura
+          Positioned(
+            top: -100,
+            right: -100,
+            width: 320,
+            height: 320,
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.2),
+                    AppColors.primary.withValues(alpha: 0.0),
+                  ],
+                ),
               ),
+            ),
+          ),
+          // Glowing bottom gradient aura
+          Positioned(
+            bottom: -50,
+            left: -50,
+            width: 250,
+            height: 250,
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.secondary.withValues(alpha: isDark ? 0.08 : 0.10),
+                    AppColors.secondary.withValues(alpha: 0.0),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // Main Scrollable Content
+          SafeArea(
+            bottom: false,
+            child: Platform.isIOS
+                ? CustomScrollView(
+                    slivers: [
+                      // iOS native refresh control
+                      CupertinoSliverRefreshControl(
+                        onRefresh: () => _refreshData(context),
+                      ),
+                      ...contentSlivers,
+                    ],
+                  )
+                : RefreshIndicator(
+                    onRefresh: () => _refreshData(context),
+                    color: AppColors.primary,
+                    backgroundColor: isDark
+                        ? AppColors.darkSurface
+                        : AppColors.surface,
+                    child: CustomScrollView(slivers: contentSlivers),
+                  ),
+          ),
+        ],
       ),
     );
   }

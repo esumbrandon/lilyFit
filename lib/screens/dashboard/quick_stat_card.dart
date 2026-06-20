@@ -21,13 +21,13 @@ class QuickStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkCard : AppColors.card,
+        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withAlpha(30), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
-            blurRadius: 10,
+            color: color.withValues(alpha: 0.08),
+            blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],

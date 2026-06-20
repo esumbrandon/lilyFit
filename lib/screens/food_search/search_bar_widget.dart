@@ -42,7 +42,31 @@ class SearchBarWidget extends StatelessWidget {
                     : AppColors.textPrimary,
               ),
               decoration: InputDecoration(
+                filled: true,
+                fillColor: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.6),
                 hintText: AppLocalizations.of(context)!.searchHint,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                    width: 1,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: const BorderSide(
+                    color: AppColors.primary,
+                    width: 1.5,
+                  ),
+                ),
                 prefixIcon: Icon(
                   Icons.search_rounded,
                   color: isDark
@@ -68,20 +92,43 @@ class SearchBarWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          IconButton(
-            icon: isAnalyzing
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: AdaptiveLoadingIndicator(
-                      color: AppColors.primary,
-                      strokeWidth: 2,
-                      size: 20,
-                    ),
-                  )
-                : const Icon(Icons.camera_alt_rounded),
-            onPressed: isAnalyzing ? null : onAnalyze,
-            tooltip: 'Analyze with AI',
+          Material(
+            color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.6),
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                  width: 1,
+                ),
+              ),
+              child: IconButton(
+                icon: isAnalyzing
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: AdaptiveLoadingIndicator(
+                          color: AppColors.primary,
+                          strokeWidth: 2,
+                          size: 20,
+                        ),
+                      )
+                    : Icon(
+                        Icons.camera_alt_rounded,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
+                      ),
+                onPressed: isAnalyzing
+                    ? null
+                    : () {
+                        HapticFeedback.lightImpact();
+                        onAnalyze();
+                      },
+                tooltip: 'Analyze with AI',
+              ),
+            ),
           ),
         ],
       ),
