@@ -28,60 +28,72 @@ class NavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isActive = currentIndex == index;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return GestureDetector(
-      onTapDown: (_) {
-        scaleController.forward();
-      },
-      onTapUp: (_) {
-        scaleController.reverse();
-      },
-      onTapCancel: () {
-        scaleController.reverse();
-      },
-      onTap: () {
-        if (currentIndex != index) {
-          HapticFeedback.selectionClick();
-          onTap();
-        }
-      },
-      behavior: HitTestBehavior.opaque,
-      child: ScaleTransition(
-        scale: scaleAnimation,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: isActive
-                ? AppColors.primary.withAlpha(20)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                isActive ? activeIcon : inactiveIcon,
-                color: isActive
-                    ? AppColors.primary
-                    : (isDark
-                          ? AppColors.darkTextTertiary
-                          : AppColors.textTertiary),
-                size: 22,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  color: isActive
-                      ? AppColors.primary
-                      : (isDark
+    return Expanded(
+      child: InkWell(
+        onTapDown: (_) {
+          scaleController.forward();
+        },
+        onTapUp: (_) {
+          scaleController.reverse();
+        },
+        onTapCancel: () {
+          scaleController.reverse();
+        },
+        onTap: () {
+          if (currentIndex != index) {
+            HapticFeedback.selectionClick();
+            onTap();
+          }
+        },
+        borderRadius: BorderRadius.circular(50),
+        hoverColor: AppColors.primary.withValues(alpha: 1),
+        child: ScaleTransition(
+          scale: scaleAnimation,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TweenAnimationBuilder<Color?>(
+                  duration: const Duration(milliseconds: 250),
+                  tween: ColorTween(
+                    end: isActive
+                        ? Colors.white
+                        : (isDark
                             ? AppColors.darkTextTertiary
                             : AppColors.textTertiary),
-                  fontSize: 10,
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                  ),
+                  builder: (context, color, child) {
+                    return Icon(
+                      isActive ? activeIcon : inactiveIcon,
+                      color: color,
+                      size: 22,
+                    );
+                  },
                 ),
-              ),
-            ],
+                const SizedBox(height: 4),
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOutCubic,
+                  style: TextStyle(
+                    color: isActive
+                        ? Colors.white
+                        : (isDark
+                            ? AppColors.darkTextTertiary
+                            : AppColors.textTertiary),
+                    fontSize: 10,
+                    fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
+                  ),
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

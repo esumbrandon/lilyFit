@@ -1,5 +1,5 @@
+import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
 import '../dashboard/dashboard_screen.dart';
@@ -85,70 +85,174 @@ class _HomeScreenState extends State<HomeScreen>
           minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
           child: Container(
             decoration: BoxDecoration(
-              color: isDark
-                  ? AppColors.darkNavBarBackground
-                  : AppColors.navBarBackground,
-              borderRadius: BorderRadius.circular(32),
-              border: Border.all(
-                color: isDark
-                    ? AppColors.darkNavBarBorder
-                    : AppColors.navBarBorder,
-              ),
+              borderRadius: BorderRadius.circular(50),
               boxShadow: isDark
                   ? AppColors.darkNavBarShadow
                   : AppColors.navBarShadow,
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-              child: Builder(
-                builder: (context) {
-                  final l10n = AppLocalizations.of(context)!;
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      NavItem(
-                        index: 0,
-                        currentIndex: _currentIndex,
-                        activeIcon: Icons.dashboard_rounded,
-                        inactiveIcon: Icons.dashboard_outlined,
-                        label: l10n.home,
-                        scaleController: _scaleController,
-                        scaleAnimation: _scaleAnimation,
-                        onTap: () => setState(() => _currentIndex = 0),
-                      ),
-                      NavItem(
-                        index: 1,
-                        currentIndex: _currentIndex,
-                        activeIcon: Icons.search_rounded,
-                        inactiveIcon: Icons.search_rounded,
-                        label: l10n.food,
-                        scaleController: _scaleController,
-                        scaleAnimation: _scaleAnimation,
-                        onTap: () => setState(() => _currentIndex = 1),
-                      ),
-                      NavItem(
-                        index: 2,
-                        currentIndex: _currentIndex,
-                        activeIcon: Icons.insights_rounded,
-                        inactiveIcon: Icons.insights_outlined,
-                        label: l10n.progress,
-                        scaleController: _scaleController,
-                        scaleAnimation: _scaleAnimation,
-                        onTap: () => setState(() => _currentIndex = 2),
-                      ),
-                      NavItem(
-                        index: 3,
-                        currentIndex: _currentIndex,
-                        activeIcon: Icons.person_rounded,
-                        inactiveIcon: Icons.person_outline_rounded,
-                        label: l10n.profile,
-                        scaleController: _scaleController,
-                        scaleAnimation: _scaleAnimation,
-                        onTap: () => setState(() => _currentIndex = 3),
-                      ),
-                    ],
-                  );
-                },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: (isDark
+                            ? AppColors.darkNavBarBackground
+                            : AppColors.navBarBackground)
+                        .withValues(alpha: 0.65),
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(
+                      color: (isDark
+                              ? AppColors.darkNavBarBorder
+                              : AppColors.navBarBorder)
+                          .withValues(alpha: 0.4),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final totalWidth = constraints.maxWidth;
+                        final itemWidth = totalWidth / 4;
+                        final l10n = AppLocalizations.of(context)!;
+                        return Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            // Sliding liquid glass highlight
+                            AnimatedPositioned(
+                              duration: const Duration(milliseconds: 350),
+                              curve: Curves.easeInOutCubic,
+                              left: _currentIndex * itemWidth,
+                              width: itemWidth,
+                              top: 0,
+                              bottom: 0,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      AppColors.primary,
+                                      AppColors.primaryDark,
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
+                                  borderRadius: BorderRadius.circular(40),
+                                  border: Border.all(
+                                    color: Colors.white.withValues(alpha: 0.35),
+                                    width: 1.0,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.primary.withValues(alpha: 0.25),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: 0.15),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 1),
+                                    ),
+                                  ],
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(40),
+                                  child: Stack(
+                                    children: [
+                                      // Top Glare
+                                      Positioned(
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        height: 14,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                Colors.white.withValues(alpha: 0.35),
+                                                Colors.white.withValues(alpha: 0.0),
+                                              ],
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      // Bottom reflection
+                                      Positioned(
+                                        bottom: 0,
+                                        left: 0,
+                                        right: 0,
+                                        height: 8,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                Colors.white.withValues(alpha: 0.0),
+                                                Colors.white.withValues(alpha: 0.15),
+                                              ],
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Navigation Items Row
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                NavItem(
+                                  index: 0,
+                                  currentIndex: _currentIndex,
+                                  activeIcon: Icons.dashboard_rounded,
+                                  inactiveIcon: Icons.dashboard_outlined,
+                                  label: l10n.home,
+                                  scaleController: _scaleController,
+                                  scaleAnimation: _scaleAnimation,
+                                  onTap: () => setState(() => _currentIndex = 0),
+                                ),
+                                NavItem(
+                                  index: 1,
+                                  currentIndex: _currentIndex,
+                                  activeIcon: Icons.search_rounded,
+                                  inactiveIcon: Icons.search_rounded,
+                                  label: l10n.food,
+                                  scaleController: _scaleController,
+                                  scaleAnimation: _scaleAnimation,
+                                  onTap: () => setState(() => _currentIndex = 1),
+                                ),
+                                NavItem(
+                                  index: 2,
+                                  currentIndex: _currentIndex,
+                                  activeIcon: Icons.insights_rounded,
+                                  inactiveIcon: Icons.insights_outlined,
+                                  label: l10n.progress,
+                                  scaleController: _scaleController,
+                                  scaleAnimation: _scaleAnimation,
+                                  onTap: () => setState(() => _currentIndex = 2),
+                                ),
+                                NavItem(
+                                  index: 3,
+                                  currentIndex: _currentIndex,
+                                  activeIcon: Icons.person_rounded,
+                                  inactiveIcon: Icons.person_outline_rounded,
+                                  label: l10n.profile,
+                                  scaleController: _scaleController,
+                                  scaleAnimation: _scaleAnimation,
+                                  onTap: () => setState(() => _currentIndex = 3),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
