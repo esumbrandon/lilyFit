@@ -25,6 +25,10 @@ class _HomeScreenState extends State<HomeScreen>
   double _lastScrollOffset = 0;
   bool _isDraggingNav = false;
   double? _dragPositionX;
+  int? _draggedHighlightIndex;
+
+  int get _activeHighlightIndex =>
+      _isDraggingNav ? (_draggedHighlightIndex ?? _currentIndex) : _currentIndex;
 
   final _screens = const [
     DashboardScreen(),
@@ -124,14 +128,17 @@ class _HomeScreenState extends State<HomeScreen>
                             setState(() {
                               _isDraggingNav = true;
                               _dragPositionX = details.localPosition.dx;
+                              _draggedHighlightIndex =
+                                  (_dragPositionX! / itemWidth).floor().clamp(0, 3);
                             });
                           },
                           onHorizontalDragUpdate: (details) {
                             setState(() {
                               _dragPositionX = details.localPosition.dx;
-                              final newIndex = (_dragPositionX! / itemWidth).floor().clamp(0, 3);
-                              if (newIndex != _currentIndex) {
-                                _currentIndex = newIndex;
+                              final newHighlightIndex =
+                                  (_dragPositionX! / itemWidth).floor().clamp(0, 3);
+                              if (newHighlightIndex != _draggedHighlightIndex) {
+                                _draggedHighlightIndex = newHighlightIndex;
                                 HapticFeedback.selectionClick();
                               }
                             });
@@ -139,13 +146,18 @@ class _HomeScreenState extends State<HomeScreen>
                           onHorizontalDragEnd: (_) {
                             setState(() {
                               _isDraggingNav = false;
+                              if (_draggedHighlightIndex != null) {
+                                _currentIndex = _draggedHighlightIndex!;
+                              }
                               _dragPositionX = null;
+                              _draggedHighlightIndex = null;
                             });
                           },
                           onHorizontalDragCancel: () {
                             setState(() {
                               _isDraggingNav = false;
                               _dragPositionX = null;
+                              _draggedHighlightIndex = null;
                             });
                           },
                           child: Stack(
@@ -165,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 bottom: 0,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
+                                    gradient: LinearGradient(
                                       colors: [
                                         AppColors.primary,
                                         AppColors.primaryDark,
@@ -173,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen>
                                       begin: Alignment.topCenter,
                                       end: Alignment.bottomCenter,
                                     ),
-                                    borderRadius: BorderRadius.circular(40),
+                                    borderRadius: const BorderRadius.all(Radius.circular(40)),
                                     border: Border.all(
                                       color: Colors.white.withValues(alpha: 0.35),
                                       width: 1.0,
@@ -192,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     ],
                                   ),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(40),
+                                    borderRadius: const BorderRadius.all(Radius.circular(40)),
                                     child: Stack(
                                       children: [
                                         // Top Glare
@@ -244,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 children: [
                                   NavItem(
                                     index: 0,
-                                    currentIndex: _currentIndex,
+                                    currentIndex: _activeHighlightIndex,
                                     activeIcon: Icons.dashboard_rounded,
                                     inactiveIcon: Icons.dashboard_outlined,
                                     label: l10n.home,
@@ -254,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   ),
                                   NavItem(
                                     index: 1,
-                                    currentIndex: _currentIndex,
+                                    currentIndex: _activeHighlightIndex,
                                     activeIcon: Icons.search_rounded,
                                     inactiveIcon: Icons.search_rounded,
                                     label: l10n.food,
@@ -264,7 +276,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   ),
                                   NavItem(
                                     index: 2,
-                                    currentIndex: _currentIndex,
+                                    currentIndex: _activeHighlightIndex,
                                     activeIcon: Icons.insights_rounded,
                                     inactiveIcon: Icons.insights_outlined,
                                     label: l10n.progress,
@@ -274,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   ),
                                   NavItem(
                                     index: 3,
-                                    currentIndex: _currentIndex,
+                                    currentIndex: _activeHighlightIndex,
                                     activeIcon: Icons.person_rounded,
                                     inactiveIcon: Icons.person_outline_rounded,
                                     label: l10n.profile,
