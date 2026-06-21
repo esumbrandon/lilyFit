@@ -383,6 +383,12 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   /// Load data from Supabase when user logs in
   Future<void> syncFromSupabase() async {
+    if (SupabaseService.isTesting) {
+      debugPrint(
+        'Testing mode: skipping syncFromSupabase to prevent local state overwrite',
+      );
+      return;
+    }
     if (!_supabaseService.isLoggedIn()) {
       debugPrint('Not logged in, skipping Supabase sync');
       return;
@@ -870,8 +876,8 @@ class AppProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   // ─── Weight Tracking ────────────────────────────────────────────
-  Future<void> addWeight(double weight) async {
-    final now = DateTime.now();
+  Future<void> addWeight(double weight, {DateTime? date}) async {
+    final now = date ?? DateTime.now();
     final today = DateTime(
       now.year,
       now.month,

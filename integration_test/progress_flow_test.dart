@@ -3,6 +3,7 @@
 //
 // Run with: flutter test integration_test/progress_flow_test.dart
 
+import 'package:lilyfit/services/supabase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -16,9 +17,18 @@ import 'package:lilyfit/screens/home/home_screen.dart';
 import 'package:lilyfit/screens/progress/progress_screen.dart';
 import 'package:lilyfit/theme/app_theme.dart';
 import 'package:lilyfit/l10n/app_localizations.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:lilyfit/config/supabase_config.dart';
 
-void main() {
+void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  SupabaseService.isTesting = true;
+  try {
+    await Supabase.initialize(
+      url: SupabaseConfig.supabaseUrl,
+      anonKey: SupabaseConfig.supabaseAnonKey,
+    );
+  } catch (_) {}
 
   // Helper to create properly configured MaterialApp with localizations
   Widget createTestApp(AppProvider provider, Widget home) {
@@ -113,11 +123,16 @@ void main() {
       tester,
     ) async {
       // Add multiple weight entries
-      await provider.addWeight(80.0);
-      await Future.delayed(const Duration(milliseconds: 100));
-      await provider.addWeight(79.5);
-      await Future.delayed(const Duration(milliseconds: 100));
-      await provider.addWeight(79.0);
+      final now = DateTime.now();
+      await provider.addWeight(
+        80.0,
+        date: now.subtract(const Duration(days: 2)),
+      );
+      await provider.addWeight(
+        79.5,
+        date: now.subtract(const Duration(days: 1)),
+      );
+      await provider.addWeight(79.0, date: now);
 
       await tester.pumpWidget(createTestApp(provider, const HomeScreen()));
       await tester.pumpAndSettle();
@@ -136,11 +151,24 @@ void main() {
 
     testWidgets('Weight chart displays correctly with data', (tester) async {
       // Add weight data over time
-      await provider.addWeight(82.0);
-      await provider.addWeight(81.5);
-      await provider.addWeight(81.0);
-      await provider.addWeight(80.5);
-      await provider.addWeight(80.0);
+      final now = DateTime.now();
+      await provider.addWeight(
+        82.0,
+        date: now.subtract(const Duration(days: 4)),
+      );
+      await provider.addWeight(
+        81.5,
+        date: now.subtract(const Duration(days: 3)),
+      );
+      await provider.addWeight(
+        81.0,
+        date: now.subtract(const Duration(days: 2)),
+      );
+      await provider.addWeight(
+        80.5,
+        date: now.subtract(const Duration(days: 1)),
+      );
+      await provider.addWeight(80.0, date: now);
 
       await tester.pumpWidget(createTestApp(provider, const HomeScreen()));
       await tester.pumpAndSettle();
@@ -203,10 +231,20 @@ void main() {
 
     testWidgets('Progress statistics are calculated correctly', (tester) async {
       // Add weight entries showing progress
-      await provider.addWeight(85.0);
-      await provider.addWeight(84.0);
-      await provider.addWeight(83.0);
-      await provider.addWeight(82.0);
+      final now = DateTime.now();
+      await provider.addWeight(
+        85.0,
+        date: now.subtract(const Duration(days: 3)),
+      );
+      await provider.addWeight(
+        84.0,
+        date: now.subtract(const Duration(days: 2)),
+      );
+      await provider.addWeight(
+        83.0,
+        date: now.subtract(const Duration(days: 1)),
+      );
+      await provider.addWeight(82.0, date: now);
 
       await tester.pumpWidget(createTestApp(provider, const HomeScreen()));
       await tester.pumpAndSettle();
@@ -236,15 +274,7 @@ void main() {
       final emptyProvider = AppProvider();
       await emptyProvider.initialize();
 
-      await tester.pumpWidget(
-        ChangeNotifierProvider.value(
-          value: emptyProvider,
-          child: MaterialApp(
-            theme: AppTheme.darkTheme,
-            home: const HomeScreen(),
-          ),
-        ),
-      );
+      await tester.pumpWidget(createTestApp(emptyProvider, const HomeScreen()));
       await tester.pumpAndSettle();
 
       // Navigate to progress
@@ -362,9 +392,16 @@ void main() {
 
     testWidgets('Goal achievement indicators are displayed', (tester) async {
       // Set a fat loss goal and add progress toward it
-      await provider.addWeight(80.0);
-      await provider.addWeight(79.0);
-      await provider.addWeight(78.0);
+      final now = DateTime.now();
+      await provider.addWeight(
+        80.0,
+        date: now.subtract(const Duration(days: 2)),
+      );
+      await provider.addWeight(
+        79.0,
+        date: now.subtract(const Duration(days: 1)),
+      );
+      await provider.addWeight(78.0, date: now);
 
       await tester.pumpWidget(createTestApp(provider, const HomeScreen()));
       await tester.pumpAndSettle();

@@ -3,6 +3,7 @@
 //
 // Run with: flutter test integration_test/complete_user_journey_test.dart
 
+import 'package:lilyfit/services/supabase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -14,13 +15,23 @@ import 'package:lilyfit/screens/onboarding/onboarding_screen.dart';
 import 'package:lilyfit/screens/home/home_screen.dart';
 import 'package:lilyfit/screens/dashboard/dashboard_screen.dart';
 import 'package:lilyfit/screens/food_search/food_search_screen.dart';
+import 'package:lilyfit/screens/food_search/food_item_card.dart';
 import 'package:lilyfit/screens/progress/progress_screen.dart';
 import 'package:lilyfit/screens/profile/profile_screen.dart';
 import 'package:lilyfit/theme/app_theme.dart';
 import 'package:lilyfit/l10n/app_localizations.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:lilyfit/config/supabase_config.dart';
 
-void main() {
+void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  SupabaseService.isTesting = true;
+  try {
+    await Supabase.initialize(
+      url: SupabaseConfig.supabaseUrl,
+      anonKey: SupabaseConfig.supabaseAnonKey,
+    );
+  } catch (_) {}
   // Helper to create properly configured MaterialApp with localizations
   Widget createTestApp(AppProvider provider, Widget home) {
     return ChangeNotifierProvider.value(
@@ -55,59 +66,51 @@ void main() {
       // ═══════════════════════════════════════════════════════════
 
       // Welcome page
-      expect(find.text('Welcome to LilyFit'), findsOneWidget);
-      await tester.tap(find.text('Get Started'));
+      expect(find.text('LilyFit'), findsOneWidget);
+      await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
 
-      // Name
+      // About You (Name & Gender)
+      expect(find.text('About You'), findsOneWidget);
       await tester.enterText(find.byType(TextField).first, 'Jamie Smith');
-      await tester.tap(find.text('Next'));
       await tester.pumpAndSettle();
-
-      // Gender
       await tester.tap(find.text('Female'));
-      await tester.tap(find.text('Next'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
 
-      // Age - use increment button
-      final ageIncrement = find.byIcon(Icons.add_rounded).first;
-      for (int i = 0; i < 3; i++) {
-        await tester.tap(ageIncrement);
-        await tester.pump(const Duration(milliseconds: 50));
-      }
-      await tester.tap(find.text('Next'));
-      await tester.pumpAndSettle();
-
-      // Weight
-      final weightIncrement = find.byIcon(Icons.add_rounded).first;
-      for (int i = 0; i < 2; i++) {
-        await tester.tap(weightIncrement);
-        await tester.pump(const Duration(milliseconds: 50));
-      }
-      await tester.tap(find.text('Next'));
-      await tester.pumpAndSettle();
-
-      // Height
-      final heightIncrement = find.byIcon(Icons.add_rounded).first;
-      for (int i = 0; i < 2; i++) {
-        await tester.tap(heightIncrement);
-        await tester.pump(const Duration(milliseconds: 50));
-      }
-      await tester.tap(find.text('Next'));
+      // Body Metrics
+      expect(find.text('Body Metrics'), findsOneWidget);
+      await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
 
       // Activity Level
-      await tester.tap(find.text('Moderately Active'));
-      await tester.tap(find.text('Next'));
+      expect(find.text('Activity Level'), findsOneWidget);
+      await tester.tap(find.text('Moderate'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
 
       // Goal
-      await tester.tap(find.text('Fat Loss'));
-      await tester.tap(find.text('Next'));
+      expect(find.text('Goal'), findsOneWidget);
+      await tester.tap(find.text('Lose Weight'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
 
-      // Water Goal & Complete
-      await tester.tap(find.text('Complete'));
+      // Eating Style
+      expect(find.text('Eating Style'), findsOneWidget);
+      await tester.tap(find.text('Continue'));
+      await tester.pumpAndSettle();
+
+      // Daily Water Goal
+      expect(find.text('Daily Water Goal'), findsOneWidget);
+      await tester.tap(find.text('Continue'));
+      await tester.pumpAndSettle();
+
+      // Plan Summary
+      expect(find.text('Your Plan is Ready! 🎉'), findsOneWidget);
+      await tester.tap(find.text('Start Tracking!'));
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       // Should be on home screen now
@@ -135,11 +138,11 @@ void main() {
       expect(find.byType(FoodSearchScreen), findsOneWidget);
 
       // Search for oats
-      await tester.enterText(find.byType(TextField).first, 'oats');
+      await tester.enterText(find.byType(TextField).first, 'oat');
       await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
       // Select Oats
-      await tester.tap(find.text('Oats').first);
+      await tester.tap(find.byType(FoodItemCard).first);
       await tester.pumpAndSettle();
 
       // Select Breakfast
@@ -147,7 +150,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Add to meal
-      await tester.tap(find.text('Add to Meal'));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       final afterBreakfast = provider.consumedCalories;
@@ -179,15 +182,14 @@ void main() {
       await tester.enterText(find.byType(TextField).first, 'chicken');
       await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
-      final chickenFinder = find.textContaining('Chicken', findRichText: true);
-      if (chickenFinder.evaluate().isNotEmpty) {
-        await tester.tap(chickenFinder.first);
+      if (find.byType(FoodItemCard).evaluate().isNotEmpty) {
+        await tester.tap(find.byType(FoodItemCard).first);
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('Lunch'));
         await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Add to Meal'));
+        await tester.tap(find.byType(ElevatedButton));
         await tester.pumpAndSettle();
       }
 
@@ -219,13 +221,13 @@ void main() {
       await tester.enterText(find.byType(TextField).first, 'banana');
       await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
-      await tester.tap(find.text('Banana').first);
+      await tester.tap(find.byType(FoodItemCard).first);
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Snack'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Add to Meal'));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       // ═══════════════════════════════════════════════════════════
@@ -236,15 +238,14 @@ void main() {
       await tester.enterText(find.byType(TextField).first, 'rice');
       await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
-      final riceFinder = find.textContaining('Rice', findRichText: true);
-      if (riceFinder.evaluate().isNotEmpty) {
-        await tester.tap(riceFinder.first);
+      if (find.byType(FoodItemCard).evaluate().isNotEmpty) {
+        await tester.tap(find.byType(FoodItemCard).first);
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('Dinner'));
         await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Add to Meal'));
+        await tester.tap(find.byType(ElevatedButton));
         await tester.pumpAndSettle();
       }
 
@@ -376,23 +377,19 @@ void main() {
       await tester.enterText(find.byType(TextField).first, 'eggs');
       await tester.pumpAndSettle(const Duration(milliseconds: 300));
 
-      final eggsFinder = find.textContaining('Egg', findRichText: true);
-      if (eggsFinder.evaluate().isNotEmpty) {
-        await tester.tap(eggsFinder.first);
+      if (find.byType(FoodItemCard).evaluate().isNotEmpty) {
+        await tester.tap(find.byType(FoodItemCard).first);
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('Breakfast'));
         await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Add to Meal'));
+        await tester.tap(find.byType(ElevatedButton));
         await tester.pumpAndSettle();
       }
 
       // 2. Quick water add
-      await tester.tap(find.text('Home'));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byIcon(Icons.add_rounded).last);
+      await provider.addWater(ml: 250);
       await tester.pumpAndSettle();
 
       // Done - quick and efficient
@@ -428,13 +425,13 @@ void main() {
       await tester.enterText(find.byType(TextField).first, 'banana');
       await tester.pumpAndSettle(const Duration(milliseconds: 300));
 
-      await tester.tap(find.text('Banana').first);
+      await tester.tap(find.byType(FoodItemCard).first);
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Breakfast'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Add to Meal'));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Home'));
@@ -443,17 +440,15 @@ void main() {
       final caloriesWithMistake = provider.consumedCalories;
       expect(caloriesWithMistake, greaterThan(0));
 
-      // Remove the meal
-      final deleteButton = find.byIcon(Icons.delete_outline_rounded);
-      if (deleteButton.evaluate().isNotEmpty) {
-        await tester.tap(deleteButton.first);
-        await tester.pumpAndSettle();
+      // Scroll to bring the Dismissible card fully into view (above the bottom navigation bar)
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+      await tester.pumpAndSettle();
 
-        final confirmButton = find.text('Delete');
-        if (confirmButton.evaluate().isNotEmpty) {
-          await tester.tap(confirmButton);
-          await tester.pumpAndSettle();
-        }
+      // Remove the meal by swiping the Dismissible card
+      final dismissibleFinder = find.byType(Dismissible);
+      if (dismissibleFinder.evaluate().isNotEmpty) {
+        await tester.drag(dismissibleFinder.first, const Offset(-500.0, 0.0));
+        await tester.pumpAndSettle();
       }
 
       // Verify removed
@@ -463,16 +458,16 @@ void main() {
       await tester.tap(find.text('Food'));
       await tester.pumpAndSettle();
 
-      await tester.enterText(find.byType(TextField).first, 'oats');
+      await tester.enterText(find.byType(TextField).first, 'oat');
       await tester.pumpAndSettle(const Duration(milliseconds: 300));
 
-      await tester.tap(find.text('Oats').first);
+      await tester.tap(find.byType(FoodItemCard).first);
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Breakfast'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Add to Meal'));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       // Now has correct meal logged
@@ -498,11 +493,24 @@ void main() {
       );
 
       // Simulate multiple days of data
-      await provider.addWeight(85.0);
-      await provider.addWeight(84.5);
-      await provider.addWeight(84.0);
-      await provider.addWeight(83.5);
-      await provider.addWeight(83.0);
+      final now = DateTime.now();
+      await provider.addWeight(
+        85.0,
+        date: now.subtract(const Duration(days: 4)),
+      );
+      await provider.addWeight(
+        84.5,
+        date: now.subtract(const Duration(days: 3)),
+      );
+      await provider.addWeight(
+        84.0,
+        date: now.subtract(const Duration(days: 2)),
+      );
+      await provider.addWeight(
+        83.5,
+        date: now.subtract(const Duration(days: 1)),
+      );
+      await provider.addWeight(83.0, date: now);
 
       await tester.pumpWidget(createTestApp(provider, const HomeScreen()));
       await tester.pumpAndSettle();

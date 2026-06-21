@@ -3,6 +3,7 @@
 //
 // Run with: flutter test integration_test/profile_flow_test.dart
 
+import 'package:lilyfit/services/supabase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -14,9 +15,18 @@ import 'package:lilyfit/screens/home/home_screen.dart';
 import 'package:lilyfit/screens/profile/profile_screen.dart';
 import 'package:lilyfit/theme/app_theme.dart';
 import 'package:lilyfit/l10n/app_localizations.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:lilyfit/config/supabase_config.dart';
 
-void main() {
+void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  SupabaseService.isTesting = true;
+  try {
+    await Supabase.initialize(
+      url: SupabaseConfig.supabaseUrl,
+      anonKey: SupabaseConfig.supabaseAnonKey,
+    );
+  } catch (_) {}
   // Helper to create properly configured MaterialApp with localizations
   Widget createTestApp(AppProvider provider, Widget home) {
     return ChangeNotifierProvider.value(
@@ -77,9 +87,9 @@ void main() {
       expect(find.text('Alex Johnson'), findsOneWidget);
 
       // Age, weight, height should be visible
-      expect(find.textContaining('32'), findsWidgets);
-      expect(find.textContaining('78'), findsWidgets);
-      expect(find.textContaining('180'), findsWidgets);
+      expect(find.textContaining('32', findRichText: true), findsWidgets);
+      expect(find.textContaining('78', findRichText: true), findsWidgets);
+      expect(find.textContaining('180', findRichText: true), findsWidgets);
     });
 
     testWidgets('User can edit profile information', (tester) async {
@@ -98,20 +108,18 @@ void main() {
         await tester.pumpAndSettle();
 
         // Should show edit profile dialog/screen
-        // Update name
-        final nameField = find.byType(TextField).first;
-        await tester.enterText(nameField, 'Alexander Johnson');
+        // Tap "Build Muscle" goal chip
+        await tester.tap(find.text('Build Muscle'));
         await tester.pumpAndSettle();
 
         // Save changes
-        final saveButton = find.text('Save');
-        if (saveButton.evaluate().isNotEmpty) {
-          await tester.tap(saveButton);
+        final updateButton = find.byType(ElevatedButton);
+        if (updateButton.evaluate().isNotEmpty) {
+          await tester.tap(updateButton.first);
           await tester.pumpAndSettle();
 
           // Verify profile was updated
-          expect(provider.userProfile.name, 'Alexander Johnson');
-          expect(find.text('Alexander Johnson'), findsOneWidget);
+          expect(provider.userProfile.goal, 'muscleGain');
         }
       }
     });
@@ -185,6 +193,9 @@ void main() {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: provider.themeMode,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: provider.currentLocale,
             home: const HomeScreen(),
           ),
         ),

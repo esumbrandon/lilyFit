@@ -3,6 +3,7 @@
 //
 // Run with: flutter test integration_test/water_tracking_flow_test.dart
 
+import 'package:lilyfit/services/supabase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -14,9 +15,18 @@ import 'package:lilyfit/screens/home/home_screen.dart';
 import 'package:lilyfit/screens/dashboard/dashboard_screen.dart';
 import 'package:lilyfit/theme/app_theme.dart';
 import 'package:lilyfit/l10n/app_localizations.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:lilyfit/config/supabase_config.dart';
 
-void main() {
+void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  SupabaseService.isTesting = true;
+  try {
+    await Supabase.initialize(
+      url: SupabaseConfig.supabaseUrl,
+      anonKey: SupabaseConfig.supabaseAnonKey,
+    );
+  } catch (_) {}
 
   // Helper to create properly configured MaterialApp with localizations
   Widget createTestApp(AppProvider provider, Widget home) {
@@ -136,8 +146,9 @@ void main() {
       await provider.addWater(ml: halfGoal * 1.5);
       await tester.pumpAndSettle();
 
-      // Progress should be > 1.0
-      expect(provider.waterProgress, greaterThan(1.0));
+      // Progress should be capped at 1.0 (clamped)
+      expect(provider.waterProgress, 1.0);
+      expect(provider.waterIntake, greaterThan(provider.waterGoal));
     });
 
     testWidgets('User can complete daily water goal', (tester) async {
@@ -168,6 +179,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(provider.waterIntake, 1000.0);
+
+      // Scroll down to make WaterTrackerCard visible
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+      await tester.pumpAndSettle();
 
       // The water card should display the current intake
       expect(
@@ -234,6 +249,10 @@ void main() {
       await tester.pumpWidget(createTestApp(provider, const HomeScreen()));
       await tester.pumpAndSettle();
 
+      // Scroll down to make WaterTrackerCard visible
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+      await tester.pumpAndSettle();
+
       // Add water incrementally and verify visual updates
       for (int i = 1; i <= 5; i++) {
         await provider.addWater(ml: 250);
@@ -244,7 +263,7 @@ void main() {
         expect(find.text(expectedText), findsOneWidget);
 
         // Verify glass count
-        expect(find.text('$i'), findsWidgets);
+        expect(find.byIcon(Icons.water_drop), findsNWidgets(i));
       }
     });
 
@@ -278,15 +297,7 @@ void main() {
       // (This depends on how the app handles persistence)
       // For same-day data, it should persist
 
-      await tester.pumpWidget(
-        ChangeNotifierProvider.value(
-          value: newProvider,
-          child: MaterialApp(
-            theme: AppTheme.darkTheme,
-            home: const HomeScreen(),
-          ),
-        ),
-      );
+      await tester.pumpWidget(createTestApp(newProvider, const HomeScreen()));
       await tester.pumpAndSettle();
 
       // In a real implementation, verify water data persists

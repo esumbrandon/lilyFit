@@ -10,6 +10,8 @@ import '../models/user_profile.dart';
 
 // Service to interact with Supabase backend
 class SupabaseService {
+  static bool isTesting = false;
+
   SupabaseClient get _supabase => Supabase.instance.client;
 
   String _formatDateString(DateTime date) {
@@ -70,18 +72,30 @@ class SupabaseService {
   }
 
   Future<void> signOut() async {
+    if (isTesting) return;
     await _supabase.auth.signOut();
   }
 
   String? getCurrentUserId() {
+    if (isTesting) return 'dummy_user_id';
     return _supabase.auth.currentUser?.id;
   }
 
   User? getCurrentUser() {
+    if (isTesting) {
+      return const User(
+        id: 'dummy_user_id',
+        appMetadata: {},
+        userMetadata: {'name': 'Jane Doe'},
+        aud: 'authenticated',
+        createdAt: '2026-06-21T00:00:00.000Z',
+      );
+    }
     return _supabase.auth.currentUser;
   }
 
   bool isLoggedIn() {
+    if (isTesting) return true;
     try {
       return _supabase.auth.currentUser != null;
     } catch (_) {
@@ -89,7 +103,10 @@ class SupabaseService {
     }
   }
 
-  Stream<AuthState> get authStateChanges => _supabase.auth.onAuthStateChange;
+  Stream<AuthState> get authStateChanges {
+    if (isTesting) return const Stream.empty();
+    return _supabase.auth.onAuthStateChange;
+  }
 
   Future<void> resetPassword(String email) async {
     await _supabase.auth.resetPasswordForEmail(email);
@@ -229,6 +246,7 @@ class SupabaseService {
   // ============ USER PROFILE ============
 
   Future<void> saveUserProfile(UserProfile profile) async {
+    if (isTesting) return;
     final userId = getCurrentUserId();
     if (userId == null) {
       throw Exception(
@@ -260,6 +278,18 @@ class SupabaseService {
   }
 
   Future<UserProfile?> getUserProfile() async {
+    if (isTesting) {
+      return UserProfile(
+        name: 'Jane Doe',
+        email: 'jane@example.com',
+        gender: 'female',
+        age: 28,
+        weight: 65.0,
+        height: 165.0,
+        activityLevel: 'moderate',
+        goal: 'fatLoss',
+      );
+    }
     final userId = getCurrentUserId();
     if (userId == null) return null;
 
@@ -290,6 +320,7 @@ class SupabaseService {
   }
 
   Future<bool> hasProfile() async {
+    if (isTesting) return true;
     final profile = await getUserProfile();
     return profile != null;
   }
@@ -300,6 +331,7 @@ class SupabaseService {
     required double weight,
     required DateTime date,
   }) async {
+    if (isTesting) return;
     final userId = getCurrentUserId();
     if (userId == null) throw Exception('No user logged in');
 
@@ -315,6 +347,7 @@ class SupabaseService {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
+    if (isTesting) return [];
     final userId = getCurrentUserId();
     if (userId == null) return [];
 
@@ -342,6 +375,7 @@ class SupabaseService {
   }
 
   Future<void> deleteWeightEntry(String id) async {
+    if (isTesting) return;
     await _supabase.from('weight_logs').delete().eq('id', id);
   }
 
@@ -357,6 +391,9 @@ class SupabaseService {
     required DateTime date,
     double? servings,
   }) async {
+    if (isTesting) {
+      return 'dummy_meal_${DateTime.now().microsecondsSinceEpoch}_${Random().nextInt(1000)}';
+    }
     final userId = getCurrentUserId();
     if (userId == null) throw Exception('No user logged in');
 
@@ -380,6 +417,7 @@ class SupabaseService {
   }
 
   Future<List<Map<String, dynamic>>> getMealLogs(DateTime date) async {
+    if (isTesting) return [];
     final userId = getCurrentUserId();
     if (userId == null) return [];
 
@@ -397,6 +435,7 @@ class SupabaseService {
     required DateTime startDate,
     required DateTime endDate,
   }) async {
+    if (isTesting) return [];
     final userId = getCurrentUserId();
     if (userId == null) return [];
 
@@ -412,6 +451,7 @@ class SupabaseService {
   }
 
   Future<void> deleteMealLog(String id) async {
+    if (isTesting) return;
     await _supabase.from('meal_logs').delete().eq('id', id);
   }
 
@@ -546,6 +586,7 @@ class SupabaseService {
     required double amount,
     required DateTime date,
   }) async {
+    if (isTesting) return;
     final userId = getCurrentUserId();
     if (userId == null) throw Exception('No user logged in');
 
@@ -557,6 +598,7 @@ class SupabaseService {
   }
 
   Future<double> getWaterIntake(DateTime date) async {
+    if (isTesting) return 0.0;
     final userId = getCurrentUserId();
     if (userId == null) return 0.0;
 

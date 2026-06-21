@@ -7,6 +7,7 @@
 // project. The tests below focus on the purely local business-logic flows
 // (onboarding, nutrition tracking, water tracking) that work entirely with
 // SharedPreferences and do not call the network.
+import 'package:lilyfit/services/supabase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -20,6 +21,7 @@ import 'package:lilyfit/widgets/macro_progress_bar.dart';
 import 'package:lilyfit/widgets/calorie_ring_painter.dart';
 import 'package:lilyfit/widgets/water_tracker_card.dart';
 import 'package:lilyfit/theme/app_theme.dart';
+import 'package:lilyfit/l10n/app_localizations.dart';
 
 Future<AppProvider> _freshProvider() async {
   SharedPreferences.setMockInitialValues({});
@@ -33,6 +35,9 @@ Widget _providerApp(AppProvider provider, Widget child) {
     value: provider,
     child: MaterialApp(
       theme: AppTheme.darkTheme,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: provider.currentLocale,
       home: Scaffold(
         body: Padding(padding: const EdgeInsets.all(16), child: child),
       ),
@@ -66,6 +71,7 @@ const _oats = FoodItem(
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  SupabaseService.isTesting = true;
 
   // ─── Onboarding flow ────────────────────────────────────────────
   group('Onboarding integration', () {
@@ -286,7 +292,7 @@ void main() {
       bool notified = false;
       provider.addListener(() => notified = true);
 
-      provider.setLocale(const Locale('sw'));
+      await provider.setLocale(const Locale('sw'));
       expect(provider.currentLocale.languageCode, 'sw');
       expect(notified, isTrue);
     });

@@ -3,6 +3,7 @@
 //
 // Run with: flutter test integration_test/nutrition_tracking_flow_test.dart
 
+import 'package:lilyfit/services/supabase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -13,12 +14,22 @@ import 'package:lilyfit/models/user_profile.dart';
 import 'package:lilyfit/models/meal_log.dart';
 import 'package:lilyfit/screens/home/home_screen.dart';
 import 'package:lilyfit/screens/food_search/food_search_screen.dart';
+import 'package:lilyfit/screens/food_search/food_item_card.dart';
 import 'package:lilyfit/screens/dashboard/dashboard_screen.dart';
 import 'package:lilyfit/theme/app_theme.dart';
 import 'package:lilyfit/l10n/app_localizations.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:lilyfit/config/supabase_config.dart';
 
-void main() {
+void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  SupabaseService.isTesting = true;
+  try {
+    await Supabase.initialize(
+      url: SupabaseConfig.supabaseUrl,
+      anonKey: SupabaseConfig.supabaseAnonKey,
+    );
+  } catch (_) {}
 
   // Helper to create properly configured MaterialApp with localizations
   Widget createTestApp(AppProvider provider, Widget home) {
@@ -75,11 +86,11 @@ void main() {
       expect(find.text('Banana'), findsWidgets);
 
       // Tap on a food item to view details
-      await tester.tap(find.text('Banana').first);
+      await tester.tap(find.byType(FoodItemCard).first);
       await tester.pumpAndSettle();
 
       // Should see food details dialog/sheet
-      expect(find.text('Add to Meal'), findsOneWidget);
+      expect(find.byType(ElevatedButton), findsOneWidget);
     });
 
     testWidgets('User can log a meal for breakfast', (tester) async {
@@ -93,11 +104,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // Search for food
-      await tester.enterText(find.byType(TextField).first, 'oats');
+      await tester.enterText(find.byType(TextField).first, 'oat');
       await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
       // Tap on Oats
-      await tester.tap(find.text('Oats').first);
+      await tester.tap(find.byType(FoodItemCard).first);
       await tester.pumpAndSettle();
 
       // Select meal type - Breakfast
@@ -107,7 +118,7 @@ void main() {
       // Adjust servings if needed (default is 1.0)
 
       // Tap Add to Meal
-      await tester.tap(find.text('Add to Meal'));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       // Verify meal was added
@@ -144,9 +155,7 @@ void main() {
         await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
         // Tap on food item
-        await tester.tap(
-          find.textContaining(foodName, findRichText: true).first,
-        );
+        await tester.tap(find.byType(FoodItemCard).first);
         await tester.pumpAndSettle();
 
         // Select meal type
@@ -154,7 +163,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Add to meal
-        await tester.tap(find.text('Add to Meal'));
+        await tester.tap(find.byType(ElevatedButton));
         await tester.pumpAndSettle();
 
         // Return to home
@@ -212,7 +221,7 @@ void main() {
       await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
       // Tap on Banana
-      await tester.tap(find.text('Banana').first);
+      await tester.tap(find.byType(FoodItemCard).first);
       await tester.pumpAndSettle();
 
       // Find and increase serving size
@@ -231,7 +240,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Add to meal
-      await tester.tap(find.text('Add to Meal'));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       // Verify meal was logged
@@ -255,13 +264,13 @@ void main() {
       await tester.enterText(find.byType(TextField).first, 'banana');
       await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
-      await tester.tap(find.text('Banana').first);
+      await tester.tap(find.byType(FoodItemCard).first);
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Breakfast'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Add to Meal'));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       // Go back to dashboard
@@ -271,22 +280,19 @@ void main() {
       final beforeRemoval = provider.consumedCalories;
       expect(beforeRemoval, greaterThan(0));
 
-      // Find and tap delete button on the meal log
-      final deleteButton = find.byIcon(Icons.delete_outline_rounded);
-      if (deleteButton.evaluate().isNotEmpty) {
-        await tester.tap(deleteButton.first);
+      // Scroll to bring the Dismissible card fully into view (above the bottom navigation bar)
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+      await tester.pumpAndSettle();
+
+      // Swipe the Dismissible to remove the meal log
+      final dismissibleFinder = find.byType(Dismissible);
+      if (dismissibleFinder.evaluate().isNotEmpty) {
+        await tester.drag(dismissibleFinder.first, const Offset(-500.0, 0.0));
         await tester.pumpAndSettle();
-
-        // Confirm deletion if there's a dialog
-        final confirmButton = find.text('Delete');
-        if (confirmButton.evaluate().isNotEmpty) {
-          await tester.tap(confirmButton);
-          await tester.pumpAndSettle();
-        }
-
-        // Verify meal was removed
-        expect(provider.consumedCalories, lessThan(beforeRemoval));
       }
+
+      // Verify meal was removed
+      expect(provider.consumedCalories, lessThan(beforeRemoval));
     });
 
     testWidgets('Calorie ring updates in real-time as meals are logged', (
@@ -309,13 +315,13 @@ void main() {
       await tester.enterText(find.byType(TextField).first, 'banana');
       await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
-      await tester.tap(find.text('Banana').first);
+      await tester.tap(find.byType(FoodItemCard).first);
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Breakfast'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Add to Meal'));
+      await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       // Go back to dashboard
@@ -346,15 +352,14 @@ void main() {
       await tester.enterText(find.byType(TextField).first, 'chicken');
       await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
-      final chickenFinder = find.textContaining('Chicken', findRichText: true);
-      if (chickenFinder.evaluate().isNotEmpty) {
-        await tester.tap(chickenFinder.first);
+      if (find.byType(FoodItemCard).evaluate().isNotEmpty) {
+        await tester.tap(find.byType(FoodItemCard).first);
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('Lunch'));
         await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Add to Meal'));
+        await tester.tap(find.byType(ElevatedButton));
         await tester.pumpAndSettle();
 
         // Go back to dashboard
@@ -375,12 +380,12 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       // Look for region filter chips/tabs
-      final regionFilters = find.textContaining('Global');
+      final regionFilters = find.textContaining('All');
 
       // If region filters exist, test filtering
       if (regionFilters.evaluate().isNotEmpty) {
         // The food list should have items
-        expect(find.byType(ListTile), findsWidgets);
+        expect(find.byType(FoodItemCard), findsWidgets);
 
         // Try selecting a specific region
         final africanFilter = find.text('African');
