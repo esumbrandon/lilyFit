@@ -109,6 +109,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       }
       final result = await _geminiService.analyzeImage(image);
       setState(() => _isAnalyzing = false);
+      if (!mounted) return;
       _showFoodDetail(context, FoodItem.fromJson(result));
     } catch (e) {
       setState(() => _isAnalyzing = false);
