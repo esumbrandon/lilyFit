@@ -81,15 +81,19 @@ class ProfileScreen extends StatelessWidget {
                       return Container(
                         margin: const EdgeInsets.symmetric(horizontal: 24),
                         decoration: BoxDecoration(
-                          color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+                          color: (isDark ? AppColors.darkCard : AppColors.card)
+                              .withValues(alpha: 0.65),
                           borderRadius: BorderRadius.circular(28),
                           border: Border.all(
-                            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withValues(alpha: 0.08),
                             width: 1.5,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
+                              color: Colors.black.withValues(
+                                alpha: isDark ? 0.25 : 0.06,
+                              ),
                               blurRadius: 24,
                               offset: const Offset(0, 10),
                             ),
@@ -114,12 +118,15 @@ class ProfileScreen extends StatelessWidget {
                                           gradient: AppColors.primaryGradient,
                                           shape: BoxShape.circle,
                                           border: Border.all(
-                                            color: Colors.white.withValues(alpha: 0.6),
+                                            color: Colors.white.withValues(
+                                              alpha: 0.6,
+                                            ),
                                             width: 2,
                                           ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: AppColors.primary.withValues(alpha: 0.3),
+                                              color: AppColors.primary
+                                                  .withValues(alpha: 0.3),
                                               blurRadius: 10,
                                               offset: const Offset(0, 4),
                                             ),
@@ -142,14 +149,19 @@ class ProfileScreen extends StatelessWidget {
                                       // User info
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               profile.name.isNotEmpty
                                                   ? profile.name
-                                                  : AppLocalizations.of(context)!.user,
+                                                  : AppLocalizations.of(
+                                                      context,
+                                                    )!.user,
                                               style: TextStyle(
-                                                color: isDark ? Colors.white : AppColors.textPrimary,
+                                                color: isDark
+                                                    ? Colors.white
+                                                    : AppColors.textPrimary,
                                                 fontSize: 22,
                                                 fontWeight: FontWeight.w800,
                                                 letterSpacing: -0.5,
@@ -160,8 +172,15 @@ class ProfileScreen extends StatelessWidget {
                                               Text(
                                                 profile.email,
                                                 style: TextStyle(
-                                                  color: (isDark ? AppColors.darkTextSecondary : AppColors.textSecondary)
-                                                      .withValues(alpha: 0.8),
+                                                  color:
+                                                      (isDark
+                                                              ? AppColors
+                                                                    .darkTextSecondary
+                                                              : AppColors
+                                                                    .textSecondary)
+                                                          .withValues(
+                                                            alpha: 0.8,
+                                                          ),
                                                   fontSize: 13,
                                                 ),
                                                 maxLines: 1,
@@ -174,15 +193,21 @@ class ProfileScreen extends StatelessWidget {
                                       GestureDetector(
                                         onTap: () {
                                           HapticFeedback.lightImpact();
-                                          _showEditProfileDialog(context, provider);
+                                          _showEditProfileDialog(
+                                            context,
+                                            provider,
+                                          );
                                         },
                                         child: Container(
                                           padding: const EdgeInsets.all(8),
                                           decoration: BoxDecoration(
-                                            color: AppColors.primary.withValues(alpha: 0.1),
+                                            color: AppColors.primary.withValues(
+                                              alpha: 0.1,
+                                            ),
                                             shape: BoxShape.circle,
                                             border: Border.all(
-                                              color: AppColors.primary.withValues(alpha: 0.25),
+                                              color: AppColors.primary
+                                                  .withValues(alpha: 0.25),
                                               width: 1,
                                             ),
                                           ),
@@ -211,7 +236,10 @@ class ProfileScreen extends StatelessWidget {
                                       Expanded(
                                         child: _infoChip(
                                           context,
-                                          _activityLabel(context, profile.activityLevel),
+                                          _activityLabel(
+                                            context,
+                                            profile.activityLevel,
+                                          ),
                                           Icons.directions_run_rounded,
                                           isDark,
                                         ),
@@ -294,8 +322,12 @@ class ProfileScreen extends StatelessWidget {
                                     value: profile.gender == 'male'
                                         ? AppLocalizations.of(context)!.male
                                         : (profile.gender == 'female'
-                                              ? AppLocalizations.of(context)!.female
-                                              : AppLocalizations.of(context)!.other),
+                                              ? AppLocalizations.of(
+                                                  context,
+                                                )!.female
+                                              : AppLocalizations.of(
+                                                  context,
+                                                )!.other),
                                     unit: '',
                                     isDark: isDark,
                                   ),
@@ -312,7 +344,10 @@ class ProfileScreen extends StatelessWidget {
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
                 // ── Preferences section ───────────────────────────────────
-                _sectionHeader(context, AppLocalizations.of(context)!.preferences),
+                _sectionHeader(
+                  context,
+                  AppLocalizations.of(context)!.preferences,
+                ),
                 _sectionCard([
                   Consumer<AppProvider>(
                     builder: (context, provider, child) {
@@ -345,8 +380,12 @@ class ProfileScreen extends StatelessWidget {
                             iconColor: const Color(0xFFFBBF24),
                             title: AppLocalizations.of(context)!.notifications,
                             subtitle: provider.waterRemindersEnabled
-                                ? AppLocalizations.of(context)!.waterRemindersActive
-                                : AppLocalizations.of(context)!.configureReminders,
+                                ? AppLocalizations.of(
+                                    context,
+                                  )!.waterRemindersActive
+                                : AppLocalizations.of(
+                                    context,
+                                  )!.configureReminders,
                             onTap: () {
                               HapticFeedback.lightImpact();
                               Navigator.push(
@@ -385,7 +424,10 @@ class ProfileScreen extends StatelessWidget {
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
                 // ── Subscription section ──────────────────────────────────
-                _sectionHeader(context, AppLocalizations.of(context)!.membership),
+                _sectionHeader(
+                  context,
+                  AppLocalizations.of(context)!.membership,
+                ),
                 _sectionCard([_premiumTile(context)]),
 
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
@@ -441,7 +483,9 @@ class ProfileScreen extends StatelessWidget {
                     icon: Icons.security_rounded,
                     iconColor: AppColors.primary,
                     title: AppLocalizations.of(context)!.privacyAndSecurity,
-                    subtitle: AppLocalizations.of(context)!.dataPermissionsPrivacy,
+                    subtitle: AppLocalizations.of(
+                      context,
+                    )!.dataPermissionsPrivacy,
                     onTap: () {
                       HapticFeedback.lightImpact();
                       _showComingSoonSnackBar(context, 'Privacy & Security');
@@ -481,7 +525,12 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _infoChip(BuildContext context, String label, IconData icon, bool isDark) {
+  Widget _infoChip(
+    BuildContext context,
+    String label,
+    IconData icon,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
@@ -497,7 +546,9 @@ class ProfileScreen extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+            color: isDark
+                ? AppColors.darkTextSecondary
+                : AppColors.textSecondary,
             size: 16,
           ),
           const SizedBox(width: 6),
@@ -526,7 +577,9 @@ class ProfileScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(
+          alpha: 0.65,
+        ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
@@ -549,7 +602,9 @@ class ProfileScreen extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  color: (isDark ? AppColors.darkTextTertiary : AppColors.textTertiary),
+                  color: (isDark
+                      ? AppColors.darkTextTertiary
+                      : AppColors.textTertiary),
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -577,12 +632,14 @@ class ProfileScreen extends StatelessWidget {
                 if (unit.isNotEmpty) ...[
                   const TextSpan(text: ' '),
                   TextSpan(
-                     text: unit,
-                     style: TextStyle(
-                       fontSize: 12,
-                       color: (isDark ? AppColors.darkTextSecondary : AppColors.textSecondary),
-                       fontWeight: FontWeight.w500,
-                     ),
+                    text: unit,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: (isDark
+                          ? AppColors.darkTextSecondary
+                          : AppColors.textSecondary),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ],
@@ -931,10 +988,13 @@ class ProfileScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Container(
               decoration: BoxDecoration(
-                color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+                color: (isDark ? AppColors.darkCard : AppColors.card)
+                    .withValues(alpha: 0.65),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.05,
+                  ),
                   width: 1,
                 ),
                 boxShadow: [

@@ -79,10 +79,14 @@ class _FoodItemCardState extends State<FoodItemCard>
               ],
             ),
             child: Material(
-              color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.6),
+              color: (isDark ? AppColors.darkCard : AppColors.card).withValues(
+                alpha: 0.6,
+              ),
               shape: RoundedRectangleBorder(
                 side: BorderSide(
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.05,
+                  ),
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(16),
@@ -108,9 +112,11 @@ class _FoodItemCardState extends State<FoodItemCard>
                         width: 46,
                         height: 46,
                         decoration: BoxDecoration(
-                          color: (isDark
-                              ? AppColors.darkCardLight
-                              : AppColors.cardLight).withValues(alpha: 0.5),
+                          color:
+                              (isDark
+                                      ? AppColors.darkCardLight
+                                      : AppColors.cardLight)
+                                  .withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         alignment: Alignment.center,

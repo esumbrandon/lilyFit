@@ -341,8 +341,12 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                                     ),
                                     const SizedBox(height: 12),
                                     Text(
-                                      AppLocalizations.of(context)!.noFoodsFound,
-                                      style: Theme.of(context).textTheme.bodyLarge
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.noFoodsFound,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
                                           ?.copyWith(
                                             color: AppColors.textTertiary
                                                 .withValues(alpha: 0.7),
@@ -354,7 +358,12 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             : ListView.builder(
                                 key: ValueKey('list_$_selectedRegion'),
                                 controller: _scrollController,
-                                padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                                padding: const EdgeInsets.fromLTRB(
+                                  20,
+                                  0,
+                                  20,
+                                  100,
+                                ),
                                 itemCount: filteredFoods.length,
                                 itemBuilder: (context, index) {
                                   if (index >= filteredFoods.length) {

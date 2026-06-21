@@ -47,12 +47,16 @@ class RegionFilterWidget extends StatelessWidget {
                 gradient: selected ? AppColors.primaryGradient : null,
                 color: selected
                     ? null
-                    : (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.6),
+                    : (isDark ? AppColors.darkCard : AppColors.card).withValues(
+                        alpha: 0.6,
+                      ),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: selected
                       ? Colors.white.withValues(alpha: 0.2)
-                      : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                      : (isDark ? Colors.white : Colors.black).withValues(
+                          alpha: 0.05,
+                        ),
                   width: 1.0,
                 ),
                 boxShadow: selected

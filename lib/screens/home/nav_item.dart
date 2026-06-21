@@ -61,8 +61,8 @@ class NavItem extends StatelessWidget {
                     end: isActive
                         ? Colors.white
                         : (isDark
-                            ? AppColors.darkTextTertiary
-                            : AppColors.textTertiary),
+                              ? AppColors.darkTextTertiary
+                              : AppColors.textTertiary),
                   ),
                   builder: (context, color, child) {
                     return Icon(
@@ -80,8 +80,8 @@ class NavItem extends StatelessWidget {
                     color: isActive
                         ? Colors.white
                         : (isDark
-                            ? AppColors.darkTextTertiary
-                            : AppColors.textTertiary),
+                              ? AppColors.darkTextTertiary
+                              : AppColors.textTertiary),
                     fontSize: 10,
                     fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
                   ),

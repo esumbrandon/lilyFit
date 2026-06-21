@@ -27,8 +27,9 @@ class _HomeScreenState extends State<HomeScreen>
   double? _dragPositionX;
   int? _draggedHighlightIndex;
 
-  int get _activeHighlightIndex =>
-      _isDraggingNav ? (_draggedHighlightIndex ?? _currentIndex) : _currentIndex;
+  int get _activeHighlightIndex => _isDraggingNav
+      ? (_draggedHighlightIndex ?? _currentIndex)
+      : _currentIndex;
 
   final _screens = const [
     DashboardScreen(),
@@ -103,20 +104,25 @@ class _HomeScreenState extends State<HomeScreen>
                 filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: (isDark
-                            ? AppColors.darkNavBarBackground
-                            : AppColors.navBarBackground)
-                        .withValues(alpha: 0.65),
+                    color:
+                        (isDark
+                                ? AppColors.darkNavBarBackground
+                                : AppColors.navBarBackground)
+                            .withValues(alpha: 0.65),
                     borderRadius: BorderRadius.circular(50),
                     border: Border.all(
-                      color: (isDark
-                              ? AppColors.darkNavBarBorder
-                              : AppColors.navBarBorder)
-                          .withValues(alpha: 0.4),
+                      color:
+                          (isDark
+                                  ? AppColors.darkNavBarBorder
+                                  : AppColors.navBarBorder)
+                              .withValues(alpha: 0.4),
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 8,
+                    ),
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         final totalWidth = constraints.maxWidth;
@@ -129,14 +135,20 @@ class _HomeScreenState extends State<HomeScreen>
                               _isDraggingNav = true;
                               _dragPositionX = details.localPosition.dx;
                               _draggedHighlightIndex =
-                                  (_dragPositionX! / itemWidth).floor().clamp(0, 3);
+                                  (_dragPositionX! / itemWidth).floor().clamp(
+                                    0,
+                                    3,
+                                  );
                             });
                           },
                           onHorizontalDragUpdate: (details) {
                             setState(() {
                               _dragPositionX = details.localPosition.dx;
                               final newHighlightIndex =
-                                  (_dragPositionX! / itemWidth).floor().clamp(0, 3);
+                                  (_dragPositionX! / itemWidth).floor().clamp(
+                                    0,
+                                    3,
+                                  );
                               if (newHighlightIndex != _draggedHighlightIndex) {
                                 _draggedHighlightIndex = newHighlightIndex;
                                 HapticFeedback.selectionClick();
@@ -170,7 +182,10 @@ class _HomeScreenState extends State<HomeScreen>
                                     : const Duration(milliseconds: 350),
                                 curve: Curves.easeInOutCubic,
                                 left: _isDraggingNav
-                                    ? (_dragPositionX! - itemWidth / 2).clamp(0.0, totalWidth - itemWidth)
+                                    ? (_dragPositionX! - itemWidth / 2).clamp(
+                                        0.0,
+                                        totalWidth - itemWidth,
+                                      )
                                     : _currentIndex * itemWidth,
                                 width: itemWidth,
                                 top: 0,
@@ -185,26 +200,36 @@ class _HomeScreenState extends State<HomeScreen>
                                       begin: Alignment.topCenter,
                                       end: Alignment.bottomCenter,
                                     ),
-                                    borderRadius: const BorderRadius.all(Radius.circular(40)),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(40),
+                                    ),
                                     border: Border.all(
-                                      color: Colors.white.withValues(alpha: 0.35),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.35,
+                                      ),
                                       width: 1.0,
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: AppColors.primary.withValues(alpha: 0.25),
+                                        color: AppColors.primary.withValues(
+                                          alpha: 0.25,
+                                        ),
                                         blurRadius: 10,
                                         offset: const Offset(0, 4),
                                       ),
                                       BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.15),
+                                        color: Colors.black.withValues(
+                                          alpha: 0.15,
+                                        ),
                                         blurRadius: 4,
                                         offset: const Offset(0, 1),
                                       ),
                                     ],
                                   ),
                                   child: ClipRRect(
-                                    borderRadius: const BorderRadius.all(Radius.circular(40)),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(40),
+                                    ),
                                     child: Stack(
                                       children: [
                                         // Top Glare
@@ -217,8 +242,12 @@ class _HomeScreenState extends State<HomeScreen>
                                             decoration: BoxDecoration(
                                               gradient: LinearGradient(
                                                 colors: [
-                                                  Colors.white.withValues(alpha: 0.35),
-                                                  Colors.white.withValues(alpha: 0.0),
+                                                  Colors.white.withValues(
+                                                    alpha: 0.35,
+                                                  ),
+                                                  Colors.white.withValues(
+                                                    alpha: 0.0,
+                                                  ),
                                                 ],
                                                 begin: Alignment.topCenter,
                                                 end: Alignment.bottomCenter,
@@ -236,8 +265,12 @@ class _HomeScreenState extends State<HomeScreen>
                                             decoration: BoxDecoration(
                                               gradient: LinearGradient(
                                                 colors: [
-                                                  Colors.white.withValues(alpha: 0.0),
-                                                  Colors.white.withValues(alpha: 0.15),
+                                                  Colors.white.withValues(
+                                                    alpha: 0.0,
+                                                  ),
+                                                  Colors.white.withValues(
+                                                    alpha: 0.15,
+                                                  ),
                                                 ],
                                                 begin: Alignment.topCenter,
                                                 end: Alignment.bottomCenter,
@@ -252,7 +285,8 @@ class _HomeScreenState extends State<HomeScreen>
                               ),
                               // Navigation Items Row
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
                                   NavItem(
                                     index: 0,
@@ -262,7 +296,8 @@ class _HomeScreenState extends State<HomeScreen>
                                     label: l10n.home,
                                     scaleController: _scaleController,
                                     scaleAnimation: _scaleAnimation,
-                                    onTap: () => setState(() => _currentIndex = 0),
+                                    onTap: () =>
+                                        setState(() => _currentIndex = 0),
                                   ),
                                   NavItem(
                                     index: 1,
@@ -272,7 +307,8 @@ class _HomeScreenState extends State<HomeScreen>
                                     label: l10n.food,
                                     scaleController: _scaleController,
                                     scaleAnimation: _scaleAnimation,
-                                    onTap: () => setState(() => _currentIndex = 1),
+                                    onTap: () =>
+                                        setState(() => _currentIndex = 1),
                                   ),
                                   NavItem(
                                     index: 2,
@@ -282,7 +318,8 @@ class _HomeScreenState extends State<HomeScreen>
                                     label: l10n.progress,
                                     scaleController: _scaleController,
                                     scaleAnimation: _scaleAnimation,
-                                    onTap: () => setState(() => _currentIndex = 2),
+                                    onTap: () =>
+                                        setState(() => _currentIndex = 2),
                                   ),
                                   NavItem(
                                     index: 3,
@@ -292,7 +329,8 @@ class _HomeScreenState extends State<HomeScreen>
                                     label: l10n.profile,
                                     scaleController: _scaleController,
                                     scaleAnimation: _scaleAnimation,
-                                    onTap: () => setState(() => _currentIndex = 3),
+                                    onTap: () =>
+                                        setState(() => _currentIndex = 3),
                                   ),
                                 ],
                               ),

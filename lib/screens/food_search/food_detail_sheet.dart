@@ -196,7 +196,7 @@ class _FoodDetailSheetState extends State<FoodDetailSheet> {
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(
                         color: selected
-                            ? AppColors.primary.withOpacity(0.25)
+                            ? AppColors.primary.withValues(alpha: 0.25)
                             : AppColors.card,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(

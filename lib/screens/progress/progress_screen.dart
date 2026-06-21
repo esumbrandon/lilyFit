@@ -151,15 +151,19 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+                        color: (isDark ? AppColors.darkCard : AppColors.card)
+                            .withValues(alpha: 0.65),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withValues(alpha: 0.05),
                           width: 1,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+                            color: Colors.black.withValues(
+                              alpha: isDark ? 0.15 : 0.03,
+                            ),
                             blurRadius: 12,
                             offset: const Offset(0, 6),
                           ),
@@ -199,10 +203,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                       )!.logAtLeast2Weights,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        color: (isDark
-                                                ? AppColors.darkTextTertiary
-                                                : AppColors.textTertiary)
-                                            .withValues(alpha: 0.6),
+                                        color:
+                                            (isDark
+                                                    ? AppColors.darkTextTertiary
+                                                    : AppColors.textTertiary)
+                                                .withValues(alpha: 0.6),
                                         fontSize: 14,
                                       ),
                                     ),
@@ -225,15 +230,19 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+                        color: (isDark ? AppColors.darkCard : AppColors.card)
+                            .withValues(alpha: 0.65),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withValues(alpha: 0.05),
                           width: 1,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+                            color: Colors.black.withValues(
+                              alpha: isDark ? 0.15 : 0.03,
+                            ),
                             blurRadius: 12,
                             offset: const Offset(0, 6),
                           ),
@@ -284,15 +293,19 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+                        color: (isDark ? AppColors.darkCard : AppColors.card)
+                            .withValues(alpha: 0.65),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withValues(alpha: 0.05),
                           width: 1,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+                            color: Colors.black.withValues(
+                              alpha: isDark ? 0.15 : 0.03,
+                            ),
                             blurRadius: 12,
                             offset: const Offset(0, 6),
                           ),
@@ -359,15 +372,19 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+                        color: (isDark ? AppColors.darkCard : AppColors.card)
+                            .withValues(alpha: 0.65),
                         borderRadius: BorderRadius.circular(24),
                         border: Border.all(
-                          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withValues(alpha: 0.05),
                           width: 1,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+                            color: Colors.black.withValues(
+                              alpha: isDark ? 0.15 : 0.03,
+                            ),
                             blurRadius: 12,
                             offset: const Offset(0, 6),
                           ),
@@ -450,10 +467,14 @@ class _ProgressScreenState extends State<ProgressScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+          color: (isDark ? AppColors.darkCard : AppColors.card).withValues(
+            alpha: 0.65,
+          ),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+            color: (isDark ? Colors.white : Colors.black).withValues(
+              alpha: 0.05,
+            ),
           ),
           boxShadow: [
             BoxShadow(
@@ -480,7 +501,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
             Text(
               label,
               style: TextStyle(
-                color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+                color: isDark
+                    ? AppColors.darkTextTertiary
+                    : AppColors.textTertiary,
                 fontSize: 11,
               ),
             ),
@@ -503,9 +526,14 @@ class _ProgressScreenState extends State<ProgressScreen> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+            color: (isDark ? AppColors.darkCard : AppColors.card).withValues(
+              alpha: 0.65,
+            ),
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: categoryColor.withValues(alpha: 0.35), width: 1.5),
+            border: Border.all(
+              color: categoryColor.withValues(alpha: 0.35),
+              width: 1.5,
+            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
@@ -531,7 +559,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
               Text(
                 AppLocalizations.of(context)!.bmi,
                 style: TextStyle(
-                  color: isDark ? AppColors.darkTextTertiary : AppColors.textTertiary,
+                  color: isDark
+                      ? AppColors.darkTextTertiary
+                      : AppColors.textTertiary,
                   fontSize: 11,
                 ),
               ),
@@ -1019,7 +1049,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
                       colors: isOverTarget
-                          ? [AppColors.carbs, AppColors.carbs.withValues(alpha: 0.75)]
+                          ? [
+                              AppColors.carbs,
+                              AppColors.carbs.withValues(alpha: 0.75),
+                            ]
                           : isToday
                           ? [
                               AppColors.primary,

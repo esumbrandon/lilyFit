@@ -43,20 +43,28 @@ class SearchBarWidget extends StatelessWidget {
               ),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.6),
+                fillColor: (isDark ? AppColors.darkCard : AppColors.card)
+                    .withValues(alpha: 0.6),
                 hintText: AppLocalizations.of(context)!.searchHint,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                    color: (isDark ? Colors.white : Colors.black).withValues(
+                      alpha: 0.05,
+                    ),
                     width: 1,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                    color: (isDark ? Colors.white : Colors.black).withValues(
+                      alpha: 0.05,
+                    ),
                     width: 1,
                   ),
                 ),
@@ -93,13 +101,17 @@ class SearchBarWidget extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Material(
-            color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.6),
+            color: (isDark ? AppColors.darkCard : AppColors.card).withValues(
+              alpha: 0.6,
+            ),
             borderRadius: BorderRadius.circular(16),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.05,
+                  ),
                   width: 1,
                 ),
               ),

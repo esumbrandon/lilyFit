@@ -25,7 +25,9 @@ class MealSectionCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(
+          alpha: 0.65,
+        ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),

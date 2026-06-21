@@ -29,7 +29,9 @@ class WaterTrackerCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(
+          alpha: 0.65,
+        ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
@@ -107,7 +109,10 @@ class WaterTrackerCard extends StatelessWidget {
                       decoration: isFilled
                           ? BoxDecoration(
                               gradient: LinearGradient(
-                                colors: [AppColors.secondary, AppColors.secondaryDark],
+                                colors: [
+                                  AppColors.secondary,
+                                  AppColors.secondaryDark,
+                                ],
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                               ),
@@ -118,19 +123,24 @@ class WaterTrackerCard extends StatelessWidget {
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.secondary.withValues(alpha: 0.3),
+                                  color: AppColors.secondary.withValues(
+                                    alpha: 0.3,
+                                  ),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),
                               ],
                             )
                           : BoxDecoration(
-                              color: (isDark
-                                  ? AppColors.darkCardLight
-                                  : AppColors.cardLight).withValues(alpha: 0.5),
+                              color:
+                                  (isDark
+                                          ? AppColors.darkCardLight
+                                          : AppColors.cardLight)
+                                      .withValues(alpha: 0.5),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                                color: (isDark ? Colors.white : Colors.black)
+                                    .withValues(alpha: 0.05),
                                 width: 1,
                               ),
                             ),

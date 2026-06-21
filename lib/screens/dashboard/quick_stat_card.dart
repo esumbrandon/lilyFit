@@ -21,7 +21,9 @@ class QuickStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       decoration: BoxDecoration(
-        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(alpha: 0.65),
+        color: (isDark ? AppColors.darkCard : AppColors.card).withValues(
+          alpha: 0.65,
+        ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
         boxShadow: [

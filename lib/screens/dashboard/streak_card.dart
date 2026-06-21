@@ -18,7 +18,10 @@ class StreakCard extends StatelessWidget {
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.carbs.withValues(alpha: 0.6), width: 1.5),
+        border: Border.all(
+          color: AppColors.carbs.withValues(alpha: 0.6),
+          width: 1.5,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
