@@ -59,3 +59,5 @@ superbase_schema.sql
 superbase_foods_schema.sql
 pubspec.lock
 
+# Environment variables
+.env

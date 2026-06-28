@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'theme/app_theme.dart';
 import 'providers/app_provider.dart';
 import 'services/supabase_service.dart';
@@ -17,6 +18,12 @@ import 'widgets/adaptive_loading_indicator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (e) {
+    debugPrint('Warning: Could not load .env file: $e');
+  }
 
   await Supabase.initialize(
     url: SupabaseConfig.supabaseUrl,

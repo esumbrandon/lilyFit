@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class GeminiService {
   final GenerativeModel _model;
@@ -9,7 +10,9 @@ class GeminiService {
   GeminiService()
     : _model = GenerativeModel(
         model: 'gemini-2.0-flash',
-        apiKey: const String.fromEnvironment('GEMINI_API_KEY'),
+        apiKey:
+            dotenv.env['GEMINI_API_KEY'] ??
+            const String.fromEnvironment('GEMINI_API_KEY'),
       );
 
   Future<Map<String, dynamic>> analyzeImage(XFile image) async {
