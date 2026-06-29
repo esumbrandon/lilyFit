@@ -488,5 +488,5 @@ provider.addListener(() {
 ---
 
 **Last Updated**: May 20, 2026  
-**Version**: 1.0.0
+**Version**: 1.0
 
