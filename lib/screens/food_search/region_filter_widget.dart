@@ -72,10 +72,6 @@ class RegionFilterWidget extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    FoodDatabase.regionEmoji(region),
-                    style: const TextStyle(fontSize: 16),
-                  ),
                   const SizedBox(width: 6),
                   AnimatedDefaultTextStyle(
                     duration: const Duration(milliseconds: 200),

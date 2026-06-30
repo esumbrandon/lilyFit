@@ -74,15 +74,6 @@ class FoodDatabase {
     'european',
   ];
 
-  static String regionEmoji(String region) => switch (region) {
-    'all' => '🌎',
-    'african' => '🌍',
-    'western' => '🍔',
-    'asian' => '🥢',
-    'european' => '🥐',
-    _ => '🍽️',
-  };
-
   static String regionLabel(String region) => switch (region) {
     'all' => 'All',
     'african' => 'African',
