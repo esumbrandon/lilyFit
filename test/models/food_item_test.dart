@@ -80,7 +80,7 @@ void main() {
 
       test('casts integer calories to double', () {
         final json = food.toJson();
-        json['calories'] = 200; // int instead of double
+        json['calories'] = 200;
         json['protein'] = 4;
         json['carbs'] = 44;
         json['fat'] = 0;

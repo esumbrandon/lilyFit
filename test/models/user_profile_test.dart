@@ -38,15 +38,13 @@ void main() {
 
       test('sets correct macro targets', () {
         final p = maleModerateMaintenance()..calculateTargets();
-        expect(p.targetProtein, 191.0); // 2546*0.30/4
-        expect(p.targetCarbs, 255.0); // 2546*0.40/4
-        expect(p.targetFat, 85.0); // 2546*0.30/9
+        expect(p.targetProtein, 191.0);
+        expect(p.targetCarbs, 255.0);
+        expect(p.targetFat, 85.0);
       });
     });
 
     group('female – maintenance – moderate', () {
-      // BMR (female) = 10*70 + 6.25*170 - 5*25 - 161 = 1476.5
-      // TDEE = 1476.5 * 1.55 = 2288.575 → 2289 kcal
       test('sets correct targetCalories', () {
         final p = UserProfile(
           gender: 'female',
@@ -68,15 +66,13 @@ void main() {
           activityLevel: 'moderate',
           goal: 'maintenance',
         )..calculateTargets();
-        expect(p.targetProtein, 172.0); // 2289*0.30/4
-        expect(p.targetCarbs, 229.0); // 2289*0.40/4
-        expect(p.targetFat, 76.0); // 2289*0.30/9
+        expect(p.targetProtein, 172.0);
+        expect(p.targetCarbs, 229.0);
+        expect(p.targetFat, 76.0);
       });
     });
 
     group('other gender – uses average BMR', () {
-      // maleBMR=1642.5, femaleBMR=1476.5, avg=1559.5
-      // TDEE = 1559.5 * 1.55 = 2417.225 → 2417 kcal
       test('sets correct targetCalories', () {
         final p = UserProfile(
           gender: 'other',
@@ -92,7 +88,6 @@ void main() {
 
     group('goal adjustments', () {
       test('fatLoss subtracts 500 kcal from TDEE', () {
-        // male moderate TDEE = 2546, fatLoss = 2546 - 500 = 2046
         final p = UserProfile(
           gender: 'male',
           age: 25,
@@ -102,14 +97,13 @@ void main() {
           goal: 'fatLoss',
         )..calculateTargets();
         expect(p.targetCalories, 2046.0);
-        // Fat loss macro split: 40% protein, 30% carbs, 30% fat
-        expect(p.targetProtein, 205.0); // 2046*0.40/4
-        expect(p.targetCarbs, 153.0); // 2046*0.30/4
-        expect(p.targetFat, 68.0); // 2046*0.30/9
+
+        expect(p.targetProtein, 205.0);
+        expect(p.targetCarbs, 153.0);
+        expect(p.targetFat, 68.0);
       });
 
       test('muscleGain adds 300 kcal to TDEE', () {
-        // male moderate TDEE = 2546, muscleGain = 2546 + 300 = 2846
         final p = UserProfile(
           gender: 'male',
           age: 25,
@@ -119,16 +113,14 @@ void main() {
           goal: 'muscleGain',
         )..calculateTargets();
         expect(p.targetCalories, 2846.0);
-        // Muscle gain macro split: 30% protein, 45% carbs, 25% fat
-        expect(p.targetProtein, 213.0); // 2846*0.30/4
-        expect(p.targetCarbs, 320.0); // 2846*0.45/4
-        expect(p.targetFat, 79.0); // 2846*0.25/9
+
+        expect(p.targetProtein, 213.0);
+        expect(p.targetCarbs, 320.0);
+        expect(p.targetFat, 79.0);
       });
     });
 
     group('activity level multipliers', () {
-      // For all: male, 70kg, 170cm, 25yo, maintenance
-      // BMR = 1642.5
       test('sedentary multiplier 1.2 → 1971 kcal', () {
         final p = UserProfile(
           gender: 'male',
@@ -138,7 +130,7 @@ void main() {
           activityLevel: 'sedentary',
           goal: 'maintenance',
         )..calculateTargets();
-        expect(p.targetCalories, 1971.0); // 1642.5 * 1.2 = 1971.0
+        expect(p.targetCalories, 1971.0);
       });
 
       test('light multiplier 1.375 → 2258 kcal', () {
@@ -150,7 +142,7 @@ void main() {
           activityLevel: 'light',
           goal: 'maintenance',
         )..calculateTargets();
-        expect(p.targetCalories, 2258.0); // 1642.5 * 1.375 = 2258.4375 → 2258
+        expect(p.targetCalories, 2258.0);
       });
 
       test('active multiplier 1.725 → 2833 kcal', () {
@@ -162,7 +154,7 @@ void main() {
           activityLevel: 'active',
           goal: 'maintenance',
         )..calculateTargets();
-        expect(p.targetCalories, 2833.0); // 1642.5 * 1.725 = 2833.3125 → 2833
+        expect(p.targetCalories, 2833.0);
       });
 
       test('veryActive multiplier 1.9 → 3121 kcal', () {
@@ -174,7 +166,7 @@ void main() {
           activityLevel: 'veryActive',
           goal: 'maintenance',
         )..calculateTargets();
-        expect(p.targetCalories, 3121.0); // 1642.5 * 1.9 = 3120.75 → 3121
+        expect(p.targetCalories, 3121.0);
       });
 
       test('unknown activity level defaults to moderate (1.55)', () {
@@ -207,7 +199,6 @@ void main() {
 
   group('bmiCategory', () {
     test('returns Underweight for BMI < 18.5', () {
-      // 50kg, 180cm → BMI = 50/3.24 ≈ 15.43
       final p = UserProfile(weight: 50, height: 180);
       expect(p.bmiCategory, 'Underweight');
     });
@@ -218,13 +209,11 @@ void main() {
     });
 
     test('returns Overweight for BMI 25–29.9', () {
-      // 80kg, 170cm → BMI ≈ 27.68
       final p = UserProfile(weight: 80, height: 170);
       expect(p.bmiCategory, 'Overweight');
     });
 
     test('returns Obese for BMI ≥ 30', () {
-      // 100kg, 170cm → BMI ≈ 34.6
       final p = UserProfile(weight: 100, height: 170);
       expect(p.bmiCategory, 'Obese');
     });

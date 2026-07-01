@@ -30,13 +30,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Verify hero card is present
       expect(find.text('Stay Hydrated'), findsOneWidget);
-
-      // Verify enable reminders toggle is present
       expect(find.text('Enable Reminders'), findsOneWidget);
-
-      // Verify switch widget is present
       expect(find.byType(Switch), findsOneWidget);
     });
 
@@ -54,7 +49,6 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Verify interval options are displayed
       expect(find.text('Every 30 min'), findsOneWidget);
       expect(find.text('Every 45 min'), findsOneWidget);
       expect(find.text('Every hour'), findsOneWidget);
