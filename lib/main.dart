@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'theme/app_theme.dart';
 import 'providers/app_provider.dart';
+import 'providers/subscription_provider.dart';
 import 'services/supabase_service.dart';
 import 'services/language_service.dart';
 import 'services/notification_service.dart';
@@ -13,6 +14,7 @@ import 'screens/auth/auth_screen.dart';
 import 'screens/onboarding/onboarding_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/language_selection/language_selection_screen.dart';
+import 'screens/subscription/subscription_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'widgets/adaptive_loading_indicator.dart';
 
@@ -35,6 +37,9 @@ void main() async {
   final appProvider = AppProvider();
   await appProvider.initialize();
 
+  final subscriptionProvider = SubscriptionProvider();
+  await subscriptionProvider.initialize();
+
   if (appProvider.waterRemindersEnabled) {
     final localizations = lookupAppLocalizations(appProvider.currentLocale);
     await NotificationService.scheduleWaterReminders(
@@ -49,7 +54,13 @@ void main() async {
   }
 
   runApp(
-    ChangeNotifierProvider.value(value: appProvider, child: const LilyFitApp()),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: appProvider),
+        ChangeNotifierProvider.value(value: subscriptionProvider),
+      ],
+      child: const LilyFitApp(),
+    ),
   );
 }
 
@@ -95,6 +106,7 @@ class LilyFitApp extends StatelessWidget {
       routes: {
         '/auth': (context) => const AuthWrapper(),
         '/language': (context) => const LanguageSelectionScreen(),
+        '/subscription': (context) => const SubscriptionScreen(),
       },
     );
   }

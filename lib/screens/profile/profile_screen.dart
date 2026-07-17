@@ -8,11 +8,13 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/user_profile.dart';
 import '../../providers/app_provider.dart';
+import '../../providers/subscription_provider.dart';
 import '../../services/language_service.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/unit_converter.dart';
 import '../../widgets/adaptive_loading_indicator.dart';
 import '../auth/auth_screen.dart';
+import '../subscription/subscription_screen.dart';
 import 'water_reminder_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -341,6 +343,35 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
 
+                const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+                // ── Subscription Banner ───────────────────────────────────
+                SliverToBoxAdapter(
+                  child: Consumer<SubscriptionProvider>(
+                    builder: (context, subProvider, _) {
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
+                        child: _SubscriptionBanner(
+                          isDark: isDark,
+                          isSubscribed: subProvider.isSubscribed,
+                          isOnTrial: subProvider.isOnTrial,
+                          trialDaysRemaining: subProvider.trialDaysRemaining,
+                          activeTierName: subProvider.activeTier?.name,
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const SubscriptionScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
                 // ── Preferences section ───────────────────────────────────
@@ -424,11 +455,11 @@ class ProfileScreen extends StatelessWidget {
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
                 // ── Subscription section ──────────────────────────────────
-                _sectionHeader(
-                  context,
-                  AppLocalizations.of(context)!.membership,
-                ),
-                _sectionCard([_premiumTile(context)]),
+                // _sectionHeader(
+                //   context,
+                //   AppLocalizations.of(context)!.membership,
+                // ),
+                // _sectionCard([_premiumTile(context)]),
 
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
@@ -1077,84 +1108,84 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _premiumTile(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            HapticFeedback.lightImpact();
-            _showComingSoonSnackBar(context, 'Premium Subscription');
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-            child: Row(
-              children: [
-                Container(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withAlpha(30),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(
-                    Icons.workspace_premium_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Premium Subscription',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'Coming soon — unlock all features',
-                        style: TextStyle(color: Colors.white70, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withAlpha(40),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Text(
-                    'Soon',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _premiumTile(BuildContext context) {
+  //   return Container(
+  //     margin: const EdgeInsets.all(4),
+  //     decoration: BoxDecoration(
+  //       gradient: AppColors.primaryGradient,
+  //       borderRadius: BorderRadius.circular(16),
+  //     ),
+  //     child: Material(
+  //       color: Colors.transparent,
+  //       child: InkWell(
+  //         borderRadius: BorderRadius.circular(16),
+  //         onTap: () {
+  //           HapticFeedback.lightImpact();
+  //           _showComingSoonSnackBar(context, 'Premium Subscription');
+  //         },
+  //         child: Padding(
+  //           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+  //           child: Row(
+  //             children: [
+  //               Container(
+  //                 width: 38,
+  //                 height: 38,
+  //                 decoration: BoxDecoration(
+  //                   color: Colors.white.withAlpha(30),
+  //                   borderRadius: BorderRadius.circular(10),
+  //                 ),
+  //                 child: const Icon(
+  //                   Icons.workspace_premium_rounded,
+  //                   color: Colors.white,
+  //                   size: 20,
+  //                 ),
+  //               ),
+  //               const SizedBox(width: 16),
+  //               const Expanded(
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     Text(
+  //                       'Premium Subscription',
+  //                       style: TextStyle(
+  //                         color: Colors.white,
+  //                         fontSize: 14,
+  //                         fontWeight: FontWeight.w600,
+  //                       ),
+  //                     ),
+  //                     SizedBox(height: 2),
+  //                     Text(
+  //                       'Coming soon — unlock all features',
+  //                       style: TextStyle(color: Colors.white70, fontSize: 12),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //               Container(
+  //                 padding: const EdgeInsets.symmetric(
+  //                   horizontal: 10,
+  //                   vertical: 4,
+  //                 ),
+  //                 decoration: BoxDecoration(
+  //                   color: Colors.white.withAlpha(40),
+  //                   borderRadius: BorderRadius.circular(20),
+  //                 ),
+  //                 child: const Text(
+  //                   'Soon',
+  //                   style: TextStyle(
+  //                     color: Colors.white,
+  //                     fontSize: 11,
+  //                     fontWeight: FontWeight.w700,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   void _showComingSoonSnackBar(BuildContext context, String feature) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -1817,4 +1848,148 @@ class ProfileScreen extends StatelessWidget {
       },
     );
   }
+}
+
+// ---------------------------------------------------------------------------
+// Subscription Banner widget (shown on Profile screen)
+// ---------------------------------------------------------------------------
+
+class _SubscriptionBanner extends StatelessWidget {
+  final bool isDark;
+  final bool isSubscribed;
+  final bool isOnTrial;
+  final int trialDaysRemaining;
+  final String? activeTierName;
+  final VoidCallback onTap;
+
+  const _SubscriptionBanner({
+    required this.isDark,
+    required this.isSubscribed,
+    required this.isOnTrial,
+    required this.trialDaysRemaining,
+    required this.activeTierName,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isActive = isSubscribed;
+
+    // Gradient and icon change depending on state
+    final List<Color> gradientColors = isActive
+        ? [const Color(0xFF16A34A), const Color(0xFF15803D)]
+        : [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)];
+
+    final String title = isOnTrial
+        ? 'Free Trial Active · ${_capitalize(activeTierName ?? '')} Plan'
+        : isActive
+        ? 'LilyFit ${_capitalize(activeTierName ?? '')} · Active'
+        : 'Upgrade to LilyFit Premium';
+
+    final String subtitle = isOnTrial
+        ? '$trialDaysRemaining day${trialDaysRemaining == 1 ? '' : 's'} remaining in your trial'
+        : isActive
+        ? 'Manage your subscription'
+        : 'Start your 7-day free trial today';
+
+    final IconData icon = isOnTrial
+        ? Icons.hourglass_top_rounded
+        : isActive
+        ? Icons.verified_rounded
+        : Icons.star_rounded;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              gradientColors[0].withValues(alpha: isDark ? 0.25 : 0.12),
+              gradientColors[1].withValues(alpha: isDark ? 0.10 : 0.05),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: gradientColors[0].withValues(alpha: 0.35),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: gradientColors[0].withValues(alpha: isDark ? 0.15 : 0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Icon
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: gradientColors,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: gradientColors[0].withValues(alpha: 0.35),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Icon(icon, color: Colors.white, size: 24),
+            ),
+            const SizedBox(width: 14),
+
+            // Text
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? Colors.white : AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark
+                          ? AppColors.darkTextSecondary
+                          : AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Arrow
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 14,
+              color: isDark
+                  ? AppColors.darkTextTertiary
+                  : AppColors.textTertiary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _capitalize(String s) =>
+      s.isEmpty ? s : s[0].toUpperCase() + s.substring(1);
 }
