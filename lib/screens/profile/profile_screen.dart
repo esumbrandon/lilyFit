@@ -460,7 +460,6 @@ class ProfileScreen extends StatelessWidget {
                 //   AppLocalizations.of(context)!.membership,
                 // ),
                 // _sectionCard([_premiumTile(context)]),
-
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
                 // ── Support & About section ───────────────────────────────
