@@ -9,6 +9,9 @@ import '../services/payment_service.dart';
 class SubscriptionProvider extends ChangeNotifier {
   static const _prefKey = 'subscription_state';
 
+  /// Expose the single Lite plan so widgets can read pricing without an extra import.
+  static SubscriptionPlan get liteDetails => SubscriptionPlans.lite;
+
   SubscriptionState _state = const SubscriptionState();
   bool _isLoading = false;
   String? _errorMessage;
@@ -35,6 +38,10 @@ class SubscriptionProvider extends ChangeNotifier {
   bool get isFree => _state.isFree;
   PlanTier? get activeTier => _state.activeTier;
   int get trialDaysRemaining => _state.trialDaysRemaining;
+
+  /// True when the user has full access to all app features.
+  /// Covers both the 7-day free trial period and an active paid subscription.
+  bool get hasAccess => _state.isActive;
 
   // ---------------------------------------------------------------------------
   // Initialisation

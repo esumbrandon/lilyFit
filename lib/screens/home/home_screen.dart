@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/subscription_gate.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../food_search/food_search_screen.dart';
 import '../progress/progress_screen.dart';
@@ -32,10 +33,10 @@ class _HomeScreenState extends State<HomeScreen>
       : _currentIndex;
 
   final _screens = const [
-    DashboardScreen(),
-    FoodSearchScreen(),
-    ProgressScreen(),
-    ProfileScreen(),
+    SubscriptionGate(featureLabel: 'Dashboard', child: DashboardScreen()),
+    SubscriptionGate(featureLabel: 'Food Search', child: FoodSearchScreen()),
+    SubscriptionGate(featureLabel: 'Progress', child: ProgressScreen()),
+    ProfileScreen(), // always accessible
   ];
 
   @override
