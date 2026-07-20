@@ -1107,7 +1107,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-
   void _showComingSoonSnackBar(BuildContext context, String feature) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
